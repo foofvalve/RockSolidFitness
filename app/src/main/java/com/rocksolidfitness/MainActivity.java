@@ -1,7 +1,6 @@
 package com.rocksolidfitness;
 
 import android.app.Activity;
-import android.app.ActionBar;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -9,25 +8,47 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.os.Build;
+import android.widget.TextView;
+
+import java.util.List;
 
 
 public class MainActivity extends Activity
 {
+    public SessionsDataSource dataSource;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
+
+        dataSource = new SessionsDataSource(this);
+        dataSource.open();
+
+        Session testSession = new Session(Session.State.PLANNED, "Running", "Easy fartlek run", 45);
+        dataSource.createSession(testSession);
+
+        Session savedSession = dataSource.getSession();
+        List<String> sports = dataSource.getSports();
+
         setContentView(R.layout.activity_main);
         if (savedInstanceState == null)
         {
+
+            PlaceholderFragment newFragment = new PlaceholderFragment();
+            Bundle args = new Bundle();
+            args.putString("Sport", savedSession.sport);
+            args.putString("Desc", savedSession.description);
+            for (String sport : sports)
+                args.putString("sport - " + sport, "val: " + sport);
+
+            newFragment.setArguments(args);
+
             getFragmentManager().beginTransaction()
-                    .add(R.id.container, new PlaceholderFragment())
+                    .add(R.id.container, newFragment)
                     .commit();
         }
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu)
@@ -47,19 +68,13 @@ public class MainActivity extends Activity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings)
-        {
             return true;
-        }
 
         return super.onOptionsItemSelected(item);
     }
 
-    /**
-     * A placeholder fragment containing a simple view.
-     */
     public static class PlaceholderFragment extends Fragment
     {
-
         public PlaceholderFragment()
         {
         }
@@ -69,6 +84,13 @@ public class MainActivity extends Activity
                                  Bundle savedInstanceState)
         {
             View rootView = inflater.inflate(R.layout.fragment_main, container, false);
+            String msg = this.getArguments().getString("Sport") + "\t" +
+                    this.getArguments().getString("Desc") + "\n" +
+                    this.getArguments().getString("sport - Cycling") + "\n" +
+                    this.getArguments().getString("sport - Swimming") + "\n" +
+                    this.getArguments().getString("sport - Running");
+            TextView mainContent = (TextView) rootView.findViewById(R.id.mainTextView);
+            mainContent.setText(msg);
             return rootView;
         }
     }
