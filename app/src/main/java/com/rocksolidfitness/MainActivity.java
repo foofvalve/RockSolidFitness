@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import java.util.Date;
 import java.util.List;
 
 
@@ -24,8 +25,8 @@ public class MainActivity extends Activity
 
         dataSource = new SessionsDataSource(this);
         dataSource.open();
-
-        Session testSession = new Session(Session.State.PLANNED, "Running", "Easy fartlek run", 45);
+        dataSource.loadSmallTestDataSet();
+        Session testSession = new Session(Session.State.PLANNED, "Running", "Easy fartlek run", 45, new Date());
         long recId = dataSource.createSession(testSession);
 
         Session savedSession = dataSource.getSessionById(recId);

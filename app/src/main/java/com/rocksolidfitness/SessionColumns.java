@@ -2,7 +2,7 @@ package com.rocksolidfitness;
 
 import android.provider.BaseColumns;
 
-public class Columns implements BaseColumns
+public class SessionColumns implements BaseColumns
 {
 
     public static final String SESSION_ID = "_id";
@@ -40,3 +40,4 @@ public class Columns implements BaseColumns
     public static final int SESSION_DATE_CREATED_INDEX = 14;
     public static final int SESSION_DATE_MODIFIED_INDEX = 15;
 }
+

@@ -4,6 +4,7 @@ import android.database.Cursor;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.text.MessageFormat;
 import java.util.Date;
 
 
@@ -32,12 +33,13 @@ public final class Session implements Parcelable
     {
     }
 
-    public Session(State state, String sport, String description, int duration)
+    public Session(State state, String sport, String description, int duration, Date dateOfSession)
     {
         this.sessionState = state;
         this.sport = sport;
         this.description = description;
         this.duration = duration;
+        this.dateOfSession = dateOfSession;
     }
 
     public Session(Cursor c)
@@ -83,40 +85,25 @@ public final class Session implements Parcelable
 
     public String toString()
     {
-        String delimeter = "|";
-        StringBuilder formattedString = new StringBuilder();
-        formattedString.append(id);
-        formattedString.append(delimeter);
-        formattedString.append(sessionState);
-        formattedString.append(delimeter);
-        formattedString.append(sport);
-        formattedString.append(delimeter);
-        formattedString.append(description);
-        formattedString.append(delimeter);
-        formattedString.append(dateOfSession);
-        formattedString.append(delimeter);
-        formattedString.append(duration);
-        formattedString.append(delimeter);
-        formattedString.append(distance);
-        formattedString.append(delimeter);
-        formattedString.append(notes);
-        formattedString.append(delimeter);
-        formattedString.append(avgHrRate);
-        formattedString.append(delimeter);
-        formattedString.append(location);
-        formattedString.append(delimeter);
-        formattedString.append(caloriesBurnt);
-        formattedString.append(delimeter);
-        formattedString.append(weight);
-        formattedString.append(delimeter);
-        formattedString.append(raceName);
-        formattedString.append(delimeter);
-        formattedString.append(trainingWeek);
-        formattedString.append(delimeter);
-        formattedString.append(dateCreated);
-        formattedString.append(delimeter);
-        formattedString.append(dateModified);
-        return formattedString.toString();
+        String stringedUp = MessageFormat.format("id=[{0}]\n" +
+                        "sessionState=[{1}]\n" +
+                        "sport=[{2}]\n" +
+                        "description=[{3}]\n" +
+                        "dateOfSession=[{4}]\n" +
+                        "duration=[{5}]\n" +
+                        "distance=[{6}]\n" +
+                        "notes=[{7}]\n" +
+                        "avgHrRate=[{8}]\n" +
+                        "location=[{9}]\n" +
+                        "caloriesBurnt=[{10}]\n" +
+                        "weight=[{11}]\n" +
+                        "raceName=[{12}]\n" +
+                        "trainingWeek=[{13}]\n" +
+                        "dateCreated=[{14}]\n" +
+                        "dateModified=[{15}]\n",
+                id, sessionState, sport, description, dateOfSession, duration, distance, notes, avgHrRate, location, caloriesBurnt, weight, raceName, trainingWeek, dateCreated, dateModified);
+
+        return stringedUp;
     }
 
     @Override

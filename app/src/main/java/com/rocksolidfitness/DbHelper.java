@@ -9,30 +9,32 @@ public class DbHelper extends SQLiteOpenHelper
 {
     public static final String TABLE_SESSIONS = "sessions";
     private static final String DATABASE_CREATE = "create table if not exists "
-            + TABLE_SESSIONS + "( " + Columns.SESSION_ID
+            + TABLE_SESSIONS + "( " + SessionColumns.SESSION_ID
             + " integer primary key autoincrement, " +
-            Columns.STATE + " int not null," +
-            Columns.SPORT + " text not null," +
-            Columns.DESCRIPTION + " text not null," +
-            Columns.DATE_OF_SESSION + " datetime default null," +
-            Columns.DURATION + " int not null," +
-            Columns.DISTANCE + " real," +
-            Columns.NOTES + " text," +
-            Columns.AVG_HR_RATE + " real," +
-            Columns.LOCATION + " text," +
-            Columns.CALORIES_BURNT + " int," +
-            Columns.WEIGHT + " real," +
-            Columns.RACE_NAME + " text," +
-            Columns.TRAINING_WEEK + " int," +
-            Columns.DATE_CREATED + " datetime default null," +
-            Columns.DATE_MODIFIED + " datetime default null);";
+            SessionColumns.STATE + " int not null," +
+            SessionColumns.SPORT + " text not null," +
+            SessionColumns.DESCRIPTION + " text not null," +
+            SessionColumns.DATE_OF_SESSION + " datetime default null," +
+            SessionColumns.DURATION + " int not null," +
+            SessionColumns.DISTANCE + " real," +
+            SessionColumns.NOTES + " text," +
+            SessionColumns.AVG_HR_RATE + " real," +
+            SessionColumns.LOCATION + " text," +
+            SessionColumns.CALORIES_BURNT + " int," +
+            SessionColumns.WEIGHT + " real," +
+            SessionColumns.RACE_NAME + " text," +
+            SessionColumns.TRAINING_WEEK + " int," +
+            SessionColumns.DATE_CREATED + " datetime default null," +
+            SessionColumns.DATE_MODIFIED + " datetime default null);";
     public static final String TABLE_SPORTS = "sports";
     private static final String DATABASE_CREATE_SPORT_TABLE = "create table if not exists "
-            + TABLE_SPORTS + "(sport varchar(255) primary key);  ";
+            + TABLE_SPORTS + "(" + SportColumns.SPORT_ID + " integer primary key autoincrement, " +
+            SportColumns.SPORT + " varchar(255) not null unique);  ";
+
     //TODO: translate this string
     private static final String DATABASE_INSERT_SPORTS =
-            "insert into " + TABLE_SPORTS + " (sport) values ";
-    private static final int DATABASE_VERSION = 4;
+            "insert into " + TABLE_SPORTS + " (" + SportColumns.SPORT + ") values ";
+    private static final int DATABASE_VERSION = 7;
     private static final String DATABASE_NAME = "sessions.db";
 
 
