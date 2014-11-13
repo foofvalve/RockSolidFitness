@@ -26,4 +26,10 @@ public class Utils
         }
         return convertedDate;
     }
+
+    public static String getTodayDatesSQLiteCompliant()
+    {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        return dateFormat.format(new Date());
+    }
 }

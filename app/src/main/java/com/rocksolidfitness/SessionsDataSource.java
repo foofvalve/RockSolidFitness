@@ -57,6 +57,7 @@ public class SessionsDataSource
         values.put(Columns.SPORT, session.sport);
         values.put(Columns.DESCRIPTION, session.description);
         values.put(Columns.DURATION, session.duration);
+        values.put(Columns.DATE_CREATED, Utils.getTodayDatesSQLiteCompliant());
 
         return database.insert(DbHelper.TABLE_SESSIONS, null, values);
         /*
@@ -106,12 +107,15 @@ public class SessionsDataSource
         */
     }
 
-    public Session getSession()
+    public Session getSessionById(long recId)
     {
-        Session session = new Session();
+        Session session = null;
 
         Cursor cursor = database.query(DbHelper.TABLE_SESSIONS,
-                allColumns, null, null, null, null, null);
+                allColumns, "_id = ?", new String[]{"" + recId}, null, null, null);
+
+        if (cursor.getCount() == 0) return session;
+
         cursor.moveToFirst();
         while (!cursor.isAfterLast())
         {
@@ -119,14 +123,13 @@ public class SessionsDataSource
             cursor.moveToNext();
         }
         cursor.close();
-
         return session;
     }
 
     public List<String> getSports()
     {
         List<String> sports = new ArrayList<String>();
-        ;
+
 
         Cursor cursor = database.query(DbHelper.TABLE_SPORTS,
                 new String[]{"sport"}, null, null, null, null, null);

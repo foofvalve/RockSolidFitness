@@ -32,8 +32,9 @@ public class DbHelper extends SQLiteOpenHelper
     //TODO: translate this string
     private static final String DATABASE_INSERT_SPORTS =
             "insert into " + TABLE_SPORTS + " (sport) values ";
-    private static final int DATABASE_VERSION = 3;
+    private static final int DATABASE_VERSION = 4;
     private static final String DATABASE_NAME = "sessions.db";
+
 
     public DbHelper(Context context)
     {

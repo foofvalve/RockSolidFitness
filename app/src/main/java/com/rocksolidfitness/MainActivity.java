@@ -26,9 +26,9 @@ public class MainActivity extends Activity
         dataSource.open();
 
         Session testSession = new Session(Session.State.PLANNED, "Running", "Easy fartlek run", 45);
-        dataSource.createSession(testSession);
+        long recId = dataSource.createSession(testSession);
 
-        Session savedSession = dataSource.getSession();
+        Session savedSession = dataSource.getSessionById(recId);
         List<String> sports = dataSource.getSports();
 
         setContentView(R.layout.activity_main);
