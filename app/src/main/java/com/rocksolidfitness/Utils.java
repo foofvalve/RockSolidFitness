@@ -18,6 +18,9 @@ public class Utils
 
         if (rawDateTime == null) return convertedDate;
 
+        if (rawDateTime.length() != 19)
+            rawDateTime += " 00:00:00";
+
         try
         {
             convertedDate = iso8601Format.parse(rawDateTime);
@@ -38,6 +41,16 @@ public class Utils
     {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         return dateFormat.format(new Date());
+    }
+
+    public static Date getDateOffsetByNDays(int dayOffset)
+    {
+        Date offsetDate = new Date();
+        Calendar c = Calendar.getInstance();
+        c.setTime(offsetDate);
+        c.add(Calendar.DATE, dayOffset);
+        offsetDate = c.getTime();
+        return offsetDate;
     }
 
     public static Date getNextDay()

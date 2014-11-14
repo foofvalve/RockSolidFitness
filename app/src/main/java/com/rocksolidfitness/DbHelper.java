@@ -49,7 +49,7 @@ public class DbHelper extends SQLiteOpenHelper
         database.execSQL(DATABASE_CREATE);
         database.execSQL(DATABASE_CREATE_SPORT_TABLE);
 
-        String[] sports = new String[]{"Cycling", "Running", "Swimming"};
+        String[] sports = new String[]{"Cycling", "Running", "Swimming", "Strength and Conditioning"};
         for (String sport : sports)
             database.execSQL(DATABASE_INSERT_SPORTS + " ('" + sport + "');");
 

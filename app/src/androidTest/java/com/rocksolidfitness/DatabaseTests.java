@@ -5,8 +5,11 @@ import android.test.AndroidTestCase;
 import android.test.RenamingDelegatingContext;
 import android.util.Log;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class DatabaseTests extends AndroidTestCase
 {
@@ -63,6 +66,35 @@ public class DatabaseTests extends AndroidTestCase
     {
         Session nonExistentSession = dataSource.getSessionById(10001);
         assertTrue(nonExistentSession == null);
+    }
+
+    public void testCreateSessionUsingDateString()
+    {
+        long recId = dataSource.createSession(new Session(Session.State.PLANNED, "Cycling", "Big Bike", 180, Utils.convertSQLiteDate("2014-05-05 00:00:00")));
+        Log.d(TAG, "Created session with Id: " + recId);
+        assertTrue(recId != 0);
+    }
+
+    public void testLoadingTestData()
+    {
+        dataSource.loadSmallTestDataSet();
+        dataSource.loadDynamicTestData();
+        dataSource.loadLargeDataSet();
+    }
+
+    public void testDateConverter()
+    {
+        String dateString = "2014-04-05 00:00:00";
+        Date date = null;
+        try
+        {
+            date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH).parse(dateString);
+            Log.d(TAG, date.toString());
+        } catch (ParseException e)
+        {
+            e.printStackTrace();
+        }
+
     }
 
     public void testSportsCRU()

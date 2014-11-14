@@ -25,7 +25,9 @@ public class MainActivity extends Activity
 
         dataSource = new SessionsDataSource(this);
         dataSource.open();
-        dataSource.loadSmallTestDataSet();
+        //dataSource.loadSmallTestDataSet();
+        //dataSource.loadLargeDataSet();
+        dataSource.loadDynamicTestData();
         Session testSession = new Session(Session.State.PLANNED, "Running", "Easy fartlek run", 45, new Date());
         long recId = dataSource.createSession(testSession);
 
