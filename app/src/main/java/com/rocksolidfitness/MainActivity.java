@@ -1,14 +1,9 @@
 package com.rocksolidfitness;
 
 import android.app.Activity;
-import android.app.Fragment;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
 
 import java.util.Date;
 import java.util.List;
@@ -38,7 +33,7 @@ public class MainActivity extends Activity
         if (savedInstanceState == null)
         {
 
-            PlaceholderFragment newFragment = new PlaceholderFragment();
+            MainViewFragment newFragment = new MainViewFragment();
             Bundle args = new Bundle();
             args.putString("Sport", savedSession.sport);
             args.putString("Desc", savedSession.description);
@@ -51,6 +46,12 @@ public class MainActivity extends Activity
                     .add(R.id.container, newFragment)
                     .commit();
         }
+    }
+
+    @Override
+    protected void onDestroy()
+    {
+        if (dataSource != null) dataSource.close();
     }
 
     @Override
@@ -76,25 +77,5 @@ public class MainActivity extends Activity
         return super.onOptionsItemSelected(item);
     }
 
-    public static class PlaceholderFragment extends Fragment
-    {
-        public PlaceholderFragment()
-        {
-        }
 
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                                 Bundle savedInstanceState)
-        {
-            View rootView = inflater.inflate(R.layout.fragment_main, container, false);
-            String msg = this.getArguments().getString("Sport") + "\t" +
-                    this.getArguments().getString("Desc") + "\n" +
-                    this.getArguments().getString("sport - Cycling") + "\n" +
-                    this.getArguments().getString("sport - Swimming") + "\n" +
-                    this.getArguments().getString("sport - Running");
-            TextView mainContent = (TextView) rootView.findViewById(R.id.mainTextView);
-            mainContent.setText(msg);
-            return rootView;
-        }
-    }
 }
