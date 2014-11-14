@@ -28,6 +28,8 @@ public final class Session implements Parcelable
     public int trainingWeek;   //http://en.wikipedia.org/wiki/ISO_week_date
     public Date dateCreated;
     public Date dateModified;
+    public int sessionWeek;
+    public int sessionYear;
 
     public Session()
     {
@@ -100,8 +102,12 @@ public final class Session implements Parcelable
                         "raceName=[{12}]\n" +
                         "trainingWeek=[{13}]\n" +
                         "dateCreated=[{14}]\n" +
-                        "dateModified=[{15}]\n",
-                id, sessionState, sport, description, dateOfSession, duration, distance, notes, avgHrRate, location, caloriesBurnt, weight, raceName, trainingWeek, dateCreated, dateModified);
+                        "dateModified=[{15}]\n" +
+                        "sessionWeek=[{16}]\n" +
+                        "sessionYear=[{17}]\n",
+                id, sessionState, sport, description, dateOfSession, duration, distance,
+                notes, avgHrRate, location, caloriesBurnt, weight, raceName, trainingWeek,
+                dateCreated, dateModified, sessionWeek, sessionYear);
 
         return stringedUp;
     }

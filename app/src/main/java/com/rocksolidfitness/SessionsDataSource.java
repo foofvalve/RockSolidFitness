@@ -11,43 +11,26 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+
 public class SessionsDataSource
 {
     // Database fields
-    private SQLiteDatabase database;
-    private DbHelper dbHelper;
-    private String[] allColumns = {
-            SessionColumns.SESSION_ID,
-            SessionColumns.STATE,
-            SessionColumns.SPORT,
-            SessionColumns.DESCRIPTION,
-            SessionColumns.DATE_OF_SESSION,
-            SessionColumns.DURATION,
-            SessionColumns.DISTANCE,
-            SessionColumns.NOTES,
-            SessionColumns.AVG_HR_RATE,
-            SessionColumns.LOCATION,
-            SessionColumns.CALORIES_BURNT,
-            SessionColumns.WEIGHT,
-            SessionColumns.RACE_NAME,
-            SessionColumns.TRAINING_WEEK,
-            SessionColumns.DATE_CREATED,
-            SessionColumns.DATE_MODIFIED
-    };
+    private SQLiteDatabase mDatabase;
+    private DbHelper mDbHelper;
 
     public SessionsDataSource(Context context)
     {
-        dbHelper = new DbHelper(context);
+        mDbHelper = new DbHelper(context);
     }
 
     public void open() throws SQLException
     {
-        database = dbHelper.getWritableDatabase();
+        mDatabase = mDbHelper.getWritableDatabase();
     }
 
     public void close()
     {
-        dbHelper.close();
+        mDbHelper.close();
     }
 
     public long createSession(Session session)
@@ -68,8 +51,10 @@ public class SessionsDataSource
         values.put(SessionColumns.RACE_NAME, session.raceName);
         values.put(SessionColumns.TRAINING_WEEK, session.trainingWeek);
         values.put(SessionColumns.DATE_CREATED, Utils.getTodayDatesSQLiteCompliant());
+        values.put(SessionColumns.SESSION_WEEK, session.sessionWeek);//TOOD: Joda this
+        values.put(SessionColumns.SESSION_YEAR, session.sessionYear);//TOOD: Joda this
 
-        return database.insert(DbHelper.TABLE_SESSIONS, null, values);
+        return mDatabase.insert(DbHelper.TABLE_SESSIONS, null, values);
     }
 
     public int updateSession(Session session)
@@ -90,42 +75,29 @@ public class SessionsDataSource
         values.put(SessionColumns.RACE_NAME, session.raceName);
         values.put(SessionColumns.TRAINING_WEEK, session.trainingWeek);
         values.put(SessionColumns.DATE_MODIFIED, Utils.getTodayDatesSQLiteCompliant());
+        values.put(SessionColumns.SESSION_WEEK, session.sessionWeek);//TOOD: Joda this
+        values.put(SessionColumns.SESSION_YEAR, session.sessionYear);//TOOD: Joda this
 
-        return database.update(DbHelper.TABLE_SESSIONS, values, "_id = ?", new String[]{"" + session.id});
+        return mDatabase.update(DbHelper.TABLE_SESSIONS, values, "_id = ?", new String[]{"" + session.id});
     }
 
     public void deleteSession(Session session)
     {
         long id = session.id;
-        database.delete(DbHelper.TABLE_SESSIONS, SessionColumns.SESSION_ID + "=" + id, null);
+        mDatabase.delete(DbHelper.TABLE_SESSIONS, SessionColumns.SESSION_ID + "=" + id, null);
     }
 
     public List<Session> getAllSessions()
     {
         throw new UnsupportedOperationException("Not implemented yet");
-        /*
-        List<Comment> comments = new ArrayList<Comment>();
-
-        Cursor cursor = database.query(MySQLiteHelper.TABLE_COMMENTS,
-                allColumns, null, null, null, null, null);
-        cursor.moveToFirst();
-        while (!cursor.isAfterLast()) {
-            Comment comment = cursorToComment(cursor);
-            comments.add(comment);
-            cursor.moveToNext();
-        }
-        // Make sure to close the cursor
-        cursor.close();
-        return comments;
-        */
     }
 
     public Session getSessionById(long recId)
     {
         Session session = null;
 
-        Cursor cursor = database.query(DbHelper.TABLE_SESSIONS,
-                allColumns, SessionColumns.SESSION_ID + " = ?", new String[]{"" + recId}, null, null, null);
+        Cursor cursor = mDatabase.query(DbHelper.TABLE_SESSIONS,
+                SessionColumns.allColumns, SessionColumns.SESSION_ID + " = ?", new String[]{"" + recId}, null, null, null);
 
         if (cursor.getCount() == 0) return session;
 
@@ -146,7 +118,7 @@ public class SessionsDataSource
         long recId;
         try
         {
-            recId = database.insert(DbHelper.TABLE_SPORTS, null, values);
+            recId = mDatabase.insert(DbHelper.TABLE_SPORTS, null, values);
         } catch (SQLiteConstraintException e)
         {
             return -1;
@@ -156,14 +128,21 @@ public class SessionsDataSource
 
     public int renameSport(String oldSportLabel, String newSportLabel)
     {
+        if (!sportExists(oldSportLabel)) return -1;
+
         ContentValues values = new ContentValues();
 
         values.put(SportColumns.SPORT, newSportLabel);
         String updateQuery = "update " + DbHelper.TABLE_SESSIONS +
                 " set " + SportColumns.SPORT + "='" + newSportLabel + "'" +
                 " where " + SportColumns.SPORT + "='" + oldSportLabel + "'";
-        database.execSQL(updateQuery);
-        return database.update(DbHelper.TABLE_SPORTS, values, SportColumns.SPORT + " = ?", new String[]{"" + oldSportLabel});
+        mDatabase.execSQL(updateQuery);
+        return mDatabase.update(DbHelper.TABLE_SPORTS, values, SportColumns.SPORT + " = ?", new String[]{"" + oldSportLabel});
+    }
+
+    public boolean sportExists(String sport)
+    {
+        return getSports().contains(sport);
     }
 
     public List<String> getSports()
@@ -171,7 +150,7 @@ public class SessionsDataSource
         List<String> sports = new ArrayList<String>();
 
 
-        Cursor cursor = database.query(DbHelper.TABLE_SPORTS,
+        Cursor cursor = mDatabase.query(DbHelper.TABLE_SPORTS,
                 new String[]{SportColumns.SPORT}, null, null, null, null, null);
         cursor.moveToFirst();
         while (!cursor.isAfterLast())
@@ -211,6 +190,9 @@ public class SessionsDataSource
 
         rawDateTime = cursor.getString(SessionColumns.SESSION_DATE_MODIFIED_INDEX);
         session.dateModified = Utils.convertSQLiteDate(rawDateTime);
+
+        session.sessionWeek = cursor.getInt(SessionColumns.SESSION_SESSION_WEEK_INDEX);
+        session.sessionYear = cursor.getInt(SessionColumns.SESSION_SESSION_YEAR_INDEX);
 
         return session;
     }
@@ -534,6 +516,6 @@ public class SessionsDataSource
     public void truncateSessionTable()
     {
         String truncateSessionsSQL = "delete from sessions;";
-        database.execSQL(truncateSessionsSQL);
+        mDatabase.execSQL(truncateSessionsSQL);
     }
 }

@@ -19,7 +19,7 @@ public class DatabaseTests extends AndroidTestCase
     public void setUp()
     {
         RenamingDelegatingContext context
-                = new RenamingDelegatingContext(getContext(), "test_");
+                = new RenamingDelegatingContext(getContext(), "test_v2_");
         dataSource = new SessionsDataSource(context);
         dataSource.open();
     }
@@ -50,11 +50,27 @@ public class DatabaseTests extends AndroidTestCase
         savedSession.weight = 60.25;
         savedSession.raceName = "Ironman NZ";
         savedSession.trainingWeek = 13;
+        savedSession.sessionWeek = 53;
+        savedSession.sessionYear = 2100;
         int updatedRecId = dataSource.updateSession(savedSession);
 
         //Read
         Session updatedSession = dataSource.getSessionById(updatedRecId);
         Log.d(TAG, "Updated session : " + updatedSession.toString());
+        assertTrue(savedSession.sessionState.equals(updatedSession.sessionState));
+        assertTrue(savedSession.sport.equals(updatedSession.sport));
+        assertTrue(savedSession.dateOfSession.compareTo(updatedSession.dateOfSession) == 0);
+        assertTrue(savedSession.duration == updatedSession.duration);
+        assertTrue(savedSession.distance == updatedSession.distance);
+        assertTrue(savedSession.notes.equals(updatedSession.notes));
+        assertTrue(savedSession.avgHrRate == updatedSession.avgHrRate);
+        assertTrue(savedSession.location.equals(updatedSession.location));
+        assertTrue(savedSession.caloriesBurnt == updatedSession.caloriesBurnt);
+        assertTrue(savedSession.weight == updatedSession.weight);
+        assertTrue(savedSession.raceName.equals(updatedSession.raceName));
+        assertTrue(savedSession.trainingWeek == updatedSession.trainingWeek);
+        assertTrue(savedSession.sessionWeek == updatedSession.sessionWeek);
+        assertTrue(savedSession.sessionYear == updatedSession.sessionYear);
 
         //Delete
         dataSource.deleteSession(updatedSession);
@@ -117,6 +133,12 @@ public class DatabaseTests extends AndroidTestCase
         testSession = dataSource.getSessionById(id);
         Log.d(TAG, "testSportsCRU - Session after sport renamed : " + testSession.toString());
         assertTrue(testSession.sport.trim().equals("SomethingElse"));
+    }
+
+    public void testRenameNonExistentSport()
+    {
+        int recId = dataSource.renameSport("NonExistent", "Something else");
+        assertTrue(recId == -1);
     }
 
     public void testAddingDupeSport()

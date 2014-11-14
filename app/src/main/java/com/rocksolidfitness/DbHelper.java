@@ -25,7 +25,9 @@ public class DbHelper extends SQLiteOpenHelper
             SessionColumns.RACE_NAME + " text," +
             SessionColumns.TRAINING_WEEK + " int," +
             SessionColumns.DATE_CREATED + " datetime default null," +
-            SessionColumns.DATE_MODIFIED + " datetime default null);";
+            SessionColumns.DATE_MODIFIED + " datetime default null," +
+            SessionColumns.SESSION_WEEK + " int not null," +
+            SessionColumns.SESSION_YEAR + " int not null);";
     public static final String TABLE_SPORTS = "sports";
     private static final String DATABASE_CREATE_SPORT_TABLE = "create table if not exists "
             + TABLE_SPORTS + "(" + SportColumns.SPORT_ID + " integer primary key autoincrement, " +
@@ -34,13 +36,14 @@ public class DbHelper extends SQLiteOpenHelper
     //TODO: translate this string
     private static final String DATABASE_INSERT_SPORTS =
             "insert into " + TABLE_SPORTS + " (" + SportColumns.SPORT + ") values ";
-    private static final int DATABASE_VERSION = 7;
+    private static final int DATABASE_VERSION = 8;
     private static final String DATABASE_NAME = "sessions.db";
-
+    private static String[] mSports;
 
     public DbHelper(Context context)
     {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
+        mSports = context.getResources().getStringArray(R.array.sports_default_list);
     }
 
     @Override
@@ -49,8 +52,7 @@ public class DbHelper extends SQLiteOpenHelper
         database.execSQL(DATABASE_CREATE);
         database.execSQL(DATABASE_CREATE_SPORT_TABLE);
 
-        String[] sports = new String[]{"Cycling", "Running", "Swimming", "Strength and Conditioning"};
-        for (String sport : sports)
+        for (String sport : mSports)
             database.execSQL(DATABASE_INSERT_SPORTS + " ('" + sport + "');");
 
     }
@@ -65,7 +67,5 @@ public class DbHelper extends SQLiteOpenHelper
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_SESSIONS);
         onCreate(db);
     }
-
-
 }
 

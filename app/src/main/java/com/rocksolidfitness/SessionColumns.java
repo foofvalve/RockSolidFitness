@@ -21,7 +21,29 @@ public class SessionColumns implements BaseColumns
     public static final String TRAINING_WEEK = "trainingweek";
     public static final String DATE_CREATED = "datecreated";
     public static final String DATE_MODIFIED = "datemodified";
+    public static final String SESSION_WEEK = "sessionweek";
+    public static final String SESSION_YEAR = "sessionyear";
 
+    public static String[] allColumns = {
+            SESSION_ID,
+            STATE,
+            SPORT,
+            DESCRIPTION,
+            DATE_OF_SESSION,
+            DURATION,
+            DISTANCE,
+            NOTES,
+            AVG_HR_RATE,
+            LOCATION,
+            CALORIES_BURNT,
+            WEIGHT,
+            RACE_NAME,
+            TRAINING_WEEK,
+            DATE_CREATED,
+            DATE_MODIFIED,
+            SESSION_WEEK,
+            SESSION_YEAR
+    };
 
     public static final int SESSION_ID_INDEX = 0;
     public static final int SESSION_STATE_INDEX = 1;
@@ -39,5 +61,7 @@ public class SessionColumns implements BaseColumns
     public static final int SESSION_TRAINING_WEEK_INDEX = 13;
     public static final int SESSION_DATE_CREATED_INDEX = 14;
     public static final int SESSION_DATE_MODIFIED_INDEX = 15;
+    public static final int SESSION_SESSION_WEEK_INDEX = 16;
+    public static final int SESSION_SESSION_YEAR_INDEX = 17;
 }
 

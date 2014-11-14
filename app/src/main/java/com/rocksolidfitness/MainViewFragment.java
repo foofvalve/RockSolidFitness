@@ -54,7 +54,7 @@ public class MainViewFragment extends Fragment
         mListDataHeader = new ArrayList<String>();
         mListDataChild = new HashMap<String, List<String>>();
 
-        // Adding child data
+        // Weekday group header
         mListDataHeader.add(getString(R.string.wk_mon));
         mListDataHeader.add(getString(R.string.wk_tue));
         mListDataHeader.add(getString(R.string.wk_wed));
@@ -64,7 +64,7 @@ public class MainViewFragment extends Fragment
         mListDataHeader.add(getString(R.string.wk_sun));
 
 
-        // Adding child data
+        // Adding session data
         List<String> top250 = new ArrayList<String>();
         top250.add("The Shawshank Redemption");
         top250.add("The Godfather");

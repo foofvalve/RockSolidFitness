@@ -13,4 +13,15 @@
     <string name="wk_fri">Friday</string>
     <string name="wk_sat">Saturday</string>
     <string name="wk_sun">Sunday</string>
+
+    <string-array name="sports_default_list">
+        <item>Cycling</item>
+        <item>Running</item>
+        <item>Swimming</item>
+        <item>Kayaking</item>
+        <item>Rowing</item>
+        <item>Walking</item>
+        <item>Mountain Biking</item>
+        <item>Strength and Conditioning</item>
+    </string-array>
 </resources>

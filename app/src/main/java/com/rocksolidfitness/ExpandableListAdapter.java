@@ -174,7 +174,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter
     @Override
     public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent)
     {
-        final String childText = (String) getChild(groupPosition, childPosition);
+        String childText = (String) getChild(groupPosition, childPosition);
 
         if (convertView == null)
         {
@@ -182,6 +182,8 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             convertView = infalInflater.inflate(R.layout.list_item, null);
         }
+
+        if (childText.equals("Turbo")) childText = "xxxBLAH BLAHxxx";
 
         TextView txtListChild = (TextView) convertView
                 .findViewById(R.id.lblListItem);
