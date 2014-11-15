@@ -5,11 +5,40 @@
               android:orientation="vertical">
 
     <TextView
-        android:id="@+id/lblListItem"
+        android:id="@+id/lblSport"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:paddingBottom="5dp"
         android:paddingLeft="?android:attr/expandableListPreferredChildPaddingLeft"
         android:paddingTop="5dp"
-        android:textSize="17dip"/>
+        android:text="Cycling"
+        android:textSize="12sp"/>
+
+    <CheckBox
+        android:id="@+id/chkComplete"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right"
+        android:text="Complete"/>
+
+    <TextView
+        android:id="@+id/lblDuration"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="5dp"
+        android:paddingLeft="?android:attr/expandableListPreferredChildPaddingLeft"
+        android:paddingTop="5dp"
+        android:text="2 hr 23 mins"
+        android:textSize="12sp"/>
+
+    <TextView
+        android:id="@+id/lblDescription"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="5dp"
+        android:paddingLeft="?android:attr/expandableListPreferredChildPaddingLeft"
+        android:paddingTop="5dp"
+        android:text="Long 6h bike with TT efforts"
+        android:textSize="12sp"/>
+
 </LinearLayout>

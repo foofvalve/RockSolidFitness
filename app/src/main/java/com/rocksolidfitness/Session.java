@@ -1,6 +1,5 @@
 package com.rocksolidfitness;
 
-import android.database.Cursor;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -17,7 +16,6 @@ public final class Session implements Parcelable
     public State sessionState;
     public String sport;
     public String description;
-    public DateTime dateOfSession;
     public int duration;
     public double distance;
     public String notes;
@@ -29,6 +27,7 @@ public final class Session implements Parcelable
     public int trainingWeek;   //http://en.wikipedia.org/wiki/ISO_week_date
     public DateTime dateCreated;
     public DateTime dateModified;
+    private DateTime dateOfSession;
     private int sessionWeek;
     private int sessionYear;
 
@@ -43,78 +42,60 @@ public final class Session implements Parcelable
         this.description = description;
         this.duration = duration;
         this.dateOfSession = dateOfSession;
+        setDateOfSession(dateOfSession);
     }
 
-    public Session(Cursor c)
+    public DateTime getDateOfSession()
     {
-        /*
-        id = c.getLong(Columns.SESSION_ID_INDEX);
-        isComplete = c.getInt(Columns.SESSION_IS_COMPLETE_INDEX) == 1;
-        sport = c.getString(Columns.SESSION_SPORT_INDEX);
-        description = c.getString(Columns.SESSION_DESCRIPTION_INDEX);
-
-        dateOfSession = c.getLong(Columns.SESSION_DATE_OF_SESSION_INDEX);
-        duration = c.getInt(Columns.SESSION_DURATION_INDEX);
-        distance = c.getDouble(Columns.SESSION_DISTANCE_INDEX);
-        notes = c.getString(Columns.SESSION_NOTES_INDEX);
-        avgHrRate = c.getInt(Columns.SESSION_AVG_HR_RATE_INDEX);
-        location = c.getString(Columns.SESSION_LOCATION_INDEX);
-        caloriesBurnt = c.getInt(Columns.SESSION_CALORIES_BURNT_INDEX);
-        weight = c.getDouble(Columns.SESSION_WEIGHT_INDEX);
-        raceName = c.getString(Columns.SESSION_RACE_NAME_INDEX);
-        trainingWeek = c.getInt(Columns.SESSION_TRAINING_WEEK_INDEX);
-        */
+        return dateOfSession;
     }
 
-    public Session(Parcel p)
+    public void setDateOfSession(DateTime sessionDate)
     {
-    /*
-        id = p.readLong();
-        sessionState = State.values()[p.readInt()];
-        sport = p.readString();
-        description = p.readString();
-        dateOfSession = p.read readLong();
-        duration = p.readInt();
-        distance = p.readDouble();
-        notes = p.readString();
-        avgHrRate = p.readInt();
-        location = p.readString();
-        caloriesBurnt = p.readInt();
-        weight = p.readDouble();
-        raceName = p.readString();
-        trainingWeek = p.readInt();
-        */
+        dateOfSession = sessionDate;
+        setSessionWeek();
+        setSessionYear();
+    }
+
+    private void setSessionWeek()
+    {
+        sessionWeek = dateOfSession.getWeekOfWeekyear();
+    }
+
+    private void setSessionYear()
+    {
+        sessionYear = dateOfSession.getYear();
     }
 
     public int getSessionWeek()
     {
-        return dateOfSession.getWeekOfWeekyear();
+        return sessionWeek;
     }
 
     public int getSessionYear()
     {
-        return dateOfSession.getYear();
+        return sessionYear;
     }
 
     public String toString()
     {
-        String stringedUp = MessageFormat.format("id=[{0}]\n" +
-                        "sessionState=[{1}]\n" +
-                        "sport=[{2}]\n" +
-                        "description=[{3}]\n" +
-                        "dateOfSession=[{4}]\n" +
-                        "duration=[{5}]\n" +
-                        "distance=[{6}]\n" +
-                        "notes=[{7}]\n" +
-                        "avgHrRate=[{8}]\n" +
-                        "location=[{9}]\n" +
-                        "caloriesBurnt=[{10}]\n" +
-                        "weight=[{11}]\n" +
-                        "raceName=[{12}]\n" +
-                        "trainingWeek=[{13}]\n" +
-                        "dateCreated=[{14}]\n" +
-                        "dateModified=[{15}]\n" +
-                        "sessionWeek=[{16}]\n" +
+        String stringedUp = MessageFormat.format("id=[{0}]|" +
+                        "sessionState=[{1}]|" +
+                        "sport=[{2}]|" +
+                        "description=[{3}]|" +
+                        "dateOfSession=[{4}]|" +
+                        "duration=[{5}]|" +
+                        "distance=[{6}]|" +
+                        "notes=[{7}]|" +
+                        "avgHrRate=[{8}]|" +
+                        "location=[{9}]|" +
+                        "caloriesBurnt=[{10}]|" +
+                        "weight=[{11}]|" +
+                        "raceName=[{12}]|" +
+                        "trainingWeek=[{13}]|" +
+                        "dateCreated=[{14}]|" +
+                        "dateModified=[{15}]|" +
+                        "sessionWeek=[{16}]|" +
                         "sessionYear=[{17}]\n",
                 id, sessionState, sport, description, dateOfSession, duration, distance,
                 notes, avgHrRate, location, caloriesBurnt, weight, raceName, trainingWeek,

@@ -40,7 +40,7 @@ public class DatabaseTests extends AndroidTestCase
         savedSession.sessionState = Session.State.COMPLETE;
         savedSession.sport = "Cycling";
         savedSession.description = "Long Ride";
-        savedSession.dateOfSession = Utils.getNextDay();
+        savedSession.setDateOfSession(Utils.getNextDay());
         savedSession.duration = 122;
         savedSession.distance = 15;
         savedSession.notes = "Lorem Ipsum is simply's dummy, text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typeset";
@@ -57,9 +57,9 @@ public class DatabaseTests extends AndroidTestCase
         Log.d(TAG, "Updated session : " + updatedSession.toString());
         assertTrue(savedSession.sessionState.equals(updatedSession.sessionState));
         assertTrue(savedSession.sport.equals(updatedSession.sport));
-        assertTrue(savedSession.dateOfSession.getMonthOfYear() == updatedSession.dateOfSession.getMonthOfYear());
-        assertTrue(savedSession.dateOfSession.getDayOfMonth() == updatedSession.dateOfSession.getDayOfMonth());
-        assertTrue(savedSession.dateOfSession.getYear() == updatedSession.dateOfSession.getYear());
+        assertTrue(savedSession.getDateOfSession().getMonthOfYear() == updatedSession.getDateOfSession().getMonthOfYear());
+        assertTrue(savedSession.getDateOfSession().getDayOfMonth() == updatedSession.getDateOfSession().getDayOfMonth());
+        assertTrue(savedSession.getDateOfSession().getYear() == updatedSession.getDateOfSession().getYear());
         assertTrue(savedSession.duration == updatedSession.duration);
         assertTrue(savedSession.distance == updatedSession.distance);
         assertTrue(savedSession.notes.equals(updatedSession.notes));
@@ -103,14 +103,16 @@ public class DatabaseTests extends AndroidTestCase
         String dateTime = "2014-11-15 09:47:38";
         DateTimeFormatter dtf = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
         DateTime dte = dtf.parseDateTime(dateTime);
+        Log.d(TAG, "year value >> " + dte.getYear());
+
+        android.text.TextUtils.join("|", (Object[]) null);
     }
 
-    public void testSportsCRU()
+    public void testSportsCRUs()
     {
         //Create
         String oldSport = "Kayaking";
         long recId = dataSource.createSport(oldSport);
-        assertTrue(recId != 0);
 
         //Read
         List<String> sports = dataSource.getSports();
@@ -137,6 +139,14 @@ public class DatabaseTests extends AndroidTestCase
     {
         dataSource.createSport("Kayaking");
         assertTrue(dataSource.createSport("Kayaking") == -1);
+    }
+
+    public void testGetSessionsForTheCurrentWeek()
+    {
+        dataSource.loadDynamicTestData();
+        List<Session> sessionsForThisWeek = dataSource.getAllSessionsForCurrentWeek();
+        for (Session sport : sessionsForThisWeek)
+            Log.d(TAG, sport.toString());
     }
 
     public void tearDown() throws Exception

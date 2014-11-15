@@ -12,7 +12,7 @@ import java.util.List;
 
 public class MainActivity extends Activity
 {
-    public SessionsDataSource dataSource;
+    public SessionsDataSource dataSource;  //todo: get rid of this or pass it around or fragment blah
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -38,6 +38,7 @@ public class MainActivity extends Activity
             Bundle args = new Bundle();
             args.putString("Sport", savedSession.sport);
             args.putString("Desc", savedSession.description);
+
             for (String sport : sports)
                 args.putString("sport - " + sport, "val: " + sport);
 

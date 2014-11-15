@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
+import android.widget.CheckBox;
 import android.widget.TextView;
 
 import java.util.HashMap;
@@ -16,10 +17,10 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter
 {
     private Context mContext;
     private List<String> mListDataHeader;
-    private HashMap<String, List<String>> mListDataChild;
+    private HashMap<String, List<Session>> mListDataChild;
 
     public ExpandableListAdapter(Context context, List<String> listDataHeader,
-                                 HashMap<String, List<String>> listChildData)
+                                 HashMap<String, List<Session>> listChildData)
     {
         mContext = context;
         mListDataHeader = listDataHeader;
@@ -174,7 +175,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter
     @Override
     public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent)
     {
-        String childText = (String) getChild(groupPosition, childPosition);
+        Session sessionDetail = (Session) getChild(groupPosition, childPosition);
 
         if (convertView == null)
         {
@@ -183,12 +184,17 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter
             convertView = infalInflater.inflate(R.layout.list_item, null);
         }
 
-        if (childText.equals("Turbo")) childText = "xxxBLAH BLAHxxx";
+        TextView txtSport = (TextView) convertView
+                .findViewById(R.id.lblSport);
+        TextView txtDesc = (TextView) convertView.findViewById(R.id.lblDescription);
+        TextView txtDuration = (TextView) convertView.findViewById(R.id.lblDuration);
+        CheckBox chkComplete = (CheckBox) convertView.findViewById(R.id.chkComplete);
 
-        TextView txtListChild = (TextView) convertView
-                .findViewById(R.id.lblListItem);
-
-        txtListChild.setText(childText);
+        txtSport.setText(sessionDetail.sport);
+        txtDesc.setText(sessionDetail.description);
+        txtDuration.setText(String.format("%d", sessionDetail.duration));
+        boolean sessionComplete = sessionDetail.sessionState == Session.State.COMPLETE ? true : false;
+        chkComplete.setChecked(sessionComplete);
         return convertView;
     }
 

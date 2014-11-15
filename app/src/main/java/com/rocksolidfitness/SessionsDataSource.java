@@ -41,7 +41,7 @@ public class SessionsDataSource
         values.put(SessionColumns.STATE, session.sessionState.ordinal());
         values.put(SessionColumns.SPORT, session.sport);
         values.put(SessionColumns.DESCRIPTION, session.description);
-        values.put(SessionColumns.DATE_OF_SESSION, Utils.convertDateToSQLiteCompliant(session.dateOfSession));
+        values.put(SessionColumns.DATE_OF_SESSION, Utils.convertDateToSQLiteCompliant(session.getDateOfSession()));
         values.put(SessionColumns.DURATION, session.duration);
         values.put(SessionColumns.DISTANCE, session.distance);
         values.put(SessionColumns.NOTES, session.notes);
@@ -65,7 +65,7 @@ public class SessionsDataSource
         values.put(SessionColumns.STATE, session.sessionState.ordinal());
         values.put(SessionColumns.SPORT, session.sport);
         values.put(SessionColumns.DESCRIPTION, session.description);
-        values.put(SessionColumns.DATE_OF_SESSION, Utils.convertDateToSQLiteCompliant(session.dateOfSession));
+        values.put(SessionColumns.DATE_OF_SESSION, Utils.convertDateToSQLiteCompliant(session.getDateOfSession()));
         values.put(SessionColumns.DURATION, session.duration);
         values.put(SessionColumns.DISTANCE, session.distance);
         values.put(SessionColumns.NOTES, session.notes);
@@ -88,9 +88,29 @@ public class SessionsDataSource
         mDatabase.delete(DbHelper.TABLE_SESSIONS, SessionColumns.SESSION_ID + "=" + id, null);
     }
 
-    public List<Session> getAllSessions()
+    public List<Session> getAllSessionsForCurrentWeek()
     {
-        throw new UnsupportedOperationException("Not implemented yet");
+        return getAllSessionsForWeek(DateTime.now().getWeekOfWeekyear(), DateTime.now().getYear());
+    }
+
+    public List<Session> getAllSessionsForWeek(int week, int year)
+    {
+        List<Session> sessionsForWeek = new ArrayList<Session>();
+
+        Cursor cursor = mDatabase.query(DbHelper.TABLE_SESSIONS,
+                SessionColumns.allColumns, SessionColumns.SESSION_WEEK + " = ? and " + SessionColumns.SESSION_YEAR + " = ?",
+                new String[]{"" + week, "" + year}, null, null, null);
+
+        if (cursor.getCount() == 0) return null;
+
+        cursor.moveToFirst();
+        while (!cursor.isAfterLast())
+        {
+            sessionsForWeek.add(cursorToSession(cursor));
+            cursor.moveToNext();
+        }
+        cursor.close();
+        return sessionsForWeek;
     }
 
     public Session getSessionById(long recId)
@@ -114,6 +134,8 @@ public class SessionsDataSource
 
     public long createSport(String sport)
     {
+        if (sportExists(sport)) return -1;
+
         ContentValues values = new ContentValues();
         values.put(SportColumns.SPORT, sport);
         long recId;
@@ -150,14 +172,12 @@ public class SessionsDataSource
     {
         List<String> sports = new ArrayList<String>();
 
-
         Cursor cursor = mDatabase.query(DbHelper.TABLE_SPORTS,
                 new String[]{SportColumns.SPORT}, null, null, null, null, null);
         cursor.moveToFirst();
         while (!cursor.isAfterLast())
         {
             sports.add(cursor.getString(0));
-
             cursor.moveToNext();
         }
         cursor.close();
@@ -175,7 +195,7 @@ public class SessionsDataSource
         session.description = cursor.getString(SessionColumns.SESSION_DESCRIPTION_INDEX);
 
         String rawDateTime = cursor.getString(SessionColumns.SESSION_DATE_OF_SESSION_INDEX);
-        session.dateOfSession = Utils.convertSQLiteDate(rawDateTime);
+        session.setDateOfSession(Utils.convertSQLiteDate(rawDateTime));
         session.duration = cursor.getInt(SessionColumns.SESSION_DURATION_INDEX);
         session.distance = cursor.getDouble(SessionColumns.SESSION_DISTANCE_INDEX);
         session.notes = cursor.getString(SessionColumns.SESSION_NOTES_INDEX);

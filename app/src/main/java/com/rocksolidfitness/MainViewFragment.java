@@ -9,6 +9,8 @@ import android.view.ViewGroup;
 import android.widget.ExpandableListView;
 import android.widget.TextView;
 
+import org.joda.time.DateTime;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -18,7 +20,7 @@ public class MainViewFragment extends Fragment
     ExpandableListAdapter mListAdapter;
     ExpandableListView mExpListView;
     List<String> mListDataHeader;
-    HashMap<String, List<String>> mListDataChild;
+    HashMap<String, List<Session>> mListDataChild;
 
     public MainViewFragment()
     {
@@ -51,8 +53,18 @@ public class MainViewFragment extends Fragment
 
     private void prepareListData()
     {
+        SessionsDataSource dataSource = new SessionsDataSource(getActivity());
+        dataSource.open();
         mListDataHeader = new ArrayList<String>();
-        mListDataChild = new HashMap<String, List<String>>();
+        mListDataChild = new HashMap<String, List<Session>>();
+
+        List<Session> monSessions = new ArrayList<Session>();
+        List<Session> tueSessions = new ArrayList<Session>();
+        List<Session> wedSessions = new ArrayList<Session>();
+        List<Session> thuSessions = new ArrayList<Session>();
+        List<Session> friSessions = new ArrayList<Session>();
+        List<Session> satSessions = new ArrayList<Session>();
+        List<Session> sunSessions = new ArrayList<Session>();
 
         // Weekday group header
         mListDataHeader.add(getString(R.string.wk_mon));
@@ -63,7 +75,38 @@ public class MainViewFragment extends Fragment
         mListDataHeader.add(getString(R.string.wk_sat));
         mListDataHeader.add(getString(R.string.wk_sun));
 
+        List<Session> sessionsForThisWeek = dataSource.getAllSessionsForCurrentWeek();
+        for (Session sport : sessionsForThisWeek)
+        {
+            DateTime.Property pDoW = sport.getDateOfSession().dayOfWeek();
 
+            switch (pDoW.get())
+            {
+                case 1:
+                    monSessions.add(sport);
+                    break;
+                case 2:
+                    tueSessions.add(sport);
+                    break;
+                case 3:
+                    wedSessions.add(sport);
+                    break;
+                case 4:
+                    thuSessions.add(sport);
+                    break;
+                case 5:
+                    friSessions.add(sport);
+                    break;
+                case 6:
+                    satSessions.add(sport);
+                    break;
+                case 7:
+                    sunSessions.add(sport);
+                    break;
+            }
+        }
+
+        /*
         // Adding session data
         List<String> top250 = new ArrayList<String>();
         top250.add("The Shawshank Redemption");
@@ -88,9 +131,15 @@ public class MainViewFragment extends Fragment
         comingSoon.add("The Spectacular Now");
         comingSoon.add("The Canyons");
         comingSoon.add("Europa Report");
+        */
 
-        mListDataChild.put(mListDataHeader.get(0), top250); // Header, Child data
-        mListDataChild.put(mListDataHeader.get(1), nowShowing);
-        mListDataChild.put(mListDataHeader.get(2), comingSoon);
+        mListDataChild.put(mListDataHeader.get(0), monSessions); // Header, Child data
+        mListDataChild.put(mListDataHeader.get(1), tueSessions);
+        mListDataChild.put(mListDataHeader.get(2), wedSessions);
+        mListDataChild.put(mListDataHeader.get(3), thuSessions);
+        mListDataChild.put(mListDataHeader.get(4), friSessions);
+        mListDataChild.put(mListDataHeader.get(5), satSessions);
+        mListDataChild.put(mListDataHeader.get(6), sunSessions);
+        dataSource.close();
     }
 }

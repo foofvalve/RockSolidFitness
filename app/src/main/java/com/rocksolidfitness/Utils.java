@@ -33,7 +33,7 @@ public class Utils
     public static DateTime getDateOffsetByNDays(int dayOffset)
     {
         DateTime offsetDate = new DateTime();
-        return dayOffset < 0 ? offsetDate.minusDays(1) : offsetDate.plusDays(1);
+        return dayOffset < 0 ? offsetDate.minusDays(dayOffset) : offsetDate.plusDays(dayOffset);
     }
 
     public static DateTime getNextDay()
