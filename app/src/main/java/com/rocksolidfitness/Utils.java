@@ -1,65 +1,44 @@
 package com.rocksolidfitness;
 
 
-import android.util.Log;
-
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 
 public class Utils
 {
-    public static Date convertSQLiteDate(String rawDateTime)
-    {
-        DateFormat iso8601Format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        Date convertedDate = null;
+    static DateTimeFormatter isoFormat = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
 
-        if (rawDateTime == null) return convertedDate;
+    public static DateTime convertSQLiteDate(String rawDateTime)
+    {
+        if (rawDateTime == null) return null;
 
         if (rawDateTime.length() != 19)
             rawDateTime += " 00:00:00";
 
-        try
-        {
-            convertedDate = iso8601Format.parse(rawDateTime);
-        } catch (ParseException e)
-        {
-            Log.e("failed parsing date", e.getMessage());
-        }
-        return convertedDate;
+        return isoFormat.parseDateTime(rawDateTime);
     }
 
-    public static String convertDateToSQLiteCompliant(Date sessionDate)
+    public static String convertDateToSQLiteCompliant(DateTime sessionDate)
     {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        return dateFormat.format(sessionDate);
+        return sessionDate.toString(isoFormat);
     }
 
     public static String getTodayDatesSQLiteCompliant()
     {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        return dateFormat.format(new Date());
+        DateTime now = new DateTime();
+        return now.toString(isoFormat);
     }
 
-    public static Date getDateOffsetByNDays(int dayOffset)
+    public static DateTime getDateOffsetByNDays(int dayOffset)
     {
-        Date offsetDate = new Date();
-        Calendar c = Calendar.getInstance();
-        c.setTime(offsetDate);
-        c.add(Calendar.DATE, dayOffset);
-        offsetDate = c.getTime();
-        return offsetDate;
+        DateTime offsetDate = new DateTime();
+        return dayOffset < 0 ? offsetDate.minusDays(1) : offsetDate.plusDays(1);
     }
 
-    public static Date getNextDay()
+    public static DateTime getNextDay()
     {
-        Date tomorrow = new Date();
-        Calendar c = Calendar.getInstance();
-        c.setTime(tomorrow);
-        c.add(Calendar.DATE, 1);
-        tomorrow = c.getTime();
-        return tomorrow;
+        DateTime tomorrow = new DateTime();
+        return tomorrow.plusDays(1);
     }
 }

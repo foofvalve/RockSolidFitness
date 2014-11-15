@@ -5,11 +5,11 @@ import android.test.AndroidTestCase;
 import android.test.RenamingDelegatingContext;
 import android.util.Log;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
+
 import java.util.List;
-import java.util.Locale;
 
 public class DatabaseTests extends AndroidTestCase
 {
@@ -27,7 +27,7 @@ public class DatabaseTests extends AndroidTestCase
     public void testSessionCRUD()
     {
         //Create
-        Session testSession = new Session(Session.State.PLANNED, "Running", "Unit Test: Easy fartlek run", 45, new Date());
+        Session testSession = new Session(Session.State.PLANNED, "Running", "Unit Test: Easy fartlek run", 45, new DateTime());
         long recId = dataSource.createSession(testSession);
         Log.d(TAG, "Created session with Id: " + recId);
         assertTrue(recId != 0);
@@ -50,8 +50,6 @@ public class DatabaseTests extends AndroidTestCase
         savedSession.weight = 60.25;
         savedSession.raceName = "Ironman NZ";
         savedSession.trainingWeek = 13;
-        savedSession.sessionWeek = 53;
-        savedSession.sessionYear = 2100;
         int updatedRecId = dataSource.updateSession(savedSession);
 
         //Read
@@ -59,7 +57,9 @@ public class DatabaseTests extends AndroidTestCase
         Log.d(TAG, "Updated session : " + updatedSession.toString());
         assertTrue(savedSession.sessionState.equals(updatedSession.sessionState));
         assertTrue(savedSession.sport.equals(updatedSession.sport));
-        assertTrue(savedSession.dateOfSession.compareTo(updatedSession.dateOfSession) == 0);
+        assertTrue(savedSession.dateOfSession.getMonthOfYear() == updatedSession.dateOfSession.getMonthOfYear());
+        assertTrue(savedSession.dateOfSession.getDayOfMonth() == updatedSession.dateOfSession.getDayOfMonth());
+        assertTrue(savedSession.dateOfSession.getYear() == updatedSession.dateOfSession.getYear());
         assertTrue(savedSession.duration == updatedSession.duration);
         assertTrue(savedSession.distance == updatedSession.distance);
         assertTrue(savedSession.notes.equals(updatedSession.notes));
@@ -69,8 +69,8 @@ public class DatabaseTests extends AndroidTestCase
         assertTrue(savedSession.weight == updatedSession.weight);
         assertTrue(savedSession.raceName.equals(updatedSession.raceName));
         assertTrue(savedSession.trainingWeek == updatedSession.trainingWeek);
-        assertTrue(savedSession.sessionWeek == updatedSession.sessionWeek);
-        assertTrue(savedSession.sessionYear == updatedSession.sessionYear);
+        assertTrue(savedSession.getSessionWeek() == updatedSession.getSessionWeek());
+        assertTrue(savedSession.getSessionYear() == updatedSession.getSessionYear());
 
         //Delete
         dataSource.deleteSession(updatedSession);
@@ -86,7 +86,7 @@ public class DatabaseTests extends AndroidTestCase
 
     public void testCreateSessionUsingDateString()
     {
-        long recId = dataSource.createSession(new Session(Session.State.PLANNED, "Cycling", "Big Bike", 180, Utils.convertSQLiteDate("2014-05-05 00:00:00")));
+        long recId = dataSource.createSession(new Session(Session.State.PLANNED, "Cycling", "Big Bike", 180, Utils.convertSQLiteDate("2014-05-05")));
         Log.d(TAG, "Created session with Id: " + recId);
         assertTrue(recId != 0);
     }
@@ -98,19 +98,11 @@ public class DatabaseTests extends AndroidTestCase
         dataSource.loadLargeDataSet();
     }
 
-    public void testDateConverter()
+    public void testMeh()
     {
-        String dateString = "2014-04-05 00:00:00";
-        Date date = null;
-        try
-        {
-            date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH).parse(dateString);
-            Log.d(TAG, date.toString());
-        } catch (ParseException e)
-        {
-            e.printStackTrace();
-        }
-
+        String dateTime = "2014-11-15 09:47:38";
+        DateTimeFormatter dtf = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
+        DateTime dte = dtf.parseDateTime(dateTime);
     }
 
     public void testSportsCRU()
@@ -126,7 +118,7 @@ public class DatabaseTests extends AndroidTestCase
         Log.d(TAG, "testSportsCRU - Number of sport records : " + sports.size());
 
         //Update
-        Session testSession = new Session(Session.State.PLANNED, oldSport, "Unit Test: Easy fartlek run", 45, new Date());
+        Session testSession = new Session(Session.State.PLANNED, oldSport, "Unit Test: Easy fartlek run", 45, new DateTime());
         long id = dataSource.createSession(testSession);
 
         dataSource.renameSport(oldSport, "SomethingElse");

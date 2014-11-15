@@ -5,7 +5,8 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import java.util.Date;
+import org.joda.time.DateTime;
+
 import java.util.List;
 
 
@@ -23,7 +24,7 @@ public class MainActivity extends Activity
         //dataSource.loadSmallTestDataSet();
         //dataSource.loadLargeDataSet();
         dataSource.loadDynamicTestData();
-        Session testSession = new Session(Session.State.PLANNED, "Running", "Easy fartlek run", 45, new Date());
+        Session testSession = new Session(Session.State.PLANNED, "Running", "Easy fartlek run", 45, new DateTime());
         long recId = dataSource.createSession(testSession);
 
         Session savedSession = dataSource.getSessionById(recId);
@@ -51,7 +52,10 @@ public class MainActivity extends Activity
     @Override
     protected void onDestroy()
     {
+
         if (dataSource != null) dataSource.close();
+        super.onDestroy();
+
     }
 
     @Override

@@ -4,8 +4,9 @@ import android.database.Cursor;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import org.joda.time.DateTime;
+
 import java.text.MessageFormat;
-import java.util.Date;
 
 
 public final class Session implements Parcelable
@@ -16,7 +17,7 @@ public final class Session implements Parcelable
     public State sessionState;
     public String sport;
     public String description;
-    public Date dateOfSession;
+    public DateTime dateOfSession;
     public int duration;
     public double distance;
     public String notes;
@@ -26,16 +27,16 @@ public final class Session implements Parcelable
     public double weight;
     public String raceName;
     public int trainingWeek;   //http://en.wikipedia.org/wiki/ISO_week_date
-    public Date dateCreated;
-    public Date dateModified;
-    public int sessionWeek;
-    public int sessionYear;
+    public DateTime dateCreated;
+    public DateTime dateModified;
+    private int sessionWeek;
+    private int sessionYear;
 
     public Session()
     {
     }
 
-    public Session(State state, String sport, String description, int duration, Date dateOfSession)
+    public Session(State state, String sport, String description, int duration, DateTime dateOfSession)
     {
         this.sessionState = state;
         this.sport = sport;
@@ -83,6 +84,16 @@ public final class Session implements Parcelable
         raceName = p.readString();
         trainingWeek = p.readInt();
         */
+    }
+
+    public int getSessionWeek()
+    {
+        return dateOfSession.getWeekOfWeekyear();
+    }
+
+    public int getSessionYear()
+    {
+        return dateOfSession.getYear();
     }
 
     public String toString()
