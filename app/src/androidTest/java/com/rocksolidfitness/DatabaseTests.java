@@ -6,20 +6,18 @@ import android.test.RenamingDelegatingContext;
 import android.util.Log;
 
 import org.joda.time.DateTime;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
 
 import java.util.List;
 
 public class DatabaseTests extends AndroidTestCase
 {
     private final String TAG = "UnitTest";
+    RenamingDelegatingContext context;
     private SessionsDataSource dataSource;
 
     public void setUp()
     {
-        RenamingDelegatingContext context
-                = new RenamingDelegatingContext(getContext(), "test_v2_");
+        context = new RenamingDelegatingContext(getContext(), "test_v2_");
         dataSource = new SessionsDataSource(context);
         dataSource.open();
     }
@@ -98,15 +96,6 @@ public class DatabaseTests extends AndroidTestCase
         dataSource.loadLargeDataSet();
     }
 
-    public void testMeh()
-    {
-        String dateTime = "2014-11-15 09:47:38";
-        DateTimeFormatter dtf = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
-        DateTime dte = dtf.parseDateTime(dateTime);
-        Log.d(TAG, "year value >> " + dte.getYear());
-
-        android.text.TextUtils.join("|", (Object[]) null);
-    }
 
     public void testSportsCRUs()
     {
@@ -147,6 +136,21 @@ public class DatabaseTests extends AndroidTestCase
         List<Session> sessionsForThisWeek = dataSource.getAllSessionsForCurrentWeek();
         for (Session sport : sessionsForThisWeek)
             Log.d(TAG, sport.toString());
+    }
+
+    public void testSessionFormatter()
+    {
+        Session testSession = new Session(Session.State.PLANNED, "Running", "Unit Test: Easy fartlek run", 45, new DateTime());
+        testSession.duration = 60;
+        assertTrue("1 hour".equals(testSession.getFormattedDuration(context)));
+
+        testSession.duration = 59;
+        assertTrue("59 minutes".equals(testSession.getFormattedDuration(context)));
+
+        testSession.duration = 61;
+        Log.d(TAG, testSession.getFormattedDuration(context));
+        assertTrue("1 hours 1 minutes".equals(testSession.getFormattedDuration(context)));
+
     }
 
     public void tearDown() throws Exception

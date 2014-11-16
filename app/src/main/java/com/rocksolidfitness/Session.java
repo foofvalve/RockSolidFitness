@@ -1,5 +1,7 @@
 package com.rocksolidfitness;
 
+import android.content.Context;
+import android.content.res.Resources;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -75,6 +77,23 @@ public final class Session implements Parcelable
     public int getSessionYear()
     {
         return sessionYear;
+    }
+
+    public String getFormattedDuration(Context context)
+    {
+        Resources resources = context.getResources();
+
+        if (duration < 60)
+            return duration + " " + resources.getString(R.string.time_minutes);
+
+        if (duration == 60)
+            return "1 " + resources.getString(R.string.time_hour);
+
+        int hours = duration % 60;
+        int minutes = duration - (hours * 60);
+
+        return hours + " " + resources.getString(R.string.time_hours) + " " +
+                minutes + " " + resources.getString(R.string.time_minutes);
     }
 
     public String toString()

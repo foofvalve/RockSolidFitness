@@ -1,9 +1,13 @@
 package com.rocksolidfitness;
 
 
+import android.util.Log;
+
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
+
+import java.util.List;
 
 public class Utils
 {
@@ -40,5 +44,11 @@ public class Utils
     {
         DateTime tomorrow = new DateTime();
         return tomorrow.plusDays(1);
+    }
+
+    public static void printSessionsToConsole(List<Session> sessionsForThisWeek)
+    {
+        for (Session sport : sessionsForThisWeek)
+            Log.d("", sport.toString());
     }
 }
