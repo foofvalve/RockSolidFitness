@@ -61,12 +61,12 @@ public final class Session implements Parcelable
 
     private void setSessionWeek()
     {
-        sessionWeek = dateOfSession.getWeekOfWeekyear();
+        sessionWeek = this.dateOfSession.getWeekOfWeekyear();
     }
 
     private void setSessionYear()
     {
-        sessionYear = dateOfSession.getYear();
+        sessionYear = this.dateOfSession.getYear();
     }
 
     public int getSessionWeek()
@@ -89,8 +89,11 @@ public final class Session implements Parcelable
         if (duration == 60)
             return "1 " + resources.getString(R.string.time_hour);
 
-        int hours = duration % 60;
-        int minutes = duration - (hours * 60);
+        if (duration % 60 == 0)
+            return duration / 60 + " " + resources.getString(R.string.time_hours);
+
+        int minutes = duration % 60;
+        int hours = (duration - minutes) / 60;
 
         return hours + " " + resources.getString(R.string.time_hours) + " " +
                 minutes + " " + resources.getString(R.string.time_minutes);

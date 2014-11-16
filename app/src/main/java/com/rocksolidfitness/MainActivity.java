@@ -1,48 +1,27 @@
 package com.rocksolidfitness;
 
+import android.app.ActionBar;
 import android.app.Activity;
+import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import org.joda.time.DateTime;
 
-import java.util.List;
-
-
-public class MainActivity extends Activity
+public class MainActivity extends Activity implements ActionBar.TabListener
 {
-    public SessionsDataSource dataSource;  //todo: get rid of this or pass it around or fragment blah
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
 
-        dataSource = new SessionsDataSource(this);
-        dataSource.open();
-        //dataSource.loadSmallTestDataSet();
-        //dataSource.loadLargeDataSet();
-        dataSource.loadDynamicTestData();
-        Session testSession = new Session(Session.State.PLANNED, "Running", "Easy fartlek run", 45, new DateTime());
-        long recId = dataSource.createSession(testSession);
-
-        Session savedSession = dataSource.getSessionById(recId);
-        List<String> sports = dataSource.getSports();
 
         setContentView(R.layout.activity_main);
         if (savedInstanceState == null)
         {
 
             MainViewFragment newFragment = new MainViewFragment();
-            Bundle args = new Bundle();
-            args.putString("Sport", savedSession.sport);
-            args.putString("Desc", savedSession.description);
-
-            for (String sport : sports)
-                args.putString("sport - " + sport, "val: " + sport);
-
-            newFragment.setArguments(args);
 
             getFragmentManager().beginTransaction()
                     .add(R.id.container, newFragment)
@@ -53,10 +32,7 @@ public class MainActivity extends Activity
     @Override
     protected void onDestroy()
     {
-
-        if (dataSource != null) dataSource.close();
         super.onDestroy();
-
     }
 
     @Override
@@ -83,4 +59,21 @@ public class MainActivity extends Activity
     }
 
 
+    @Override
+    public void onTabSelected(ActionBar.Tab tab, FragmentTransaction ft)
+    {
+
+    }
+
+    @Override
+    public void onTabUnselected(ActionBar.Tab tab, FragmentTransaction ft)
+    {
+
+    }
+
+    @Override
+    public void onTabReselected(ActionBar.Tab tab, FragmentTransaction ft)
+    {
+
+    }
 }

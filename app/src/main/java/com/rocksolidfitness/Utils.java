@@ -4,9 +4,11 @@ package com.rocksolidfitness;
 import android.util.Log;
 
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeConstants;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
+import java.util.HashMap;
 import java.util.List;
 
 public class Utils
@@ -37,7 +39,12 @@ public class Utils
     public static DateTime getDateOffsetByNDays(int dayOffset)
     {
         DateTime offsetDate = new DateTime();
-        return dayOffset < 0 ? offsetDate.minusDays(dayOffset) : offsetDate.plusDays(dayOffset);
+        if (dayOffset < 0)
+            offsetDate = offsetDate.minusDays(Math.abs(dayOffset));
+        else
+            offsetDate = offsetDate.plusDays(dayOffset);
+
+        return offsetDate;
     }
 
     public static DateTime getNextDay()
@@ -50,5 +57,19 @@ public class Utils
     {
         for (Session sport : sessionsForThisWeek)
             Log.d("", sport.toString());
+    }
+
+    public static HashMap<String, DateTime> getDateFromWeekAndYear(DateTime dte)
+    {
+        HashMap<String, DateTime> daysOfGivenWeek = new HashMap<String, DateTime>();
+        DateTime firstDayOfWeek = dte.dayOfWeek().withMinimumValue();
+        daysOfGivenWeek.put(DateTimeConstants.MONDAY + "", firstDayOfWeek);
+        daysOfGivenWeek.put(DateTimeConstants.TUESDAY + "", firstDayOfWeek.plusDays(1));
+        daysOfGivenWeek.put(DateTimeConstants.WEDNESDAY + "", firstDayOfWeek.plusDays(2));
+        daysOfGivenWeek.put(DateTimeConstants.THURSDAY + "", firstDayOfWeek.plusDays(3));
+        daysOfGivenWeek.put(DateTimeConstants.FRIDAY + "", firstDayOfWeek.plusDays(4));
+        daysOfGivenWeek.put(DateTimeConstants.SATURDAY + "", firstDayOfWeek.plusDays(5));
+        daysOfGivenWeek.put(DateTimeConstants.SUNDAY + "", firstDayOfWeek.plusDays(6));
+        return daysOfGivenWeek;
     }
 }

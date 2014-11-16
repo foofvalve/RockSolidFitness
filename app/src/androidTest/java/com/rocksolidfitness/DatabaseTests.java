@@ -6,7 +6,9 @@ import android.test.RenamingDelegatingContext;
 import android.util.Log;
 
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeConstants;
 
+import java.util.HashMap;
 import java.util.List;
 
 public class DatabaseTests extends AndroidTestCase
@@ -151,6 +153,23 @@ public class DatabaseTests extends AndroidTestCase
         Log.d(TAG, testSession.getFormattedDuration(context));
         assertTrue("1 hours 1 minutes".equals(testSession.getFormattedDuration(context)));
 
+        testSession.duration = 120;
+        Log.d(TAG, testSession.getFormattedDuration(context));
+        assertTrue("2 hours".equals(testSession.getFormattedDuration(context)));
+
+        testSession.duration = 230;
+        Log.d(TAG, testSession.getFormattedDuration(context));
+        assertTrue("3 hours 50 minutes".equals(testSession.getFormattedDuration(context)));
+
+    }
+
+    public void testUtilsDateOffseter()
+    {
+        DateTime dte = Utils.convertSQLiteDate("2014-08-27");
+        HashMap<String, DateTime> dateFromWeekAndYear = Utils.getDateFromWeekAndYear(dte);
+        assertTrue("2014-08-25T00:00:00.000+10:00".equals(dateFromWeekAndYear.get(DateTimeConstants.MONDAY + "").toString()));
+        assertTrue("2014-08-26T00:00:00.000+10:00".equals(dateFromWeekAndYear.get(DateTimeConstants.TUESDAY + "").toString()));
+        assertTrue("2014-08-31T00:00:00.000+10:00".equals(dateFromWeekAndYear.get(DateTimeConstants.SUNDAY + "").toString()));
     }
 
     public void tearDown() throws Exception

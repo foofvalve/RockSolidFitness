@@ -149,7 +149,12 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter
         TextView lblListHeader = (TextView) convertView
                 .findViewById(R.id.lblListHeader);
         lblListHeader.setTypeface(null, Typeface.BOLD);
-        lblListHeader.setText(headerTitle);
+        lblListHeader.setText(headerTitle.split("~")[0]);
+
+        TextView lblDayOfMonth = (TextView) convertView
+                .findViewById(R.id.lblDayOfMonth);
+        lblDayOfMonth.setTypeface(null, Typeface.BOLD);
+        lblDayOfMonth.setText(headerTitle.split("~")[1]);
 
         return convertView;
     }
@@ -192,7 +197,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter
 
         txtSport.setText(sessionDetail.sport);
         txtDesc.setText(sessionDetail.description);
-        txtDuration.setText(String.format("%d", sessionDetail.duration));
+        txtDuration.setText(sessionDetail.getFormattedDuration(mContext));
         boolean sessionComplete = sessionDetail.sessionState == Session.State.COMPLETE ? true : false;
         chkComplete.setChecked(sessionComplete);
         return convertView;

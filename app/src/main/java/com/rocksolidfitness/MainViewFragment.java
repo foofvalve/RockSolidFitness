@@ -7,9 +7,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ExpandableListView;
-import android.widget.TextView;
 
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeConstants;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -31,13 +31,6 @@ public class MainViewFragment extends Fragment
                              Bundle savedInstanceState)
     {
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
-        String msg = this.getArguments().getString("Sport") + "\t" +
-                this.getArguments().getString("Desc") + "\n" +
-                this.getArguments().getString("sport - Cycling") + "\n" +
-                this.getArguments().getString("sport - Swimming") + "\n" +
-                this.getArguments().getString("sport - Running");
-        TextView mainContent = (TextView) rootView.findViewById(R.id.mainTextView);
-        mainContent.setText(msg);
 
         mExpListView = (ExpandableListView) rootView.findViewById(R.id.expandableListViewSessions);
 
@@ -55,6 +48,7 @@ public class MainViewFragment extends Fragment
     {
         SessionsDataSource dataSource = new SessionsDataSource(getActivity());
         dataSource.open();
+        dataSource.loadDynamicTestData();
         mListDataHeader = new ArrayList<String>();
         mListDataChild = new HashMap<String, List<Session>>();
 
@@ -66,14 +60,6 @@ public class MainViewFragment extends Fragment
         List<Session> satSessions = new ArrayList<Session>();
         List<Session> sunSessions = new ArrayList<Session>();
 
-        // Weekday group header
-        mListDataHeader.add(getString(R.string.wk_mon));
-        mListDataHeader.add(getString(R.string.wk_tue));
-        mListDataHeader.add(getString(R.string.wk_wed));
-        mListDataHeader.add(getString(R.string.wk_thu));
-        mListDataHeader.add(getString(R.string.wk_fri));
-        mListDataHeader.add(getString(R.string.wk_sat));
-        mListDataHeader.add(getString(R.string.wk_sun));
 
         List<Session> sessionsForThisWeek = dataSource.getAllSessionsForCurrentWeek();
         for (Session sport : sessionsForThisWeek)
@@ -106,32 +92,16 @@ public class MainViewFragment extends Fragment
             }
         }
 
-        /*
-        // Adding session data
-        List<String> top250 = new ArrayList<String>();
-        top250.add("The Shawshank Redemption");
-        top250.add("The Godfather");
-        top250.add("The Godfather: Part II");
-        top250.add("Pulp Fiction");
-        top250.add("The Good, the Bad and the Ugly");
-        top250.add("The Dark Knight");
-        top250.add("12 Angry Men");
+        HashMap<String, DateTime> dateFromWeekAndYear = Utils.getDateFromWeekAndYear(sessionsForThisWeek.get(0).getDateOfSession());
 
-        List<String> nowShowing = new ArrayList<String>();
-        nowShowing.add("The Conjuring");
-        nowShowing.add("Despicable Me 2");
-        nowShowing.add("Turbo");
-        nowShowing.add("Grown Ups 2");
-        nowShowing.add("Red 2");
-        nowShowing.add("The Wolverine");
-
-        List<String> comingSoon = new ArrayList<String>();
-        comingSoon.add("2 Guns");
-        comingSoon.add("The Smurfs 2");
-        comingSoon.add("The Spectacular Now");
-        comingSoon.add("The Canyons");
-        comingSoon.add("Europa Report");
-        */
+        // Weekday group header - format will be "Wednesday~12", this will be split on ~ in the Adapter
+        mListDataHeader.add(getString(R.string.wk_mon) + "~" + dateFromWeekAndYear.get(DateTimeConstants.MONDAY + "").dayOfMonth().getAsShortText());
+        mListDataHeader.add(getString(R.string.wk_tue) + "~" + dateFromWeekAndYear.get(DateTimeConstants.TUESDAY + "").dayOfMonth().getAsShortText());
+        mListDataHeader.add(getString(R.string.wk_wed) + "~" + dateFromWeekAndYear.get(DateTimeConstants.WEDNESDAY + "").dayOfMonth().getAsShortText());
+        mListDataHeader.add(getString(R.string.wk_thu) + "~" + dateFromWeekAndYear.get(DateTimeConstants.THURSDAY + "").dayOfMonth().getAsShortText());
+        mListDataHeader.add(getString(R.string.wk_fri) + "~" + dateFromWeekAndYear.get(DateTimeConstants.FRIDAY + "").dayOfMonth().getAsShortText());
+        mListDataHeader.add(getString(R.string.wk_sat) + "~" + dateFromWeekAndYear.get(DateTimeConstants.SATURDAY + "").dayOfMonth().getAsShortText());
+        mListDataHeader.add(getString(R.string.wk_sun) + "~" + dateFromWeekAndYear.get(DateTimeConstants.SUNDAY + "").dayOfMonth().getAsShortText());
 
         mListDataChild.put(mListDataHeader.get(0), monSessions); // Header, Child data
         mListDataChild.put(mListDataHeader.get(1), tueSessions);
