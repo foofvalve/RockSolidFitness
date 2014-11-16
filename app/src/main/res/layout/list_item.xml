@@ -1,15 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:orientation="vertical">
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="360sp"
+                android:layout_height="100sp"
+                android:layout_marginBottom="4dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/bg_card"
+                android:orientation="vertical"
+                android:paddingBottom="5dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:paddingTop="10dp">
 
     <TextView
         android:id="@+id/lblSport"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_gravity="left"
+        android:layout_marginLeft="0dp"
+        android:layout_marginTop="0dp"
         android:paddingBottom="5dp"
-        android:paddingLeft="?android:attr/expandableListPreferredChildPaddingLeft"
+        android:paddingLeft="5dp"
         android:paddingTop="5dp"
         android:text="Cycling"
         android:textSize="12sp"/>
@@ -18,27 +32,55 @@
         android:id="@+id/chkComplete"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="right"
-        android:text="Complete"/>
-
-    <TextView
-        android:id="@+id/lblDuration"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignRight="@id/lblSport"
+        android:layout_marginLeft="0dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginTop="0dp"
         android:paddingBottom="5dp"
-        android:paddingLeft="?android:attr/expandableListPreferredChildPaddingLeft"
         android:paddingTop="5dp"
-        android:text="2 hr 23 mins"
-        android:textSize="12sp"/>
+        android:text="Done"/>
 
     <TextView
         android:id="@+id/lblDescription"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:paddingBottom="5dp"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@id/chkComplete"
         android:paddingLeft="?android:attr/expandableListPreferredChildPaddingLeft"
-        android:paddingTop="5dp"
         android:text="Long 6h bike with TT efforts"
         android:textSize="12sp"/>
 
-</LinearLayout>
+    <TextView
+        android:id="@+id/lblDuration"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@id/lblDescription"
+        android:paddingLeft="?android:attr/expandableListPreferredChildPaddingLeft"
+        android:text="2 hr 23 mins"
+        android:textSize="12sp"/>
+
+    <Button
+        android:id="@+id/btnEdit"
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@+id/chkComplete"
+        android:layout_alignRight="@+id/chkComplete"
+        android:layout_below="@+id/lblDescription"
+        android:text="Edit"/>
+
+    <Button
+        android:id="@+id/btnDelete"
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/btnEdit"
+        android:layout_below="@+id/lblDescription"
+        android:layout_toLeftOf="@+id/btnEdit"
+        android:layout_toStartOf="@+id/btnEdit"
+        android:text="Delete"/>
+
+
+</RelativeLayout>
