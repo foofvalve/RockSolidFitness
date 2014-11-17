@@ -7,7 +7,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
-import android.widget.CheckBox;
 import android.widget.TextView;
 
 import java.util.HashMap;
@@ -193,13 +192,15 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter
                 .findViewById(R.id.lblSport);
         TextView txtDesc = (TextView) convertView.findViewById(R.id.lblDescription);
         TextView txtDuration = (TextView) convertView.findViewById(R.id.lblDuration);
-        CheckBox chkComplete = (CheckBox) convertView.findViewById(R.id.chkComplete);
 
+        //CheckBox chkComplete = (CheckBox) convertView.findViewById(R.id.chkComplete);
+        //boolean sessionComplete = sessionDetail.sessionState == Session.State.COMPLETE ? true : false;
+        //
         txtSport.setText(sessionDetail.sport);
         txtDesc.setText(sessionDetail.description);
         txtDuration.setText(sessionDetail.getFormattedDuration(mContext));
-        boolean sessionComplete = sessionDetail.sessionState == Session.State.COMPLETE ? true : false;
-        chkComplete.setChecked(sessionComplete);
+
+
         return convertView;
     }
 

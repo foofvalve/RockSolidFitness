@@ -6,6 +6,22 @@
     <string name="action_settings">Settings</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
+    <string name="title_section1">Dashboard</string>
+    <string name="title_section2">Add Session</string>
+    <string name="title_section3">Reporting</string>
+    <string name="title_section4">Weekly Assessment</string>
+    <string name="title_section5">User Setup</string>
+    <string name="title_section6">App Settings</string>
+    <string name="title_section7">Export Data</string>
+    <string name="title_section8">Import Data</string>
+    <string name="title_section9">Import Data</string>
+    <string name="title_section10">Download Training Plan</string>
+    <string name="title_section11">Debug</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="action_example">Example action</string>
+
     <string name="wk_mon">Monday</string>
     <string name="wk_tue">Tuesday</string>
     <string name="wk_wed">Wednesday</string>
@@ -17,7 +33,6 @@
     <string name="time_minutes">minutes</string>
     <string name="time_hours">hours</string>
     <string name="time_hour">hour</string>
-
 
     <string-array name="sports_default_list">
         <item>Cycling</item>

@@ -1,97 +1,125 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:layout_width="360sp"
-                android:layout_height="100sp"
-                android:layout_marginBottom="4dp"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
-                android:layout_marginTop="10dp"
-                android:background="@drawable/bg_card"
-                android:orientation="vertical"
-                android:paddingBottom="5dp"
-                android:paddingLeft="10dp"
-                android:paddingRight="10dp"
-                android:paddingTop="10dp">
+<RelativeLayout
+    android:id="@+id/cardContainer"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="72dp"
+    android:layout_alignParentEnd="false"
+    android:layout_alignParentRight="false"
+    android:layout_marginBottom="4dp"
+    android:layout_marginLeft="10dp"
+    android:layout_marginRight="10dp"
+    android:layout_marginTop="10dp"
+    android:background="@drawable/bg_card"
+    android:orientation="horizontal"
+    android:paddingBottom="2dp"
+    android:paddingLeft="2dp"
+    android:paddingRight="2dp"
+    android:paddingTop="2dp">
 
+    <ImageView
+        android:id="@+id/imgGripper"
+        android:layout_width="30dp"
+        android:layout_height="72dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="2dp"
+        android:layout_marginTop="2dp"
+        android:contentDescription="cvxdvc"
+        android:src="@drawable/ic_action_overflow"/>
 
     <ImageView
         android:id="@+id/imgSport"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:layout_gravity="left"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
         android:layout_marginRight="0dp"
+        android:layout_marginTop="10dp"
+        android:layout_toRightOf="@id/imgGripper"
+        android:adjustViewBounds="true"
         android:src="@drawable/ic_action_user"/>
 
     <TextView
         android:id="@+id/lblSport"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_gravity="left"
-        android:layout_marginTop="0dp"
-        android:layout_toEndOf="@+id/imgSport"
-        android:layout_toRightOf="@+id/imgSport"
-        android:paddingBottom="5dp"
-        android:paddingLeft="5dp"
-        android:paddingTop="5dp"
-        android:text="Cycling"
-        android:textSize="12sp"/>
-
-    <CheckBox
-        android:id="@+id/chkComplete"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:layout_alignRight="@id/lblSport"
-        android:layout_marginLeft="0dp"
-        android:layout_marginRight="5dp"
-        android:layout_marginTop="0dp"
-        android:paddingBottom="5dp"
-        android:paddingTop="5dp"
-        android:text="Done"/>
+        android:layout_gravity="left"
+        android:layout_marginLeft="5dp"
+        android:layout_marginTop="5dp"
+        android:layout_toRightOf="@id/imgSport"
+        android:paddingBottom="2dp"
+        android:paddingTop="2dp"
+        android:text="Cycling"
+        android:textSize="16sp"
+        android:textStyle="bold"/>
 
     <TextView
         android:id="@+id/lblDescription"
-        android:layout_width="fill_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@id/chkComplete"
-        android:paddingLeft="?android:attr/expandableListPreferredChildPaddingLeft"
+        android:layout_below="@+id/lblSport"
+        android:layout_gravity="left"
+        android:layout_marginLeft="5dp"
+        android:layout_marginTop="5dp"
+        android:layout_toRightOf="@id/imgSport"
+        android:gravity="left"
         android:text="Long 6h bike with TT efforts"
         android:textSize="12sp"/>
 
     <TextView
         android:id="@+id/lblDuration"
-        android:layout_width="fill_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
+        android:layout_alignParentLeft="false"
+        android:layout_alignParentStart="false"
         android:layout_below="@id/lblDescription"
-        android:paddingLeft="?android:attr/expandableListPreferredChildPaddingLeft"
+        android:layout_gravity="left"
+        android:layout_marginLeft="5dp"
+        android:layout_marginTop="5dp"
+        android:layout_toRightOf="@id/imgSport"
         android:text="2 hr 23 mins"
         android:textSize="12sp"/>
 
-    <Button
+
+    <ImageView
+        android:id="@+id/imgDone"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:layout_gravity="left"
+        android:layout_marginLeft="600dp"
+        android:layout_marginTop="2dp"
+        android:adjustViewBounds="true"
+        android:background="#ff2fff40"
+        android:contentDescription="trtfg"
+        android:src="@drawable/ic_action_done"/>
+
+    <ImageButton
         android:id="@+id/btnEdit"
         style="?android:attr/buttonStyleSmall"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignEnd="@+id/chkComplete"
-        android:layout_alignRight="@+id/chkComplete"
-        android:layout_below="@+id/lblDescription"
-        android:text="Edit"/>
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_below="@+id/imgDone"
+        android:layout_marginRight="5dp"
+        android:layout_marginTop="5dp"
+        android:layout_toLeftOf="@+id/btnDelete"
+        android:layout_toStartOf="@+id/btnDelete"
+        android:adjustViewBounds="true"
+        android:background="@android:drawable/ic_menu_edit"
+        android:clickable="true"/>
 
-    <Button
+    <ImageButton
         android:id="@+id/btnDelete"
         style="?android:attr/buttonStyleSmall"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/btnEdit"
-        android:layout_below="@+id/lblDescription"
-        android:layout_toLeftOf="@+id/btnEdit"
-        android:layout_toStartOf="@+id/btnEdit"
-        android:text="Delete"/>
-
-
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/imgDone"
+        android:layout_marginTop="5dp"
+        android:adjustViewBounds="true"
+        android:background="@android:drawable/ic_menu_delete"
+        android:baselineAlignBottom="@+id/btnEdit"
+        android:clickable="true"/>
 </RelativeLayout>
