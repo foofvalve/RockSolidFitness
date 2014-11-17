@@ -58,7 +58,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:gravity="center|center_vertical"
-                android:text="beginning 14th June 2014"
+                android:text="BLAH 2014"
                 android:textAppearance="?android:attr/textAppearanceSmall"/>
         </LinearLayout>
 

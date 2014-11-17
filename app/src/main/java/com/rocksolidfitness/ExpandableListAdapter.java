@@ -2,11 +2,13 @@ package com.rocksolidfitness;
 
 
 import android.content.Context;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.HashMap;
@@ -155,6 +157,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter
         lblDayOfMonth.setTypeface(null, Typeface.BOLD);
         lblDayOfMonth.setText(headerTitle.split("~")[1]);
 
+
         return convertView;
     }
 
@@ -193,13 +196,17 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter
         TextView txtDesc = (TextView) convertView.findViewById(R.id.lblDescription);
         TextView txtDuration = (TextView) convertView.findViewById(R.id.lblDuration);
 
-        //CheckBox chkComplete = (CheckBox) convertView.findViewById(R.id.chkComplete);
-        //boolean sessionComplete = sessionDetail.sessionState == Session.State.COMPLETE ? true : false;
-        //
         txtSport.setText(sessionDetail.sport);
         txtDesc.setText(sessionDetail.description);
         txtDuration.setText(sessionDetail.getFormattedDuration(mContext));
 
+        boolean isSessionComplete = sessionDetail.sessionState == Session.State.COMPLETE ? true : false;
+        ImageView sessionComplete = (ImageView) convertView.findViewById(R.id.imgDone);
+
+        if (isSessionComplete)
+            sessionComplete.setBackgroundColor(Color.rgb(47, 255, 64));
+        else
+            sessionComplete.setBackgroundColor(Color.rgb(0, 0, 0));
 
         return convertView;
     }

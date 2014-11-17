@@ -41,6 +41,15 @@ public class MainViewFragment extends Fragment
 
         // setting list adapter
         mExpListView.setAdapter(mListAdapter);
+
+        //auto expand and highlight today  :: TODO highlight it!
+        int count = mListAdapter.getGroupCount();
+        for (int position = 1; position <= count; position++)
+        {
+            if (mListAdapter.getGroup(position - 1).toString().startsWith("Today"))
+                mExpListView.expandGroup(position - 1, true);
+        }
+
         return rootView;
     }
 
@@ -95,13 +104,13 @@ public class MainViewFragment extends Fragment
         HashMap<String, DateTime> dateFromWeekAndYear = Utils.getDateFromWeekAndYear(sessionsForThisWeek.get(0).getDateOfSession());
 
         // Weekday group header - format will be "Wednesday~12", this will be split on ~ in the Adapter
-        mListDataHeader.add(getString(R.string.wk_mon) + "~" + dateFromWeekAndYear.get(DateTimeConstants.MONDAY + "").dayOfMonth().getAsShortText());
-        mListDataHeader.add(getString(R.string.wk_tue) + "~" + dateFromWeekAndYear.get(DateTimeConstants.TUESDAY + "").dayOfMonth().getAsShortText());
-        mListDataHeader.add(getString(R.string.wk_wed) + "~" + dateFromWeekAndYear.get(DateTimeConstants.WEDNESDAY + "").dayOfMonth().getAsShortText());
-        mListDataHeader.add(getString(R.string.wk_thu) + "~" + dateFromWeekAndYear.get(DateTimeConstants.THURSDAY + "").dayOfMonth().getAsShortText());
-        mListDataHeader.add(getString(R.string.wk_fri) + "~" + dateFromWeekAndYear.get(DateTimeConstants.FRIDAY + "").dayOfMonth().getAsShortText());
-        mListDataHeader.add(getString(R.string.wk_sat) + "~" + dateFromWeekAndYear.get(DateTimeConstants.SATURDAY + "").dayOfMonth().getAsShortText());
-        mListDataHeader.add(getString(R.string.wk_sun) + "~" + dateFromWeekAndYear.get(DateTimeConstants.SUNDAY + "").dayOfMonth().getAsShortText());
+        mListDataHeader.add(getFormattedGroupHeaderLabel(getString(R.string.wk_mon), dateFromWeekAndYear.get(DateTimeConstants.MONDAY + "")));
+        mListDataHeader.add(getFormattedGroupHeaderLabel(getString(R.string.wk_tue), dateFromWeekAndYear.get(DateTimeConstants.TUESDAY + "")));
+        mListDataHeader.add(getFormattedGroupHeaderLabel(getString(R.string.wk_wed), dateFromWeekAndYear.get(DateTimeConstants.WEDNESDAY + "")));
+        mListDataHeader.add(getFormattedGroupHeaderLabel(getString(R.string.wk_thu), dateFromWeekAndYear.get(DateTimeConstants.THURSDAY + "")));
+        mListDataHeader.add(getFormattedGroupHeaderLabel(getString(R.string.wk_fri), dateFromWeekAndYear.get(DateTimeConstants.FRIDAY + "")));
+        mListDataHeader.add(getFormattedGroupHeaderLabel(getString(R.string.wk_sat), dateFromWeekAndYear.get(DateTimeConstants.SATURDAY + "")));
+        mListDataHeader.add(getFormattedGroupHeaderLabel(getString(R.string.wk_sun), dateFromWeekAndYear.get(DateTimeConstants.SUNDAY + "")));
 
         mListDataChild.put(mListDataHeader.get(0), monSessions); // Header, Child data
         mListDataChild.put(mListDataHeader.get(1), tueSessions);
@@ -111,5 +120,17 @@ public class MainViewFragment extends Fragment
         mListDataChild.put(mListDataHeader.get(5), satSessions);
         mListDataChild.put(mListDataHeader.get(6), sunSessions);
         dataSource.close();
+    }
+
+    public String getFormattedGroupHeaderLabel(String dayOfWeek, DateTime correspondingDate)
+    {
+        //necessary to find the current day
+        DateTime today = new DateTime();
+        if (today.dayOfMonth().getAsShortText().equals(correspondingDate.dayOfMonth().getAsShortText()) &&
+                today.getMonthOfYear() == correspondingDate.getMonthOfYear() &&
+                today.getYear() == correspondingDate.getYear())
+            return "Today~" + correspondingDate.dayOfMonth().getAsShortText();
+        else
+            return dayOfWeek + "~" + correspondingDate.dayOfMonth().getAsShortText();
     }
 }

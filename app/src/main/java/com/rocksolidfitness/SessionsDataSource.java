@@ -240,12 +240,12 @@ public class SessionsDataSource
         createSession(new Session(Session.State.PLANNED, "Cycling", "mtb", 120, Utils.getDateOffsetByNDays(-6)));
         createSession(new Session(Session.State.PLANNED, "Running", "easy", 57, Utils.getDateOffsetByNDays(-4)));
         createSession(new Session(Session.State.PLANNED, "Swimming", "1k+stuff+pullbouy+wd", 45, Utils.getDateOffsetByNDays(-3)));
-        createSession(new Session(Session.State.PLANNED, "Strength and Conditioning", "plank", 14, Utils.getDateOffsetByNDays(-1)));
-        createSession(new Session(Session.State.PLANNED, "Strength and Conditioning", "legs", 17, Utils.getDateOffsetByNDays(-1)));
+        createSession(new Session(Session.State.COMPLETE, "Strength and Conditioning", "plank", 14, Utils.getDateOffsetByNDays(-1)));
+        createSession(new Session(Session.State.COMPLETE, "Strength and Conditioning", "legs", 17, Utils.getDateOffsetByNDays(-1)));
         createSession(new Session(Session.State.PLANNED, "Running", "easy", 57, Utils.getDateOffsetByNDays(0)));
         createSession(new Session(Session.State.PLANNED, "Swimming", "easy", 30, Utils.getDateOffsetByNDays(1)));
         createSession(new Session(Session.State.PLANNED, "Running", "easy", 56, Utils.getDateOffsetByNDays(2)));
-        createSession(new Session(Session.State.PLANNED, "Cycling", "big bike", 230, Utils.getDateOffsetByNDays(2)));
+        createSession(new Session(Session.State.COMPLETE, "Cycling", "big bike", 230, Utils.getDateOffsetByNDays(2)));
         createSession(new Session(Session.State.PLANNED, "Strength and Conditioning", "plank", 14, Utils.getDateOffsetByNDays(3)));
         createSession(new Session(Session.State.PLANNED, "Running", "easy", 57, Utils.getDateOffsetByNDays(5)));
         createSession(new Session(Session.State.PLANNED, "Swimming", "easy", 30, Utils.getDateOffsetByNDays(5)));
