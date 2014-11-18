@@ -29,6 +29,11 @@ class SessionsDataSource
         mDatabase = mDbHelper.getWritableDatabase();
     }
 
+    public void openReadOnly() throws SQLException
+    {
+        mDatabase = mDbHelper.getReadableDatabase();
+    }
+
     public void close()
     {
         mDbHelper.close();

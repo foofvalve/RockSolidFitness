@@ -3,10 +3,12 @@ package com.rocksolidfitness;
 
 import android.app.Fragment;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ExpandableListView;
+import android.widget.TextView;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeConstants;
@@ -17,9 +19,11 @@ import java.util.List;
 
 public class MainViewFragment extends Fragment
 {
+    DateTime mDashboardDate;
+    ExpandableListView mExpListView;
+    ExpandableListAdapter mListAdapter;
     private List<String> mListDataHeader;
     private HashMap<String, List<Session>> mListDataChild;
-
 
     public MainViewFragment()
     {
@@ -29,37 +33,74 @@ public class MainViewFragment extends Fragment
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState)
     {
+
+        SessionsDataSource dataSource = new SessionsDataSource(getActivity());
+        dataSource.open();
+        //dataSource.loadDynamicTestData();
+        dataSource.close();
+
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
-        ExpandableListView mExpListView = (ExpandableListView) rootView.findViewById(R.id.expandableListViewSessions);
+        mExpListView = (ExpandableListView) rootView.findViewById(R.id.expandableListViewSessions);
+
+        TextView sliderMonthName = (TextView) rootView.findViewById(R.id.lblCurrentWeekInfo);
+        mDashboardDate = new DateTime();
+        sliderMonthName.clearComposingText();
+        sliderMonthName.setText(mDashboardDate.monthOfYear().getAsText() + " " + mDashboardDate.getYear());
 
         // preparing list data
         prepareListData();
 
-        ExpandableListAdapter mListAdapter = new ExpandableListAdapter(getActivity(), mListDataHeader, mListDataChild);
+        mListAdapter = new ExpandableListAdapter(getActivity(), mListDataHeader, mListDataChild);
 
         // setting list adapter
         mExpListView.setAdapter(mListAdapter);
+        autoExpandToday();
 
-        //auto expand and highlight today  :: TODO highlight it!
+        return rootView;
+    }
+
+    //@Override
+    public void onResumeZZZ()
+    {
+        Log.e("", ">>> onResume is called");
+        super.onResume();
+        prepareListData();
+
+        final ExpandableListAdapter mListAdapter = new ExpandableListAdapter(getActivity(), mListDataHeader, mListDataChild);
+        mExpListView.setAdapter(mListAdapter);
+        //mExpListView.refreshDrawableState();
+        autoExpandToday();
+        // setting list adapter
+
+
+        //if(mListAdapter== null){ //Adapter not set yet.
+        //   mExpListView.setAdapter(mListAdapter);
+        //   Log.e("",">>> onResume mExpListView.setAdapter(mListAdapter);");
+        //}
+        //else{ //Already has an adapter
+
+        //    mListAdapter.notifyDataSetChanged();
+        //    Log.e("",">>> onResume notifyDataSetChanged");
+        //}
+    }
+
+    void autoExpandToday()
+    {
         int count = mListAdapter.getGroupCount();
         for (int position = 1; position <= count; position++)
-        {
-            if (mListAdapter.getGroup(position - 1).toString().startsWith("Today"))
+            if (mListAdapter.getGroup(position - 1).toString().startsWith(getString(R.string.today)))
             {
                 mExpListView.expandGroup(position - 1, true);
                 break;
             }
-        }
-
-        return rootView;
     }
 
     private void prepareListData()
     {
         SessionsDataSource dataSource = new SessionsDataSource(getActivity());
-        dataSource.open();
-        dataSource.loadDynamicTestData();
+        dataSource.openReadOnly();
+
         mListDataHeader = new ArrayList<String>();
         mListDataChild = new HashMap<String, List<Session>>();
 
@@ -131,7 +172,7 @@ public class MainViewFragment extends Fragment
         if (today.dayOfMonth().getAsShortText().equals(correspondingDate.dayOfMonth().getAsShortText()) &&
                 today.getMonthOfYear() == correspondingDate.getMonthOfYear() &&
                 today.getYear() == correspondingDate.getYear())
-            return "Today~" + correspondingDate.dayOfMonth().getAsShortText();
+            return getString(R.string.today) + "~" + correspondingDate.dayOfMonth().getAsShortText();
         else
             return dayOfWeek + "~" + correspondingDate.dayOfMonth().getAsShortText();
     }

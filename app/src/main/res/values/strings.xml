@@ -28,6 +28,7 @@
     <string name="wk_sat">Saturday</string>
     <string name="wk_sun">Sunday</string>
 
+    <string name="today">Today</string>
     <string name="time_minutes">minutes</string>
     <string name="time_hours">hours</string>
     <string name="time_hour">hour</string>
@@ -37,6 +38,14 @@
     <string name="complete_workout">Mark session as complete</string>
 
     <string name="dashboard_header">This Week</string>
+
+    <string name="confirm_delete_title">Confirm Deletion</string>
+    <string name="confirm_delete_msg">Delete this session?</string>
+    <string name="confirm_delete_yes">Yes</string>
+    <string name="confirm_delete_no">No</string>
+
+    <string name="toast_session_deleted">Session Deleted</string>
+    <string name="toast_session_state_fondled">Session updated</string>
 
     <string-array name="sports_default_list">
         <item>Cycling</item>

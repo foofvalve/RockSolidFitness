@@ -1,15 +1,19 @@
 package com.rocksolidfitness;
 
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.HashMap;
 import java.util.List;
@@ -19,6 +23,7 @@ class ExpandableListAdapter extends BaseExpandableListAdapter
     private final Context mContext;
     private final List<String> mListDataHeader;
     private final HashMap<String, List<Session>> mListDataChild;
+    SessionsDataSource dataSource;
 
     public ExpandableListAdapter(Context context, List<String> listDataHeader,
                                  HashMap<String, List<Session>> listChildData)
@@ -26,6 +31,8 @@ class ExpandableListAdapter extends BaseExpandableListAdapter
         mContext = context;
         mListDataHeader = listDataHeader;
         mListDataChild = listChildData;
+        dataSource = new SessionsDataSource(mContext);
+        dataSource.open();
     }
 
     /**
@@ -143,7 +150,7 @@ class ExpandableListAdapter extends BaseExpandableListAdapter
         {
             LayoutInflater infalInflater = (LayoutInflater) this.mContext
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            convertView = infalInflater.inflate(R.layout.list_group, null);
+            convertView = infalInflater.inflate(R.layout.list_group, parent, false);
         }
 
         TextView lblListHeader = (TextView) convertView
@@ -155,7 +162,6 @@ class ExpandableListAdapter extends BaseExpandableListAdapter
                 .findViewById(R.id.lblDayOfMonth);
         lblDayOfMonth.setTypeface(null, Typeface.BOLD);
         lblDayOfMonth.setText(headerTitle.split("~")[1]);
-
 
         return convertView;
     }
@@ -178,9 +184,10 @@ class ExpandableListAdapter extends BaseExpandableListAdapter
      * @return the View corresponding to the child at the specified position
      */
     @Override
-    public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent)
+    public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, final ViewGroup parent)
     {
-        Session sessionDetail = (Session) getChild(groupPosition, childPosition);
+        final Session sessionDetail = (Session) getChild(groupPosition, childPosition);
+        final int groupie = groupPosition;
 
         if (convertView == null)
         {
@@ -199,12 +206,78 @@ class ExpandableListAdapter extends BaseExpandableListAdapter
         txtDuration.setText(sessionDetail.getFormattedDuration(mContext));
 
         boolean isSessionComplete = sessionDetail.sessionState == Session.State.COMPLETE;
-        ImageView sessionComplete = (ImageView) convertView.findViewById(R.id.imgDone);
+        final ImageView sessionComplete = (ImageView) convertView.findViewById(R.id.imgDone);
 
         if (isSessionComplete)
             sessionComplete.setBackgroundColor(Color.rgb(47, 255, 64));
         else
             sessionComplete.setBackgroundColor(Color.rgb(0, 0, 0));
+
+        ImageButton editButton = (ImageButton) convertView.findViewById(R.id.btnEdit);
+        editButton.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                Toast.makeText(mContext, "Edit button clicked", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        ImageButton deleteButton = (ImageButton) convertView.findViewById(R.id.btnDelete);
+        deleteButton.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(mContext);
+
+                alertDialogBuilder.setTitle(mContext.getString(R.string.confirm_delete_title));
+
+                alertDialogBuilder
+                        .setMessage(mContext.getString(R.string.confirm_delete_msg))
+                        .setCancelable(false)
+                        .setPositiveButton(mContext.getString(R.string.confirm_delete_yes), new DialogInterface.OnClickListener()
+                        {
+                            public void onClick(DialogInterface dialog, int id)
+                            {
+                                dataSource.deleteSession(sessionDetail);
+                                mListDataChild.get(getGroup(groupie)).remove(sessionDetail);
+                                notifyDataSetChanged();
+                                Toast.makeText(mContext, mContext.getString(R.string.toast_session_deleted), Toast.LENGTH_SHORT).show();
+                            }
+                        })
+                        .setNegativeButton(mContext.getString(R.string.confirm_delete_no), new DialogInterface.OnClickListener()
+                        {
+                            public void onClick(DialogInterface dialog, int id)
+                            {
+                                dialog.cancel();
+                            }
+                        });
+                AlertDialog alertDialog = alertDialogBuilder.create();
+                alertDialog.show();
+            }
+
+            ;
+        });
+
+        final ImageView markAsDone = (ImageView) convertView.findViewById(R.id.imgDone);
+        markAsDone.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                if (sessionDetail.isComplete())
+                    sessionDetail.sessionState = Session.State.PLANNED;
+                else
+                    sessionDetail.sessionState = Session.State.COMPLETE;
+
+                int sessionPosition = mListDataChild.get(getGroup(groupie)).indexOf(sessionDetail);
+                dataSource.updateSession(sessionDetail);
+                mListDataChild.get(getGroup(groupie)).set(sessionPosition, sessionDetail);
+                notifyDataSetChanged();
+                Toast.makeText(mContext, mContext.getString(R.string.toast_session_state_fondled), Toast.LENGTH_SHORT).show();
+            }
+        });
 
         return convertView;
     }

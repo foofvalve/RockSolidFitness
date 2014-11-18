@@ -57,6 +57,11 @@ public final class Session
         setSessionYear();
     }
 
+    public boolean isComplete()
+    {
+        return sessionState == State.COMPLETE;
+    }
+
     private void setSessionWeek()
     {
         sessionWeek = this.dateOfSession.getWeekOfWeekyear();
