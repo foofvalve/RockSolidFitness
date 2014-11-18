@@ -78,7 +78,7 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
                 .commit();
     }
 
-    public void onSectionAttached(int number)
+    void onSectionAttached(int number)
     {
         switch (number)
         {
@@ -110,7 +110,7 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
         }
     }
 
-    public void restoreActionBar()
+    void restoreActionBar()
     {
         ActionBar actionBar = getActionBar();
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
@@ -166,8 +166,7 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState)
         {
-            View rootView = inflater.inflate(R.layout.fragment_main, container, false);
-            return rootView;
+            return inflater.inflate(R.layout.fragment_main, container, false);
         }
 
         @Override

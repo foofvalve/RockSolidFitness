@@ -14,11 +14,11 @@ import android.widget.TextView;
 import java.util.HashMap;
 import java.util.List;
 
-public class ExpandableListAdapter extends BaseExpandableListAdapter
+class ExpandableListAdapter extends BaseExpandableListAdapter
 {
-    private Context mContext;
-    private List<String> mListDataHeader;
-    private HashMap<String, List<Session>> mListDataChild;
+    private final Context mContext;
+    private final List<String> mListDataHeader;
+    private final HashMap<String, List<Session>> mListDataChild;
 
     public ExpandableListAdapter(Context context, List<String> listDataHeader,
                                  HashMap<String, List<Session>> listChildData)
@@ -132,7 +132,6 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter
      *                      the correct data, this method can create a new view. It is not
      *                      guaranteed that the convertView will have been previously
      *                      created by
-     *                      {@link #getGroupView(int, boolean, android.view.View, android.view.ViewGroup)}.
      * @param parent        the parent that this view will eventually be attached to
      * @return the View corresponding to the group at the specified position
      */
@@ -175,7 +174,6 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter
      *                      the correct data, this method can create a new view. It is not
      *                      guaranteed that the convertView will have been previously
      *                      created by
-     *                      {@link #getChildView(int, int, boolean, android.view.View, android.view.ViewGroup)}.
      * @param parent        the parent that this view will eventually be attached to
      * @return the View corresponding to the child at the specified position
      */
@@ -200,7 +198,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter
         txtDesc.setText(sessionDetail.description);
         txtDuration.setText(sessionDetail.getFormattedDuration(mContext));
 
-        boolean isSessionComplete = sessionDetail.sessionState == Session.State.COMPLETE ? true : false;
+        boolean isSessionComplete = sessionDetail.sessionState == Session.State.COMPLETE;
         ImageView sessionComplete = (ImageView) convertView.findViewById(R.id.imgDone);
 
         if (isSessionComplete)

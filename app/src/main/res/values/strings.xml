@@ -2,9 +2,7 @@
 <resources>
 
     <string name="app_name">Rock Solid Fitness</string>
-    <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
-    <string name="hello_blank_fragment">Hello blank fragment</string>
 
     <string name="title_section1">Dashboard</string>
     <string name="title_section2">Add Session</string>
@@ -33,6 +31,12 @@
     <string name="time_minutes">minutes</string>
     <string name="time_hours">hours</string>
     <string name="time_hour">hour</string>
+
+    <string name="edit_workout">Edit workout</string>
+    <string name="delete_workout">Delete workout</string>
+    <string name="complete_workout">Mark session as complete</string>
+
+    <string name="dashboard_header">This Week</string>
 
     <string-array name="sports_default_list">
         <item>Cycling</item>

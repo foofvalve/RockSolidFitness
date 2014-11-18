@@ -17,10 +17,9 @@ import java.util.List;
 
 public class MainViewFragment extends Fragment
 {
-    ExpandableListAdapter mListAdapter;
-    ExpandableListView mExpListView;
-    List<String> mListDataHeader;
-    HashMap<String, List<Session>> mListDataChild;
+    private List<String> mListDataHeader;
+    private HashMap<String, List<Session>> mListDataChild;
+
 
     public MainViewFragment()
     {
@@ -32,12 +31,12 @@ public class MainViewFragment extends Fragment
     {
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
-        mExpListView = (ExpandableListView) rootView.findViewById(R.id.expandableListViewSessions);
+        ExpandableListView mExpListView = (ExpandableListView) rootView.findViewById(R.id.expandableListViewSessions);
 
         // preparing list data
         prepareListData();
 
-        mListAdapter = new ExpandableListAdapter(getActivity(), mListDataHeader, mListDataChild);
+        ExpandableListAdapter mListAdapter = new ExpandableListAdapter(getActivity(), mListDataHeader, mListDataChild);
 
         // setting list adapter
         mExpListView.setAdapter(mListAdapter);
@@ -47,7 +46,10 @@ public class MainViewFragment extends Fragment
         for (int position = 1; position <= count; position++)
         {
             if (mListAdapter.getGroup(position - 1).toString().startsWith("Today"))
+            {
                 mExpListView.expandGroup(position - 1, true);
+                break;
+            }
         }
 
         return rootView;
@@ -122,7 +124,7 @@ public class MainViewFragment extends Fragment
         dataSource.close();
     }
 
-    public String getFormattedGroupHeaderLabel(String dayOfWeek, DateTime correspondingDate)
+    String getFormattedGroupHeaderLabel(String dayOfWeek, DateTime correspondingDate)
     {
         //necessary to find the current day
         DateTime today = new DateTime();

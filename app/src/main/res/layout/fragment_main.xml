@@ -39,9 +39,9 @@
             android:layout_toLeftOf="@+id/btnNexWeek"
             android:layout_toRightOf="@+id/btnPreviousWeek"
             android:layout_toStartOf="@+id/btnNexWeek"
-            android:layout_weight="1"
             android:gravity="center|center_vertical"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            >
 
             <TextView
                 android:id="@+id/lblCurrentWeek"
@@ -49,7 +49,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:gravity="center|center_vertical"
-                android:text="This Week"
+                android:text="@string/dashboard_header"
                 android:textAppearance="?android:attr/textAppearanceLarge"/>
 
             <TextView

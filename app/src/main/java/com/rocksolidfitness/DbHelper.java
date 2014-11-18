@@ -5,7 +5,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
-public class DbHelper extends SQLiteOpenHelper
+class DbHelper extends SQLiteOpenHelper
 {
     public static final String TABLE_SESSIONS = "sessions";
     private static final String DATABASE_CREATE = "create table if not exists "

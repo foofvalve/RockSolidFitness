@@ -36,6 +36,7 @@
         android:layout_marginTop="10dp"
         android:layout_toRightOf="@id/imgGripper"
         android:adjustViewBounds="true"
+        android:contentDescription="Workout image"
         android:src="@drawable/ic_action_user"/>
 
     <TextView
@@ -92,7 +93,7 @@
         android:layout_marginTop="2dp"
         android:adjustViewBounds="true"
         android:background="#ff2fff40"
-        android:contentDescription="trtfg"
+        android:contentDescription="@string/complete_workout"
         android:src="@drawable/ic_action_done"/>
 
     <ImageButton
@@ -107,7 +108,8 @@
         android:layout_toStartOf="@+id/btnDelete"
         android:adjustViewBounds="true"
         android:background="@android:drawable/ic_menu_edit"
-        android:clickable="true"/>
+        android:clickable="true"
+        android:contentDescription="@string/edit_workout"/>
 
     <ImageButton
         android:id="@+id/btnDelete"
@@ -121,5 +123,6 @@
         android:adjustViewBounds="true"
         android:background="@android:drawable/ic_menu_delete"
         android:baselineAlignBottom="@+id/btnEdit"
-        android:clickable="true"/>
+        android:clickable="true"
+        android:contentDescription="@string/delete_workout"/>
 </RelativeLayout>

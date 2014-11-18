@@ -14,7 +14,7 @@ import java.util.List;
 public class DatabaseTests extends AndroidTestCase
 {
     private final String TAG = "UnitTest";
-    RenamingDelegatingContext context;
+    private RenamingDelegatingContext context;
     private SessionsDataSource dataSource;
 
     public void setUp()
@@ -104,6 +104,7 @@ public class DatabaseTests extends AndroidTestCase
         //Create
         String oldSport = "Kayaking";
         long recId = dataSource.createSport(oldSport);
+        assertEquals(recId, -1);
 
         //Read
         List<String> sports = dataSource.getSports();

@@ -11,9 +11,9 @@ import org.joda.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
 
-public class Utils
+class Utils
 {
-    static DateTimeFormatter isoFormat = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
+    private final static DateTimeFormatter isoFormat = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
 
     public static DateTime convertSQLiteDate(String rawDateTime)
     {

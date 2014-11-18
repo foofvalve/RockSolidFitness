@@ -13,11 +13,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class SessionsDataSource
+class SessionsDataSource
 {
+    private final DbHelper mDbHelper;
     // Database fields
     private SQLiteDatabase mDatabase;
-    private DbHelper mDbHelper;
 
     public SessionsDataSource(Context context)
     {
@@ -93,7 +93,7 @@ public class SessionsDataSource
         return getAllSessionsForWeek(DateTime.now().getWeekOfWeekyear(), DateTime.now().getYear());
     }
 
-    public List<Session> getAllSessionsForWeek(int week, int year)
+    List<Session> getAllSessionsForWeek(int week, int year)
     {
         List<Session> sessionsForWeek = new ArrayList<Session>();
 
@@ -120,7 +120,7 @@ public class SessionsDataSource
         Cursor cursor = mDatabase.query(DbHelper.TABLE_SESSIONS,
                 SessionColumns.allColumns, SessionColumns.SESSION_ID + " = ?", new String[]{"" + recId}, null, null, null);
 
-        if (cursor.getCount() == 0) return session;
+        if (cursor.getCount() == 0) return null;
 
         cursor.moveToFirst();
         while (!cursor.isAfterLast())
@@ -163,7 +163,7 @@ public class SessionsDataSource
         return mDatabase.update(DbHelper.TABLE_SPORTS, values, SportColumns.SPORT + " = ?", new String[]{"" + oldSportLabel});
     }
 
-    public boolean sportExists(String sport)
+    boolean sportExists(String sport)
     {
         return getSports().contains(sport);
     }
@@ -531,7 +531,7 @@ public class SessionsDataSource
         createSession(new Session(Session.State.PLANNED, "Strength and Conditioning", "plank", 14, Utils.convertSQLiteDate("2014-11-12")));
     }
 
-    public void truncateSessionTable()
+    void truncateSessionTable()
     {
         String truncateSessionsSQL = "delete from sessions;";
         mDatabase.execSQL(truncateSessionsSQL);

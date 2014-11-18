@@ -94,7 +94,7 @@ public class NavigationDrawerFragment extends Fragment implements ActionBar.OnNa
         ActionBar.OnNavigationListener callback = new ActionBar.OnNavigationListener()
         {
 
-            String[] items = getResources().getStringArray(R.array.sports_default_list); // List items from res
+            final String[] items = getResources().getStringArray(R.array.sports_default_list); // List items from res
 
             @Override
             public boolean onNavigationItemSelected(int position, long id)

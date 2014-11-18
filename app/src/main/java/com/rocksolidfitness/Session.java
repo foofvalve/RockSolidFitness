@@ -2,15 +2,13 @@ package com.rocksolidfitness;
 
 import android.content.Context;
 import android.content.res.Resources;
-import android.os.Parcel;
-import android.os.Parcelable;
 
 import org.joda.time.DateTime;
 
 import java.text.MessageFormat;
 
 
-public final class Session implements Parcelable
+public final class Session
 {
     //Fields
     public long id;
@@ -101,7 +99,7 @@ public final class Session implements Parcelable
 
     public String toString()
     {
-        String stringedUp = MessageFormat.format("id=[{0}]|" +
+        return MessageFormat.format("id=[{0}]|" +
                         "sessionState=[{1}]|" +
                         "sport=[{2}]|" +
                         "description=[{3}]|" +
@@ -122,19 +120,6 @@ public final class Session implements Parcelable
                 id, sessionState, sport, description, dateOfSession, duration, distance,
                 notes, avgHrRate, location, caloriesBurnt, weight, raceName, trainingWeek,
                 dateCreated, dateModified, sessionWeek, sessionYear);
-
-        return stringedUp;
-    }
-
-    @Override
-    public int describeContents()
-    {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags)
-    {
 
     }
 

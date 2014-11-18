@@ -2,7 +2,7 @@ package com.rocksolidfitness;
 
 import android.provider.BaseColumns;
 
-public class SessionColumns implements BaseColumns
+class SessionColumns implements BaseColumns
 {
 
     public static final String SESSION_ID = "_id";
@@ -24,7 +24,7 @@ public class SessionColumns implements BaseColumns
     public static final String SESSION_WEEK = "sessionweek";
     public static final String SESSION_YEAR = "sessionyear";
 
-    public static String[] allColumns = {
+    public static final String[] allColumns = {
             SESSION_ID,
             STATE,
             SPORT,
@@ -61,7 +61,9 @@ public class SessionColumns implements BaseColumns
     public static final int SESSION_TRAINING_WEEK_INDEX = 13;
     public static final int SESSION_DATE_CREATED_INDEX = 14;
     public static final int SESSION_DATE_MODIFIED_INDEX = 15;
-    public static final int SESSION_SESSION_WEEK_INDEX = 16;
-    public static final int SESSION_SESSION_YEAR_INDEX = 17;
+
+    //not required, set dynamically by Session.setDateOfSession()
+    //public static final int SESSION_SESSION_WEEK_INDEX = 16;
+    //public static final int SESSION_SESSION_YEAR_INDEX = 17;
 }
 
