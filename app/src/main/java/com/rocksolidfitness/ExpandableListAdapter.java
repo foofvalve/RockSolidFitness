@@ -2,10 +2,14 @@ package com.rocksolidfitness;
 
 
 import android.app.AlertDialog;
+import android.content.ClipData;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.graphics.Typeface;
+import android.util.Log;
+import android.view.DragEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -202,6 +206,7 @@ class ExpandableListAdapter extends BaseExpandableListAdapter
         if (sessionDetail.description.equals("NO_SESSIONS_YET"))
         {
             convertView = infalInflater.inflate(R.layout.list_no_session, null);
+            convertView.setTag("gropie=" + groupie);
             Button addSession = (Button) convertView.findViewById(R.id.btnAddSession);
             addSession.setOnClickListener(new View.OnClickListener()
             {
@@ -211,11 +216,13 @@ class ExpandableListAdapter extends BaseExpandableListAdapter
                     Toast.makeText(mContext, "Add session button clicked", Toast.LENGTH_SHORT).show();
                 }
             });
+
+
             return convertView;
         } else
             convertView = infalInflater.inflate(R.layout.list_item, null);
 
-
+        convertView.setTag("gropie=" + groupie);
         TextView txtSport = (TextView) convertView
                 .findViewById(R.id.lblSport);
         TextView txtDesc = (TextView) convertView.findViewById(R.id.lblDescription);
@@ -299,6 +306,46 @@ class ExpandableListAdapter extends BaseExpandableListAdapter
             }
         });
 
+
+        convertView.setOnLongClickListener(new View.OnLongClickListener()
+        {
+
+            // Defines the one method for the interface, which is called when the View is long-clicked
+            public boolean onLongClick(View v)
+            {
+
+                // Create a new ClipData.
+                // This is done in two steps to provide clarity. The convenience method
+                // ClipData.newPlainText() can create a plain text ClipData in one step.
+
+                // Create a new ClipData.Item from the ImageView object's tag
+
+                ClipData dragData = ClipData.newPlainText("Group Position", "" + groupie);
+
+                // Create a new ClipData using the tag as a label, the plain text MIME type, and
+                // the already-created item. This will create a new ClipDescription object within the
+                // ClipData, and set its MIME type entry to "text/plain"
+                //ClipData dragData = new ClipData(v.getTag(),ClipData.MIMETYPE_TEXT_PLAIN,item);
+
+                // Instantiates the drag shadow builder.
+                View.DragShadowBuilder myShadow = new View.DragShadowBuilder(v);
+                //View.DragShadowBuilder myShadow = new MyDragShadowBuilder(imageView);
+
+                // Starts the drag
+
+                v.startDrag(dragData,  // the data to be dragged
+                        myShadow,  // the drag shadow builder
+                        null,      // no need to use local data
+                        0          // flags (not currently used, set to 0)
+                );
+                return true;
+            }
+        });
+
+
+        myDragEventListener mDragListen = new myDragEventListener();
+        convertView.setOnDragListener(mDragListen);
+
         return convertView;
     }
 
@@ -313,5 +360,140 @@ class ExpandableListAdapter extends BaseExpandableListAdapter
     public boolean isChildSelectable(int groupPosition, int childPosition)
     {
         return false;
+    }
+
+    ;
+
+    protected class myDragEventListener implements View.OnDragListener
+    {
+
+        // This is the method that the system calls when it dispatches a drag event to the
+        // listener.
+
+        public boolean onDrag(View v, DragEvent event)
+        {
+
+            // Defines a variable to store the action type for the incoming event
+            final int action = event.getAction();
+
+            // Handles each of the expected events
+            switch (action)
+            {
+
+                case DragEvent.ACTION_DRAG_STARTED:
+
+                    // Determines if this View can accept the dragged data
+                    //if (event.getClipDescription().hasMimeType(ClipDescription.MIMETYPE_TEXT_PLAIN))
+                    //{
+
+                    // As an example of what your application might do,
+                    // applies a blue color tint to the View to indicate that it can accept
+                    // data.
+
+                    v.getBackground().setColorFilter(Color.parseColor("#B7B2B0"), PorterDuff.Mode.MULTIPLY);
+
+                    // Invalidate the view to force a redraw in the new tint
+                    v.invalidate();
+
+                    // returns true to indicate that the View can accept the dragged data.
+                    return true;
+
+                //}
+
+                // Returns false. During the current drag and drop operation, this View will
+                // not receive events again until ACTION_DRAG_ENDED is sent.
+                //return false;
+
+                case DragEvent.ACTION_DRAG_ENTERED:
+
+                    // Applies a green tint to the View. Return true; the return value is ignored.
+
+                    //v.setColorFilter(Color.GREEN);
+                    v.getBackground().setColorFilter(Color.parseColor("#B9B9B0"), PorterDuff.Mode.MULTIPLY);
+                    // Invalidate the view to force a redraw in the new tint
+                    v.invalidate();
+
+                    return true;
+
+                case DragEvent.ACTION_DRAG_LOCATION:
+
+                    // Ignore the event
+                    return true;
+
+                case DragEvent.ACTION_DRAG_EXITED:
+
+                    // Re-sets the color tint to blue. Returns true; the return value is ignored.
+                    //v.setColorFilter(Color.BLUE);
+                    v.getBackground().setColorFilter(Color.parseColor("#B7B2B0"), PorterDuff.Mode.MULTIPLY);
+                    // Invalidate the view to force a redraw in the new tint
+                    v.invalidate();
+
+                    return true;
+
+                case DragEvent.ACTION_DROP:
+
+                    // Gets the item containing the dragged data
+                    ClipData.Item item = event.getClipData().getItemAt(0);
+
+                    // Gets the text data from the item.
+                    CharSequence dragData = item.getText();
+
+                    // Displays a message containing the dragged data.
+
+                    //Toast.makeText(mContext, "Dragged data is " + dragData, Toast.LENGTH_LONG);
+                    Log.e("", "drag data is (from): " + dragData);
+                    Log.e("", "view tag is (to): " + v.getTag().toString());
+                    // Turns off any color tints
+                    //v.clearColorFilter();
+                    // v.getParent()
+                    // View view = (View) event.getLocalState();
+
+
+                    /*
+                    ViewGroup owner = (ViewGroup) v.getParent();
+
+                    owner.removeView(v);
+                    LinearLayout container = (LinearLayout) v;
+                    container.addView(v);
+                    v.setVisibility(View.VISIBLE);
+                    */
+
+
+                    // Invalidates the view to force a redraw
+                    v.invalidate();
+
+                    // Returns true. DragEvent.getResult() will return true.
+                    return true;
+
+                case DragEvent.ACTION_DRAG_ENDED:
+
+                    // Turns off any color tinting
+                    //v.clearColorFilter();
+
+                    // Invalidates the view to force a redraw
+                    v.invalidate();
+
+                    // Does a getResult(), and displays what happened.
+                    if (event.getResult())
+                    {
+                        Toast.makeText(mContext, "The drop was handled.", Toast.LENGTH_LONG);
+
+                    } else
+                    {
+                        Toast.makeText(mContext, "The drop didn't work.", Toast.LENGTH_LONG);
+
+                    }
+
+                    // returns true; the value is ignored.
+                    return true;
+
+                // An unknown action type was received.
+                default:
+                    Log.e("DragDrop Example", "Unknown action type received by OnDragListener.");
+                    break;
+            }
+
+            return false;
+        }
     }
 }
