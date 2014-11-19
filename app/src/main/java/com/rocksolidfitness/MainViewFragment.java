@@ -155,14 +155,23 @@ public class MainViewFragment extends Fragment
         mListDataHeader.add(getFormattedGroupHeaderLabel(getString(R.string.wk_sat), dateFromWeekAndYear.get(DateTimeConstants.SATURDAY + "")));
         mListDataHeader.add(getFormattedGroupHeaderLabel(getString(R.string.wk_sun), dateFromWeekAndYear.get(DateTimeConstants.SUNDAY + "")));
 
-        mListDataChild.put(mListDataHeader.get(0), monSessions); // Header, Child data
-        mListDataChild.put(mListDataHeader.get(1), tueSessions);
-        mListDataChild.put(mListDataHeader.get(2), wedSessions);
-        mListDataChild.put(mListDataHeader.get(3), thuSessions);
-        mListDataChild.put(mListDataHeader.get(4), friSessions);
-        mListDataChild.put(mListDataHeader.get(5), satSessions);
-        mListDataChild.put(mListDataHeader.get(6), sunSessions);
+
+        mListDataChild.put(mListDataHeader.get(0), getSessionForDay(monSessions)); // Header, Child data
+        mListDataChild.put(mListDataHeader.get(1), getSessionForDay(tueSessions));
+        mListDataChild.put(mListDataHeader.get(2), getSessionForDay(wedSessions));
+        mListDataChild.put(mListDataHeader.get(3), getSessionForDay(thuSessions));
+        mListDataChild.put(mListDataHeader.get(4), getSessionForDay(friSessions));
+        mListDataChild.put(mListDataHeader.get(5), getSessionForDay(satSessions));
+        mListDataChild.put(mListDataHeader.get(6), getSessionForDay(sunSessions));
         dataSource.close();
+    }
+
+    List<Session> getSessionForDay(List<Session> sessions)
+    {
+        if (sessions.size() == 0) //insert a placeholder session if there are no sessions for the day
+            sessions.add(new Session(Session.State.PLANNED, "NO_SESSIONS_YET", "NO_SESSIONS_YET", 99, Utils.getDateOffsetByNDays(0)));
+
+        return sessions;
     }
 
     String getFormattedGroupHeaderLabel(String dayOfWeek, DateTime correspondingDate)

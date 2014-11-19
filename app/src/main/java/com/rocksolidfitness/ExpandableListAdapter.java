@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -145,7 +146,9 @@ class ExpandableListAdapter extends BaseExpandableListAdapter
     @Override
     public View getGroupView(int groupPosition, boolean isExpanded, View convertView, ViewGroup parent)
     {
+
         String headerTitle = (String) getGroup(groupPosition);
+
         if (convertView == null)
         {
             LayoutInflater infalInflater = (LayoutInflater) this.mContext
@@ -162,6 +165,9 @@ class ExpandableListAdapter extends BaseExpandableListAdapter
                 .findViewById(R.id.lblDayOfMonth);
         lblDayOfMonth.setTypeface(null, Typeface.BOLD);
         lblDayOfMonth.setText(headerTitle.split("~")[1]);
+
+        // if(headerTitle.startsWith(mContext.getString(R.string.today))&&isExpanded)
+        //    lblDayOfMonth.setBackgroundColor(Color.rgb(54, 45, 99));
 
         return convertView;
     }
@@ -189,12 +195,26 @@ class ExpandableListAdapter extends BaseExpandableListAdapter
         final Session sessionDetail = (Session) getChild(groupPosition, childPosition);
         final int groupie = groupPosition;
 
-        if (convertView == null)
+
+        LayoutInflater infalInflater = (LayoutInflater) this.mContext
+                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
+        if (sessionDetail.description.equals("NO_SESSIONS_YET"))
         {
-            LayoutInflater infalInflater = (LayoutInflater) this.mContext
-                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            convertView = infalInflater.inflate(R.layout.list_no_session, null);
+            Button addSession = (Button) convertView.findViewById(R.id.btnAddSession);
+            addSession.setOnClickListener(new View.OnClickListener()
+            {
+                @Override
+                public void onClick(View v)
+                {
+                    Toast.makeText(mContext, "Add session button clicked", Toast.LENGTH_SHORT).show();
+                }
+            });
+            return convertView;
+        } else
             convertView = infalInflater.inflate(R.layout.list_item, null);
-        }
+
 
         TextView txtSport = (TextView) convertView
                 .findViewById(R.id.lblSport);
