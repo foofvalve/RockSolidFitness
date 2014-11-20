@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.os.Vibrator;
 import android.util.Log;
 import android.view.DragEvent;
 import android.view.LayoutInflater;
@@ -30,6 +31,7 @@ class ExpandableListAdapter extends BaseExpandableListAdapter
     private final List<String> mListDataHeader;
     HashMap<String, List<Session>> mListDataChild;
     SessionsDataSource dataSource;
+    private Vibrator mVibrator;
 
     public ExpandableListAdapter(Context context, List<String> listDataHeader,
                                  HashMap<String, List<Session>> listChildData)
@@ -39,6 +41,7 @@ class ExpandableListAdapter extends BaseExpandableListAdapter
         mListDataChild = listChildData;
         dataSource = new SessionsDataSource(mContext);
         dataSource.open();
+        mVibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
     }
 
     /**
@@ -225,6 +228,7 @@ class ExpandableListAdapter extends BaseExpandableListAdapter
                 @Override
                 public void onClick(View v)
                 {
+                    mVibrator.vibrate(Consts.VIBRATE_DURATION);
                     Toast.makeText(mContext, "Add session button clicked", Toast.LENGTH_SHORT).show();
                 }
             });
@@ -261,6 +265,7 @@ class ExpandableListAdapter extends BaseExpandableListAdapter
             @Override
             public void onClick(View v)
             {
+                mVibrator.vibrate(Consts.VIBRATE_DURATION);
                 Toast.makeText(mContext, "Edit button clicked", Toast.LENGTH_SHORT).show();
             }
         });
@@ -282,6 +287,7 @@ class ExpandableListAdapter extends BaseExpandableListAdapter
                         {
                             public void onClick(DialogInterface dialog, int id)
                             {
+                                mVibrator.vibrate(Consts.VIBRATE_DURATION);
                                 dataSource.deleteSession(sessionDetail);
                                 mListDataChild.get(getGroup(groupie)).remove(sessionDetail);
                                 notifyDataSetChanged();
@@ -308,6 +314,7 @@ class ExpandableListAdapter extends BaseExpandableListAdapter
             @Override
             public void onClick(View v)
             {
+                mVibrator.vibrate(Consts.VIBRATE_DURATION);
                 if (sessionDetail.isComplete())
                     sessionDetail.sessionState = Session.State.PLANNED;
                 else
@@ -426,6 +433,7 @@ class ExpandableListAdapter extends BaseExpandableListAdapter
 
                     v.setVisibility(View.GONE);
                     v.invalidate();
+                    mVibrator.vibrate(Consts.VIBRATE_DURATION);
                     return true;
 
                 case DragEvent.ACTION_DRAG_ENDED:
