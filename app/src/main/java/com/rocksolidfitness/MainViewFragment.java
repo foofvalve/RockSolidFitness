@@ -3,10 +3,10 @@ package com.rocksolidfitness;
 
 import android.app.Fragment;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ExpandableListView;
 import android.widget.TextView;
 
@@ -23,6 +23,8 @@ public class MainViewFragment extends Fragment
     ExpandableListView mExpListView;
     ExpandableListAdapter mListAdapter;
     HashMap<String, DateTime> mDateFromWeekAndYear;
+    TextView currentWeekLabel;
+    TextView sliderMonthName;
     private List<String> mListDataHeader;
     private HashMap<String, List<Session>> mListDataChild;
 
@@ -41,50 +43,67 @@ public class MainViewFragment extends Fragment
         dataSource.close();
 
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
-
         mExpListView = (ExpandableListView) rootView.findViewById(R.id.expandableListViewSessions);
+        currentWeekLabel = (TextView) rootView.findViewById(R.id.lblCurrentWeek);
+        sliderMonthName = (TextView) rootView.findViewById(R.id.lblCurrentWeekInfo);
+        setDashboardDate(new DateTime());
 
-        TextView sliderMonthName = (TextView) rootView.findViewById(R.id.lblCurrentWeekInfo);
-        mDashboardDate = new DateTime();
-        sliderMonthName.clearComposingText();
-        sliderMonthName.setText(mDashboardDate.monthOfYear().getAsText() + " " + mDashboardDate.getYear());
+        Button btnPrev = (Button) rootView.findViewById(R.id.btnPreviousWeek);
+        btnPrev.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                prepareListData(DIRECTION.BACKWARD);
 
-        // preparing list data
-        prepareListData();
+                mListAdapter = new ExpandableListAdapter(getActivity(), mListDataHeader, mListDataChild);
+                mExpListView.setAdapter(mListAdapter);
+
+                mListAdapter.notifyDataSetChanged();
+                mExpListView.invalidate();
+                autoExpandToday();
+            }
+        });
+
+        Button btnNext = (Button) rootView.findViewById(R.id.btnNexWeek);
+        btnNext.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                prepareListData(DIRECTION.FORWARD);
+
+                mListAdapter = new ExpandableListAdapter(getActivity(), mListDataHeader, mListDataChild);
+                mExpListView.setAdapter(mListAdapter);
+
+                mListAdapter.notifyDataSetChanged();
+                mExpListView.invalidate();
+                autoExpandToday();
+            }
+        });
+
+        prepareListData(DIRECTION.TODAY);
 
         mListAdapter = new ExpandableListAdapter(getActivity(), mListDataHeader, mListDataChild);
-
-        // setting list adapter
         mExpListView.setAdapter(mListAdapter);
         autoExpandToday();
-
         return rootView;
     }
 
-    //@Override
-    public void onResumeZZZ()
+    void setDashboardDate(DateTime dashboardDate)
     {
-        Log.e("", ">>> onResume is called");
-        super.onResume();
-        prepareListData();
+        mDashboardDate = dashboardDate;
+        currentWeekLabel.clearComposingText();
 
-        final ExpandableListAdapter mListAdapter = new ExpandableListAdapter(getActivity(), mListDataHeader, mListDataChild);
-        mExpListView.setAdapter(mListAdapter);
-        //mExpListView.refreshDrawableState();
-        autoExpandToday();
-        // setting list adapter
+        if (mDashboardDate.getWeekOfWeekyear() == DateTime.now().getWeekOfWeekyear())
+            currentWeekLabel.setText(getString(R.string.dashboard_header));
+        else
+            currentWeekLabel.setText(getString(R.string.week) + " " + mDashboardDate.getWeekOfWeekyear());
 
-
-        //if(mListAdapter== null){ //Adapter not set yet.
-        //   mExpListView.setAdapter(mListAdapter);
-        //   Log.e("",">>> onResume mExpListView.setAdapter(mListAdapter);");
-        //}
-        //else{ //Already has an adapter
-
-        //    mListAdapter.notifyDataSetChanged();
-        //    Log.e("",">>> onResume notifyDataSetChanged");
-        //}
+        sliderMonthName.clearComposingText();
+        sliderMonthName.setText(mDashboardDate.monthOfYear().getAsText() + " " + mDashboardDate.getYear());
     }
+
 
     void autoExpandToday()
     {
@@ -97,7 +116,7 @@ public class MainViewFragment extends Fragment
             }
     }
 
-    private void prepareListData()
+    private void prepareListData(DIRECTION shiftDirection)
     {
         SessionsDataSource dataSource = new SessionsDataSource(getActivity());
         dataSource.openReadOnly();
@@ -113,9 +132,22 @@ public class MainViewFragment extends Fragment
         List<Session> satSessions = new ArrayList<Session>();
         List<Session> sunSessions = new ArrayList<Session>();
 
+        List<Session> sessionsForDisplay;
 
-        List<Session> sessionsForThisWeek = dataSource.getAllSessionsForCurrentWeek();
-        for (Session sport : sessionsForThisWeek)
+        if (shiftDirection == DIRECTION.FORWARD)
+        {
+            setDashboardDate(mDashboardDate.plusDays(7));
+            sessionsForDisplay = dataSource.getAllSessionsBasedOnDate(mDashboardDate);
+        } else if (shiftDirection == DIRECTION.TODAY)
+        {
+            sessionsForDisplay = dataSource.getAllSessionsForCurrentWeek();
+        } else
+        {
+            setDashboardDate(mDashboardDate.minusDays(7));
+            sessionsForDisplay = dataSource.getAllSessionsBasedOnDate(mDashboardDate);
+        }
+
+        for (Session sport : sessionsForDisplay)
         {
             DateTime.Property pDoW = sport.getDateOfSession().dayOfWeek();
 
@@ -145,7 +177,7 @@ public class MainViewFragment extends Fragment
             }
         }
 
-        mDateFromWeekAndYear = Utils.getDateFromWeekAndYear(sessionsForThisWeek.get(0).getDateOfSession());
+        mDateFromWeekAndYear = Utils.getDateFromWeekAndYear(sessionsForDisplay.get(0).getDateOfSession());
 
         // Weekday group header - format will be "Wednesday~12", this will be split on ~ in the Adapter
         mListDataHeader.add(getFormattedGroupHeaderLabel(getString(R.string.wk_mon), mDateFromWeekAndYear.get(DateTimeConstants.MONDAY + "")));
@@ -185,5 +217,12 @@ public class MainViewFragment extends Fragment
             return getString(R.string.today) + "~" + correspondingDate.dayOfMonth().getAsShortText();
         else
             return dayOfWeek + "~" + correspondingDate.dayOfMonth().getAsShortText();
+    }
+
+    public enum DIRECTION
+    {
+        FORWARD,
+        BACKWARD,
+        TODAY
     }
 }

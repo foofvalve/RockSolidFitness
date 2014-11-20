@@ -93,6 +93,11 @@ class SessionsDataSource
         mDatabase.delete(DbHelper.TABLE_SESSIONS, SessionColumns.SESSION_ID + "=" + id, null);
     }
 
+    public List<Session> getAllSessionsBasedOnDate(DateTime baseLineDate)
+    {
+        return getAllSessionsForWeek(baseLineDate.getWeekOfWeekyear(), baseLineDate.getYear());
+    }
+
     public List<Session> getAllSessionsForCurrentWeek()
     {
         return getAllSessionsForWeek(DateTime.now().getWeekOfWeekyear(), DateTime.now().getYear());

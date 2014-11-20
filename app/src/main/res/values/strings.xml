@@ -29,6 +29,7 @@
     <string name="wk_sun">Sunday</string>
 
     <string name="today">Today</string>
+    <string name="week">Week</string>
     <string name="time_minutes">minutes</string>
     <string name="time_hours">hours</string>
     <string name="time_hour">hour</string>
@@ -58,3 +59,4 @@
         <item>Strength and Conditioning</item>
     </string-array>
 </resources>
+
