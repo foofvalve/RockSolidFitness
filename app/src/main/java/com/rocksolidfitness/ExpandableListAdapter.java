@@ -6,7 +6,6 @@ import android.content.ClipData;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;
-import android.graphics.PorterDuff;
 import android.graphics.Typeface;
 import android.util.Log;
 import android.view.DragEvent;
@@ -20,6 +19,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.joda.time.DateTime;
+
 import java.util.HashMap;
 import java.util.List;
 
@@ -27,7 +28,7 @@ class ExpandableListAdapter extends BaseExpandableListAdapter
 {
     private final Context mContext;
     private final List<String> mListDataHeader;
-    private final HashMap<String, List<Session>> mListDataChild;
+    HashMap<String, List<Session>> mListDataChild;
     SessionsDataSource dataSource;
 
     public ExpandableListAdapter(Context context, List<String> listDataHeader,
@@ -131,6 +132,19 @@ class ExpandableListAdapter extends BaseExpandableListAdapter
     }
 
     /**
+     * Whether the child at the specified position is selectable.
+     *
+     * @param groupPosition the position of the group that contains the child
+     * @param childPosition the position of the child within the group
+     * @return whether the child is selectable.
+     */
+    @Override
+    public boolean isChildSelectable(int groupPosition, int childPosition)
+    {
+        return false;
+    }
+
+    /**
      * Gets a View that displays the given group. This View is only for the
      * group--the Views for the group's children will be fetched using
      * {@link #getChildView(int, int, boolean, android.view.View, android.view.ViewGroup)}.
@@ -199,14 +213,12 @@ class ExpandableListAdapter extends BaseExpandableListAdapter
         final Session sessionDetail = (Session) getChild(groupPosition, childPosition);
         final int groupie = groupPosition;
 
-
-        LayoutInflater infalInflater = (LayoutInflater) this.mContext
+        LayoutInflater inflater = (LayoutInflater) this.mContext
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         if (sessionDetail.description.equals("NO_SESSIONS_YET"))
         {
-            convertView = infalInflater.inflate(R.layout.list_no_session, null);
-            convertView.setTag("gropie=" + groupie);
+            convertView = inflater.inflate(R.layout.list_no_session, null);
             Button addSession = (Button) convertView.findViewById(R.id.btnAddSession);
             addSession.setOnClickListener(new View.OnClickListener()
             {
@@ -217,14 +229,16 @@ class ExpandableListAdapter extends BaseExpandableListAdapter
                 }
             });
 
+            DragEventListener dragListenerNoSession = new DragEventListener();
+            convertView.setOnDragListener(dragListenerNoSession);
+            convertView.setTag(groupie + "-" + sessionDetail.id + "-" + sessionDetail.getDateOfSession().getMillis());
 
             return convertView;
         } else
-            convertView = infalInflater.inflate(R.layout.list_item, null);
+            convertView = inflater.inflate(R.layout.list_item, null);
 
-        convertView.setTag("gropie=" + groupie);
-        TextView txtSport = (TextView) convertView
-                .findViewById(R.id.lblSport);
+
+        TextView txtSport = (TextView) convertView.findViewById(R.id.lblSport);
         TextView txtDesc = (TextView) convertView.findViewById(R.id.lblDescription);
         TextView txtDuration = (TextView) convertView.findViewById(R.id.lblDuration);
 
@@ -309,190 +323,117 @@ class ExpandableListAdapter extends BaseExpandableListAdapter
 
         convertView.setOnLongClickListener(new View.OnLongClickListener()
         {
-
-            // Defines the one method for the interface, which is called when the View is long-clicked
             public boolean onLongClick(View v)
             {
+                ClipData dragData = ClipData.newPlainText("Session long clicked invoked by:",
+                        groupie + "-" + sessionDetail.id + "-" + sessionDetail.getDateOfSession().getMillis());
 
-                // Create a new ClipData.
-                // This is done in two steps to provide clarity. The convenience method
-                // ClipData.newPlainText() can create a plain text ClipData in one step.
-
-                // Create a new ClipData.Item from the ImageView object's tag
-
-                ClipData dragData = ClipData.newPlainText("Group Position", "" + groupie);
-
-                // Create a new ClipData using the tag as a label, the plain text MIME type, and
-                // the already-created item. This will create a new ClipDescription object within the
-                // ClipData, and set its MIME type entry to "text/plain"
-                //ClipData dragData = new ClipData(v.getTag(),ClipData.MIMETYPE_TEXT_PLAIN,item);
-
-                // Instantiates the drag shadow builder.
-                View.DragShadowBuilder myShadow = new View.DragShadowBuilder(v);
-                //View.DragShadowBuilder myShadow = new MyDragShadowBuilder(imageView);
-
-                // Starts the drag
-
-                v.startDrag(dragData,  // the data to be dragged
-                        myShadow,  // the drag shadow builder
-                        null,      // no need to use local data
-                        0          // flags (not currently used, set to 0)
-                );
+                View.DragShadowBuilder dragShadow = new View.DragShadowBuilder(v);
+                v.startDrag(dragData, dragShadow, null, 0);
                 return true;
             }
         });
 
-
-        myDragEventListener mDragListen = new myDragEventListener();
+        DragEventListener mDragListen = new DragEventListener();
         convertView.setOnDragListener(mDragListen);
+        convertView.setTag(groupie + "-" + sessionDetail.id + "-" + sessionDetail.getDateOfSession().getMillis());
 
         return convertView;
     }
 
-    /**
-     * Whether the child at the specified position is selectable.
-     *
-     * @param groupPosition the position of the group that contains the child
-     * @param childPosition the position of the child within the group
-     * @return whether the child is selectable.
-     */
-    @Override
-    public boolean isChildSelectable(int groupPosition, int childPosition)
+    public void removeSessionFromAdaptor(Session session) //because  groupedSessionForDay.remove(Object) is whacked up
     {
-        return false;
+        for (int j = 0; j < getGroupCount(); j++)
+        {
+            if (mListDataChild.get(getGroup(j)).size() > 0)
+            {
+                Log.i("Blahs", "asdfas size of group" + j + " = " + mListDataChild.get(getGroup(j)).size());
+                List<Session> groupedSessionForDay = mListDataChild.get(getGroup(j));
+                for (int i = 0; i < groupedSessionForDay.size(); i++)
+                    if (groupedSessionForDay.get(i) != null)
+                    {
+                        Log.i("Blahs", "id found=" + groupedSessionForDay.get(i).id + " looking for = " + session.id);
+                        if (groupedSessionForDay.get(i).id == session.id)
+                            groupedSessionForDay.remove(i);
+                    }
+            }
+        }
+
+        notifyDataSetChanged();
     }
 
-    ;
-
-    protected class myDragEventListener implements View.OnDragListener
+    protected class DragEventListener implements View.OnDragListener
     {
-
-        // This is the method that the system calls when it dispatches a drag event to the
-        // listener.
-
         public boolean onDrag(View v, DragEvent event)
         {
-
-            // Defines a variable to store the action type for the incoming event
             final int action = event.getAction();
-
-            // Handles each of the expected events
             switch (action)
             {
 
                 case DragEvent.ACTION_DRAG_STARTED:
-
-                    // Determines if this View can accept the dragged data
-                    //if (event.getClipDescription().hasMimeType(ClipDescription.MIMETYPE_TEXT_PLAIN))
-                    //{
-
-                    // As an example of what your application might do,
-                    // applies a blue color tint to the View to indicate that it can accept
-                    // data.
-
-                    v.getBackground().setColorFilter(Color.parseColor("#B7B2B0"), PorterDuff.Mode.MULTIPLY);
-
-                    // Invalidate the view to force a redraw in the new tint
-                    v.invalidate();
-
-                    // returns true to indicate that the View can accept the dragged data.
+                    //v.getBackground().setColorFilter(Color.parseColor("#B7B2B0"), PorterDuff.Mode.MULTIPLY);
+                    //v.invalidate();
                     return true;
 
-                //}
-
-                // Returns false. During the current drag and drop operation, this View will
-                // not receive events again until ACTION_DRAG_ENDED is sent.
-                //return false;
-
                 case DragEvent.ACTION_DRAG_ENTERED:
-
-                    // Applies a green tint to the View. Return true; the return value is ignored.
-
-                    //v.setColorFilter(Color.GREEN);
-                    v.getBackground().setColorFilter(Color.parseColor("#B9B9B0"), PorterDuff.Mode.MULTIPLY);
-                    // Invalidate the view to force a redraw in the new tint
-                    v.invalidate();
-
+                    //v.getBackground().setColorFilter(Color.parseColor("#B9B9B0"), PorterDuff.Mode.MULTIPLY);
+                    //v.invalidate();
                     return true;
 
                 case DragEvent.ACTION_DRAG_LOCATION:
-
-                    // Ignore the event
-                    return true;
+                    v.setVisibility(View.VISIBLE);
+                    break;
 
                 case DragEvent.ACTION_DRAG_EXITED:
-
-                    // Re-sets the color tint to blue. Returns true; the return value is ignored.
-                    //v.setColorFilter(Color.BLUE);
-                    v.getBackground().setColorFilter(Color.parseColor("#B7B2B0"), PorterDuff.Mode.MULTIPLY);
-                    // Invalidate the view to force a redraw in the new tint
-                    v.invalidate();
-
+                    //v.getBackground().setColorFilter(Color.parseColor("#FFCCCCCC"), PorterDuff.Mode.MULTIPLY);
+                    //v.invalidate();
                     return true;
 
                 case DragEvent.ACTION_DROP:
-
-                    // Gets the item containing the dragged data
                     ClipData.Item item = event.getClipData().getItemAt(0);
 
-                    // Gets the text data from the item.
-                    CharSequence dragData = item.getText();
+                    Log.d("", "drag data is (from): \t\t" + item.getText());
+                    Log.d("", "view tag is (to): \t\t" + v.getTag().toString());
 
-                    // Displays a message containing the dragged data.
+                    long fromDate = Long.parseLong(item.getText().toString().split("-")[2]);
+                    long toDate = Long.parseLong(v.getTag().toString().split("-")[2]);
 
-                    //Toast.makeText(mContext, "Dragged data is " + dragData, Toast.LENGTH_LONG);
-                    Log.e("", "drag data is (from): " + dragData);
-                    Log.e("", "view tag is (to): " + v.getTag().toString());
-                    // Turns off any color tints
-                    //v.clearColorFilter();
-                    // v.getParent()
-                    // View view = (View) event.getLocalState();
+                    if (fromDate == toDate)
+                        return true; //do nothing when drag+dropping onto the same zone
+                    else
+                    {
+                        long idOfSessionReschedule = Long.parseLong(item.getText().toString().split("-")[1]);
+                        Session sessionForReschedule = dataSource.getSessionById(idOfSessionReschedule);
 
+                        //move the session within the adapter
+                        int oldOriginalGroupPosition = Integer.parseInt(item.getText().toString().split("-")[0]);
+                        int targetGroupPosition = Integer.parseInt(v.getTag().toString().split("-")[0]);
+                        mListDataChild.get(getGroup(oldOriginalGroupPosition)).remove(sessionForReschedule);
 
-                    /*
-                    ViewGroup owner = (ViewGroup) v.getParent();
+                        DateTime sessionNewDate = new DateTime(toDate);
+                        sessionForReschedule.setDateOfSession(sessionNewDate);
+                        removeSessionFromAdaptor(sessionForReschedule);
 
-                    owner.removeView(v);
-                    LinearLayout container = (LinearLayout) v;
-                    container.addView(v);
-                    v.setVisibility(View.VISIBLE);
-                    */
+                        mListDataChild.get(getGroup(targetGroupPosition)).add(sessionForReschedule);
 
+                        //update the db Record
+                        dataSource.updateSession(sessionForReschedule);
+                        notifyDataSetChanged();
+                        Log.d("", "Updated Session(date of session) via drag and drop");
+                    }
 
-                    // Invalidates the view to force a redraw
+                    v.setVisibility(View.GONE);
                     v.invalidate();
-
-                    // Returns true. DragEvent.getResult() will return true.
                     return true;
 
                 case DragEvent.ACTION_DRAG_ENDED:
-
-                    // Turns off any color tinting
-                    //v.clearColorFilter();
-
-                    // Invalidates the view to force a redraw
                     v.invalidate();
-
-                    // Does a getResult(), and displays what happened.
-                    if (event.getResult())
-                    {
-                        Toast.makeText(mContext, "The drop was handled.", Toast.LENGTH_LONG);
-
-                    } else
-                    {
-                        Toast.makeText(mContext, "The drop didn't work.", Toast.LENGTH_LONG);
-
-                    }
-
-                    // returns true; the value is ignored.
                     return true;
 
-                // An unknown action type was received.
                 default:
                     Log.e("DragDrop Example", "Unknown action type received by OnDragListener.");
                     break;
             }
-
             return false;
         }
     }

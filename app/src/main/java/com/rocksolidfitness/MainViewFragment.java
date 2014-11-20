@@ -22,6 +22,7 @@ public class MainViewFragment extends Fragment
     DateTime mDashboardDate;
     ExpandableListView mExpListView;
     ExpandableListAdapter mListAdapter;
+    HashMap<String, DateTime> mDateFromWeekAndYear;
     private List<String> mListDataHeader;
     private HashMap<String, List<Session>> mListDataChild;
 
@@ -144,32 +145,32 @@ public class MainViewFragment extends Fragment
             }
         }
 
-        HashMap<String, DateTime> dateFromWeekAndYear = Utils.getDateFromWeekAndYear(sessionsForThisWeek.get(0).getDateOfSession());
+        mDateFromWeekAndYear = Utils.getDateFromWeekAndYear(sessionsForThisWeek.get(0).getDateOfSession());
 
         // Weekday group header - format will be "Wednesday~12", this will be split on ~ in the Adapter
-        mListDataHeader.add(getFormattedGroupHeaderLabel(getString(R.string.wk_mon), dateFromWeekAndYear.get(DateTimeConstants.MONDAY + "")));
-        mListDataHeader.add(getFormattedGroupHeaderLabel(getString(R.string.wk_tue), dateFromWeekAndYear.get(DateTimeConstants.TUESDAY + "")));
-        mListDataHeader.add(getFormattedGroupHeaderLabel(getString(R.string.wk_wed), dateFromWeekAndYear.get(DateTimeConstants.WEDNESDAY + "")));
-        mListDataHeader.add(getFormattedGroupHeaderLabel(getString(R.string.wk_thu), dateFromWeekAndYear.get(DateTimeConstants.THURSDAY + "")));
-        mListDataHeader.add(getFormattedGroupHeaderLabel(getString(R.string.wk_fri), dateFromWeekAndYear.get(DateTimeConstants.FRIDAY + "")));
-        mListDataHeader.add(getFormattedGroupHeaderLabel(getString(R.string.wk_sat), dateFromWeekAndYear.get(DateTimeConstants.SATURDAY + "")));
-        mListDataHeader.add(getFormattedGroupHeaderLabel(getString(R.string.wk_sun), dateFromWeekAndYear.get(DateTimeConstants.SUNDAY + "")));
+        mListDataHeader.add(getFormattedGroupHeaderLabel(getString(R.string.wk_mon), mDateFromWeekAndYear.get(DateTimeConstants.MONDAY + "")));
+        mListDataHeader.add(getFormattedGroupHeaderLabel(getString(R.string.wk_tue), mDateFromWeekAndYear.get(DateTimeConstants.TUESDAY + "")));
+        mListDataHeader.add(getFormattedGroupHeaderLabel(getString(R.string.wk_wed), mDateFromWeekAndYear.get(DateTimeConstants.WEDNESDAY + "")));
+        mListDataHeader.add(getFormattedGroupHeaderLabel(getString(R.string.wk_thu), mDateFromWeekAndYear.get(DateTimeConstants.THURSDAY + "")));
+        mListDataHeader.add(getFormattedGroupHeaderLabel(getString(R.string.wk_fri), mDateFromWeekAndYear.get(DateTimeConstants.FRIDAY + "")));
+        mListDataHeader.add(getFormattedGroupHeaderLabel(getString(R.string.wk_sat), mDateFromWeekAndYear.get(DateTimeConstants.SATURDAY + "")));
+        mListDataHeader.add(getFormattedGroupHeaderLabel(getString(R.string.wk_sun), mDateFromWeekAndYear.get(DateTimeConstants.SUNDAY + "")));
 
 
-        mListDataChild.put(mListDataHeader.get(0), getSessionForDay(monSessions)); // Header, Child data
-        mListDataChild.put(mListDataHeader.get(1), getSessionForDay(tueSessions));
-        mListDataChild.put(mListDataHeader.get(2), getSessionForDay(wedSessions));
-        mListDataChild.put(mListDataHeader.get(3), getSessionForDay(thuSessions));
-        mListDataChild.put(mListDataHeader.get(4), getSessionForDay(friSessions));
-        mListDataChild.put(mListDataHeader.get(5), getSessionForDay(satSessions));
-        mListDataChild.put(mListDataHeader.get(6), getSessionForDay(sunSessions));
+        mListDataChild.put(mListDataHeader.get(0), getSessionForDay(monSessions, DateTimeConstants.MONDAY)); // Header, Child data
+        mListDataChild.put(mListDataHeader.get(1), getSessionForDay(tueSessions, DateTimeConstants.TUESDAY));
+        mListDataChild.put(mListDataHeader.get(2), getSessionForDay(wedSessions, DateTimeConstants.WEDNESDAY));
+        mListDataChild.put(mListDataHeader.get(3), getSessionForDay(thuSessions, DateTimeConstants.THURSDAY));
+        mListDataChild.put(mListDataHeader.get(4), getSessionForDay(friSessions, DateTimeConstants.FRIDAY));
+        mListDataChild.put(mListDataHeader.get(5), getSessionForDay(satSessions, DateTimeConstants.SATURDAY));
+        mListDataChild.put(mListDataHeader.get(6), getSessionForDay(sunSessions, DateTimeConstants.SUNDAY));
         dataSource.close();
     }
 
-    List<Session> getSessionForDay(List<Session> sessions)
+    List<Session> getSessionForDay(List<Session> sessions, int dayOfWeek)
     {
         if (sessions.size() == 0) //insert a placeholder session if there are no sessions for the day
-            sessions.add(new Session(Session.State.PLANNED, "NO_SESSIONS_YET", "NO_SESSIONS_YET", 99, Utils.getDateOffsetByNDays(0)));
+            sessions.add(new Session(Session.State.PLANNED, "NO_SESSIONS_YET", "NO_SESSIONS_YET", 99, mDateFromWeekAndYear.get(dayOfWeek + "")));
 
         return sessions;
     }
