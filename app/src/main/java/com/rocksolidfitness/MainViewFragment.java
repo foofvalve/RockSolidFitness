@@ -170,7 +170,7 @@ public class MainViewFragment extends Fragment
     List<Session> getSessionForDay(List<Session> sessions, int dayOfWeek)
     {
         if (sessions.size() == 0) //insert a placeholder session if there are no sessions for the day
-            sessions.add(new Session(Session.State.PLANNED, "NO_SESSIONS_YET", "NO_SESSIONS_YET", 99, mDateFromWeekAndYear.get(dayOfWeek + "")));
+            sessions.add(new Session(Session.State.PLANNED, Consts.NO_SESSIONS_YET, Consts.NO_SESSIONS_YET, 99, mDateFromWeekAndYear.get(dayOfWeek + "")));
 
         return sessions;
     }

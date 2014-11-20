@@ -216,7 +216,7 @@ class ExpandableListAdapter extends BaseExpandableListAdapter
         LayoutInflater inflater = (LayoutInflater) this.mContext
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-        if (sessionDetail.description.equals("NO_SESSIONS_YET"))
+        if (sessionDetail.description.equals(Consts.NO_SESSIONS_YET))
         {
             convertView = inflater.inflate(R.layout.list_no_session, null);
             Button addSession = (Button) convertView.findViewById(R.id.btnAddSession);
@@ -231,7 +231,8 @@ class ExpandableListAdapter extends BaseExpandableListAdapter
 
             DragEventListener dragListenerNoSession = new DragEventListener();
             convertView.setOnDragListener(dragListenerNoSession);
-            convertView.setTag(groupie + "-" + sessionDetail.id + "-" + sessionDetail.getDateOfSession().getMillis());
+            ViewTag vTagNoSess = new ViewTag(groupPosition, childPosition, isLastChild, sessionDetail);
+            convertView.setTag(vTagNoSess);
 
             return convertView;
         } else
@@ -336,7 +337,8 @@ class ExpandableListAdapter extends BaseExpandableListAdapter
 
         DragEventListener mDragListen = new DragEventListener();
         convertView.setOnDragListener(mDragListen);
-        convertView.setTag(groupie + "-" + sessionDetail.id + "-" + sessionDetail.getDateOfSession().getMillis());
+        ViewTag vTag = new ViewTag(groupPosition, childPosition, isLastChild, sessionDetail);
+        convertView.setTag(vTag);
 
         return convertView;
     }
@@ -393,10 +395,10 @@ class ExpandableListAdapter extends BaseExpandableListAdapter
                     ClipData.Item item = event.getClipData().getItemAt(0);
 
                     Log.d("", "drag data is (from): \t\t" + item.getText());
-                    Log.d("", "view tag is (to): \t\t" + v.getTag().toString());
+                    ViewTag viewTag = (ViewTag) v.getTag();
 
                     long fromDate = Long.parseLong(item.getText().toString().split("-")[2]);
-                    long toDate = Long.parseLong(v.getTag().toString().split("-")[2]);
+                    long toDate = viewTag.getDateOfSessionInMillis();
 
                     if (fromDate == toDate)
                         return true; //do nothing when drag+dropping onto the same zone
@@ -406,18 +408,18 @@ class ExpandableListAdapter extends BaseExpandableListAdapter
                         Session sessionForReschedule = dataSource.getSessionById(idOfSessionReschedule);
 
                         //move the session within the adapter
-                        int oldOriginalGroupPosition = Integer.parseInt(item.getText().toString().split("-")[0]);
-                        int targetGroupPosition = Integer.parseInt(v.getTag().toString().split("-")[0]);
-                        mListDataChild.get(getGroup(oldOriginalGroupPosition)).remove(sessionForReschedule);
+                        int targetGroupPosition = viewTag.groupPosition;
+                        if (viewTag.isPlaceHolder())
+                            mListDataChild.get(getGroup(viewTag.groupPosition)).remove(viewTag.childPosition);
 
                         DateTime sessionNewDate = new DateTime(toDate);
                         sessionForReschedule.setDateOfSession(sessionNewDate);
                         removeSessionFromAdaptor(sessionForReschedule);
-
                         mListDataChild.get(getGroup(targetGroupPosition)).add(sessionForReschedule);
 
                         //update the db Record
                         dataSource.updateSession(sessionForReschedule);
+                        //reinstate "No Session?" placeholder if item is the only item in group
                         notifyDataSetChanged();
                         Log.d("", "Updated Session(date of session) via drag and drop");
                     }
