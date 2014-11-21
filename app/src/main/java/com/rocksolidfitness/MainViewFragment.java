@@ -61,7 +61,7 @@ public class MainViewFragment extends Fragment
 
                 mListAdapter.notifyDataSetChanged();
                 mExpListView.invalidate();
-                autoExpandToday();
+                autoExpandAll();
             }
         });
 
@@ -78,7 +78,7 @@ public class MainViewFragment extends Fragment
 
                 mListAdapter.notifyDataSetChanged();
                 mExpListView.invalidate();
-                autoExpandToday();
+                autoExpandAll();
             }
         });
 
@@ -104,6 +104,13 @@ public class MainViewFragment extends Fragment
         sliderMonthName.setText(mDashboardDate.monthOfYear().getAsText() + " " + mDashboardDate.getYear());
     }
 
+
+    void autoExpandAll()
+    {
+        int count = mListAdapter.getGroupCount();
+        for (int position = count; position != 0; position--)  //go backwards to force scroll to top
+            mExpListView.expandGroup(position - 1, true);
+    }
 
     void autoExpandToday()
     {
@@ -147,37 +154,43 @@ public class MainViewFragment extends Fragment
             sessionsForDisplay = dataSource.getAllSessionsBasedOnDate(mDashboardDate);
         }
 
-        for (Session sport : sessionsForDisplay)
+        if (sessionsForDisplay == null || sessionsForDisplay.size() == 0) //no session data found for the given week
         {
-            DateTime.Property pDoW = sport.getDateOfSession().dayOfWeek();
-
-            switch (pDoW.get())
+            mDateFromWeekAndYear = Utils.getDateFromWeekAndYear(mDashboardDate);
+        } else
+        {
+            for (Session sport : sessionsForDisplay)
             {
-                case 1:
-                    monSessions.add(sport);
-                    break;
-                case 2:
-                    tueSessions.add(sport);
-                    break;
-                case 3:
-                    wedSessions.add(sport);
-                    break;
-                case 4:
-                    thuSessions.add(sport);
-                    break;
-                case 5:
-                    friSessions.add(sport);
-                    break;
-                case 6:
-                    satSessions.add(sport);
-                    break;
-                case 7:
-                    sunSessions.add(sport);
-                    break;
+                DateTime.Property pDoW = sport.getDateOfSession().dayOfWeek();
+
+                switch (pDoW.get())
+                {
+                    case 1:
+                        monSessions.add(sport);
+                        break;
+                    case 2:
+                        tueSessions.add(sport);
+                        break;
+                    case 3:
+                        wedSessions.add(sport);
+                        break;
+                    case 4:
+                        thuSessions.add(sport);
+                        break;
+                    case 5:
+                        friSessions.add(sport);
+                        break;
+                    case 6:
+                        satSessions.add(sport);
+                        break;
+                    case 7:
+                        sunSessions.add(sport);
+                        break;
+                }
             }
+            mDateFromWeekAndYear = Utils.getDateFromWeekAndYear(sessionsForDisplay.get(0).getDateOfSession());
         }
 
-        mDateFromWeekAndYear = Utils.getDateFromWeekAndYear(sessionsForDisplay.get(0).getDateOfSession());
 
         // Weekday group header - format will be "Wednesday~12", this will be split on ~ in the Adapter
         mListDataHeader.add(getFormattedGroupHeaderLabel(getString(R.string.wk_mon), mDateFromWeekAndYear.get(DateTimeConstants.MONDAY + "")));

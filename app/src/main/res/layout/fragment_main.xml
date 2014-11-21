@@ -80,7 +80,8 @@
         android:layout_below="@+id/sessionSlider"
         android:layout_weight="1"
         android:divider="@android:color/darker_gray"
-        android:dividerHeight="5sp"/>
+        android:dividerHeight="5sp"
+        android:transcriptMode="disabled"/>
 
 
 </RelativeLayout>

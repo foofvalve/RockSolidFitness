@@ -211,7 +211,7 @@ class ExpandableListAdapter extends BaseExpandableListAdapter
      * @return the View corresponding to the child at the specified position
      */
     @Override
-    public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, final ViewGroup parent)
+    public View getChildView(int groupPosition, int childPosition, final boolean isLastChild, View convertView, final ViewGroup parent)
     {
         final Session sessionDetail = (Session) getChild(groupPosition, childPosition);
         final int groupie = groupPosition;
@@ -229,7 +229,7 @@ class ExpandableListAdapter extends BaseExpandableListAdapter
                 public void onClick(View v)
                 {
                     mVibrator.vibrate(Consts.VIBRATE_DURATION);
-                    Toast.makeText(mContext, "Add session button clicked", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(mContext, "Add session " + sessionDetail.getDateOfSession().toLocalDateTime(), Toast.LENGTH_SHORT).show();
                 }
             });
 
@@ -290,7 +290,10 @@ class ExpandableListAdapter extends BaseExpandableListAdapter
                                 mVibrator.vibrate(Consts.VIBRATE_DURATION);
                                 dataSource.deleteSession(sessionDetail);
                                 mListDataChild.get(getGroup(groupie)).remove(sessionDetail);
+                                if (isLastChild)
+                                    addPlaceholderSession(groupie, sessionDetail.getDateOfSession());
                                 notifyDataSetChanged();
+
                                 Toast.makeText(mContext, mContext.getString(R.string.toast_session_deleted), Toast.LENGTH_SHORT).show();
                             }
                         })
@@ -334,7 +337,7 @@ class ExpandableListAdapter extends BaseExpandableListAdapter
             public boolean onLongClick(View v)
             {
                 ClipData dragData = ClipData.newPlainText("Session long clicked invoked by:",
-                        groupie + "-" + sessionDetail.id + "-" + sessionDetail.getDateOfSession().getMillis());
+                        groupie + "-" + sessionDetail.id + "-" + sessionDetail.getDateOfSession().getMillis() + "-" + isLastChild);
 
                 View.DragShadowBuilder dragShadow = new View.DragShadowBuilder(v);
                 v.startDrag(dragData, dragShadow, null, 0);
@@ -356,19 +359,22 @@ class ExpandableListAdapter extends BaseExpandableListAdapter
         {
             if (mListDataChild.get(getGroup(j)).size() > 0)
             {
-                Log.i("Blahs", "asdfas size of group" + j + " = " + mListDataChild.get(getGroup(j)).size());
                 List<Session> groupedSessionForDay = mListDataChild.get(getGroup(j));
                 for (int i = 0; i < groupedSessionForDay.size(); i++)
                     if (groupedSessionForDay.get(i) != null)
-                    {
-                        Log.i("Blahs", "id found=" + groupedSessionForDay.get(i).id + " looking for = " + session.id);
                         if (groupedSessionForDay.get(i).id == session.id)
                             groupedSessionForDay.remove(i);
-                    }
+
             }
         }
 
         notifyDataSetChanged();
+    }
+
+    void addPlaceholderSession(int groupPosition, DateTime dateOfSession)
+    {
+        Session placeHolderSession = new Session(Session.State.PLANNED, Consts.NO_SESSIONS_YET, Consts.NO_SESSIONS_YET, 99, dateOfSession);
+        mListDataChild.get(getGroup(groupPosition)).add(placeHolderSession);
     }
 
     protected class DragEventListener implements View.OnDragListener
@@ -400,33 +406,35 @@ class ExpandableListAdapter extends BaseExpandableListAdapter
 
                 case DragEvent.ACTION_DROP:
                     ClipData.Item item = event.getClipData().getItemAt(0);
-
-                    Log.d("", "drag data is (from): \t\t" + item.getText());
                     ViewTag viewTag = (ViewTag) v.getTag();
 
-                    long fromDate = Long.parseLong(item.getText().toString().split("-")[2]);
+                    int originatorGroupPosition = Integer.parseInt(item.getText().toString().split("-")[0]);
+                    long originatorSessionId = Long.parseLong(item.getText().toString().split("-")[1]);
+                    long originiatorFromDate = Long.parseLong(item.getText().toString().split("-")[2]);
+                    boolean originatorIsLastChild = item.getText().toString().split("-")[3].equals("true");
                     long toDate = viewTag.getDateOfSessionInMillis();
 
-                    if (fromDate == toDate)
+                    if (originiatorFromDate == toDate)
                         return true; //do nothing when drag+dropping onto the same zone
                     else
-                    {
-                        long idOfSessionReschedule = Long.parseLong(item.getText().toString().split("-")[1]);
-                        Session sessionForReschedule = dataSource.getSessionById(idOfSessionReschedule);
+                    {   //get session from db and update its session date
+                        Session sessionForReschedule = dataSource.getSessionById(originatorSessionId);
+                        DateTime sessionNewDate = new DateTime(toDate);
+                        sessionForReschedule.setDateOfSession(sessionNewDate);
 
                         //move the session within the adapter
                         int targetGroupPosition = viewTag.groupPosition;
                         if (viewTag.isPlaceHolder())
                             mListDataChild.get(getGroup(viewTag.groupPosition)).remove(viewTag.childPosition);
 
-                        DateTime sessionNewDate = new DateTime(toDate);
-                        sessionForReschedule.setDateOfSession(sessionNewDate);
+
                         removeSessionFromAdaptor(sessionForReschedule);
                         mListDataChild.get(getGroup(targetGroupPosition)).add(sessionForReschedule);
 
-                        //update the db Record
-                        dataSource.updateSession(sessionForReschedule);
-                        //reinstate "No Session?" placeholder if item is the only item in group
+                        if (originatorIsLastChild)
+                            addPlaceholderSession(originatorGroupPosition, new DateTime(originiatorFromDate)); //reinstate "No Session?" placeholder if item is the only item in group
+
+                        dataSource.updateSession(sessionForReschedule); //update the db Record
                         notifyDataSetChanged();
                         Log.d("", "Updated Session(date of session) via drag and drop");
                     }
