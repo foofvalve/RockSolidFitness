@@ -27,6 +27,7 @@ class DbHelper extends SQLiteOpenHelper
             SessionColumns.DATE_CREATED + " datetime default null," +
             SessionColumns.DATE_MODIFIED + " datetime default null," +
             SessionColumns.SESSION_WEEK + " int not null," +
+            SessionColumns.UOM + " text," +
             SessionColumns.SESSION_YEAR + " int not null);";
     public static final String TABLE_SPORTS = "sports";
     private static final String DATABASE_CREATE_SPORT_TABLE = "create table if not exists "
@@ -36,7 +37,7 @@ class DbHelper extends SQLiteOpenHelper
     //TODO: translate this string
     private static final String DATABASE_INSERT_SPORTS =
             "insert into " + TABLE_SPORTS + " (" + SportColumns.SPORT + ") values ";
-    private static final int DATABASE_VERSION = 8;
+    private static final int DATABASE_VERSION = 9;
     private static final String DATABASE_NAME = "sessions.db";
     private static String[] mSports;
 

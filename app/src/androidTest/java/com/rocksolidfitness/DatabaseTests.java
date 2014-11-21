@@ -10,6 +10,7 @@ import org.joda.time.DateTimeConstants;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 
 public class DatabaseTests extends AndroidTestCase
 {
@@ -19,7 +20,7 @@ public class DatabaseTests extends AndroidTestCase
 
     public void setUp()
     {
-        context = new RenamingDelegatingContext(getContext(), "test_v2_");
+        context = new RenamingDelegatingContext(getContext(), "test_v3_");
         dataSource = new SessionsDataSource(context);
         dataSource.open();
     }
@@ -42,7 +43,7 @@ public class DatabaseTests extends AndroidTestCase
         savedSession.description = "Long Ride";
         savedSession.setDateOfSession(Utils.getNextDay());
         savedSession.duration = 122;
-        savedSession.distance = 15;
+        savedSession.setDistance(context, 15);
         savedSession.notes = "Lorem Ipsum is simply's dummy, text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typeset";
         savedSession.avgHrRate = 78;
         savedSession.location = "Brisbane";
@@ -61,7 +62,7 @@ public class DatabaseTests extends AndroidTestCase
         assertTrue(savedSession.getDateOfSession().getDayOfMonth() == updatedSession.getDateOfSession().getDayOfMonth());
         assertTrue(savedSession.getDateOfSession().getYear() == updatedSession.getDateOfSession().getYear());
         assertTrue(savedSession.duration == updatedSession.duration);
-        assertTrue(savedSession.distance == updatedSession.distance);
+        assertTrue(savedSession.getDistance() == updatedSession.getDistance());
         assertTrue(savedSession.notes.equals(updatedSession.notes));
         assertTrue(savedSession.avgHrRate == updatedSession.avgHrRate);
         assertTrue(savedSession.location.equals(updatedSession.location));
@@ -71,6 +72,7 @@ public class DatabaseTests extends AndroidTestCase
         assertTrue(savedSession.trainingWeek == updatedSession.trainingWeek);
         assertTrue(savedSession.getSessionWeek() == updatedSession.getSessionWeek());
         assertTrue(savedSession.getSessionYear() == updatedSession.getSessionYear());
+        assertTrue(savedSession.getUomAsString().equals("KM"));
 
         //Delete
         dataSource.deleteSession(updatedSession);
@@ -139,6 +141,12 @@ public class DatabaseTests extends AndroidTestCase
         List<Session> sessionsForThisWeek = dataSource.getAllSessionsForCurrentWeek();
         for (Session sport : sessionsForThisWeek)
             Log.d(TAG, sport.toString());
+    }
+
+    public void testMeh2()
+    {
+
+        Log.d(TAG, Locale.getDefault().getCountry());
     }
 
     public void testSessionFormatter()

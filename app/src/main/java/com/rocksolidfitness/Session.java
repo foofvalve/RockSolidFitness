@@ -1,6 +1,7 @@
 package com.rocksolidfitness;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 
 import org.joda.time.DateTime;
@@ -17,7 +18,6 @@ public final class Session
     public String sport;
     public String description;
     public int duration;
-    public double distance;
     public String notes;
     public int avgHrRate;
     public String location;
@@ -27,9 +27,11 @@ public final class Session
     public int trainingWeek;   //http://en.wikipedia.org/wiki/ISO_week_date
     public DateTime dateCreated;
     public DateTime dateModified;
+    private double distance;
     private DateTime dateOfSession;
     private int sessionWeek;
     private int sessionYear;
+    private UOM uom;
 
     public Session()
     {
@@ -121,15 +123,44 @@ public final class Session
                         "dateCreated=[{14}]|" +
                         "dateModified=[{15}]|" +
                         "sessionWeek=[{16}]|" +
-                        "sessionYear=[{17}]\n",
-                id, sessionState, sport, description, dateOfSession, duration, distance,
+                        "sessionYear=[{17}]|" +
+                        "uom=[{17}]\n",
+                id, sessionState, sport, description, dateOfSession, duration, getDistance(),
                 notes, avgHrRate, location, caloriesBurnt, weight, raceName, trainingWeek,
-                dateCreated, dateModified, sessionWeek, sessionYear);
+                dateCreated, dateModified, sessionWeek, sessionYear, getUomAsString());
 
+    }
+
+    public double getDistance()
+    {
+        return distance;
+    }
+
+    public void setDistance(Context context, double distance)
+    {
+        this.distance = distance;
+        if (distance != 0)
+        {
+            SharedPreferences settings = context.getSharedPreferences(Consts.PREFS_NAME, 0);
+            this.uom = UOM.valueOf(settings.getString("uom", "KM"));
+        }
+    }
+
+    public String getUomAsString()
+    {
+        if (uom == null)
+            return "";
+        else
+            return uom.name();
     }
 
     public enum State
     {
         PLANNED, COMPLETE, SKIPPED
+    }
+
+    public enum UOM
+    {
+        KM, MILES
     }
 }

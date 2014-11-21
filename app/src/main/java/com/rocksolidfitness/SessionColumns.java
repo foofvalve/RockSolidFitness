@@ -23,6 +23,7 @@ class SessionColumns implements BaseColumns
     public static final String DATE_MODIFIED = "datemodified";
     public static final String SESSION_WEEK = "sessionweek";
     public static final String SESSION_YEAR = "sessionyear";
+    public static final String UOM = "uom";
 
     public static final String[] allColumns = {
             SESSION_ID,
@@ -42,7 +43,8 @@ class SessionColumns implements BaseColumns
             DATE_CREATED,
             DATE_MODIFIED,
             SESSION_WEEK,
-            SESSION_YEAR
+            SESSION_YEAR,
+            UOM
     };
 
     public static final int SESSION_ID_INDEX = 0;
@@ -65,5 +67,6 @@ class SessionColumns implements BaseColumns
     //not required, set dynamically by Session.setDateOfSession()
     //public static final int SESSION_SESSION_WEEK_INDEX = 16;
     //public static final int SESSION_SESSION_YEAR_INDEX = 17;
+    public static final int SESSION_UOM_INDEX = 18;
 }
 

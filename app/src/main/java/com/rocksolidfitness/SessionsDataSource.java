@@ -16,12 +16,14 @@ import java.util.List;
 class SessionsDataSource
 {
     private final DbHelper mDbHelper;
+    Context mContext;
     // Database fields
     private SQLiteDatabase mDatabase;
 
     public SessionsDataSource(Context context)
     {
         mDbHelper = new DbHelper(context);
+        mContext = context;
     }
 
     public void open() throws SQLException
@@ -48,7 +50,7 @@ class SessionsDataSource
         values.put(SessionColumns.DESCRIPTION, session.description);
         values.put(SessionColumns.DATE_OF_SESSION, Utils.convertDateToSQLiteCompliant(session.getDateOfSession()));
         values.put(SessionColumns.DURATION, session.duration);
-        values.put(SessionColumns.DISTANCE, session.distance);
+        values.put(SessionColumns.DISTANCE, session.getDistance());
         values.put(SessionColumns.NOTES, session.notes);
         values.put(SessionColumns.AVG_HR_RATE, session.avgHrRate);
         values.put(SessionColumns.LOCATION, session.location);
@@ -57,8 +59,9 @@ class SessionsDataSource
         values.put(SessionColumns.RACE_NAME, session.raceName);
         values.put(SessionColumns.TRAINING_WEEK, session.trainingWeek);
         values.put(SessionColumns.DATE_CREATED, Utils.getTodayDatesSQLiteCompliant());
-        values.put(SessionColumns.SESSION_WEEK, session.getSessionWeek());//TOOD: Joda this
-        values.put(SessionColumns.SESSION_YEAR, session.getSessionYear());//TOOD: Joda this
+        values.put(SessionColumns.SESSION_WEEK, session.getSessionWeek());
+        values.put(SessionColumns.SESSION_YEAR, session.getSessionYear());
+        values.put(SessionColumns.UOM, session.getUomAsString());
 
         return mDatabase.insert(DbHelper.TABLE_SESSIONS, null, values);
     }
@@ -72,7 +75,7 @@ class SessionsDataSource
         values.put(SessionColumns.DESCRIPTION, session.description);
         values.put(SessionColumns.DATE_OF_SESSION, Utils.convertDateToSQLiteCompliant(session.getDateOfSession()));
         values.put(SessionColumns.DURATION, session.duration);
-        values.put(SessionColumns.DISTANCE, session.distance);
+        values.put(SessionColumns.DISTANCE, session.getDistance());
         values.put(SessionColumns.NOTES, session.notes);
         values.put(SessionColumns.AVG_HR_RATE, session.avgHrRate);
         values.put(SessionColumns.LOCATION, session.location);
@@ -81,8 +84,9 @@ class SessionsDataSource
         values.put(SessionColumns.RACE_NAME, session.raceName);
         values.put(SessionColumns.TRAINING_WEEK, session.trainingWeek);
         values.put(SessionColumns.DATE_MODIFIED, Utils.getTodayDatesSQLiteCompliant());
-        values.put(SessionColumns.SESSION_WEEK, session.getSessionWeek());//TOOD: Joda this
-        values.put(SessionColumns.SESSION_YEAR, session.getSessionYear());//TOOD: Joda this
+        values.put(SessionColumns.SESSION_WEEK, session.getSessionWeek());
+        values.put(SessionColumns.SESSION_YEAR, session.getSessionYear());
+        values.put(SessionColumns.UOM, session.getUomAsString());
 
         return mDatabase.update(DbHelper.TABLE_SESSIONS, values, "_id = ?", new String[]{"" + session.id});
     }
@@ -207,7 +211,7 @@ class SessionsDataSource
         String rawDateTime = cursor.getString(SessionColumns.SESSION_DATE_OF_SESSION_INDEX);
         session.setDateOfSession(Utils.convertSQLiteDate(rawDateTime));
         session.duration = cursor.getInt(SessionColumns.SESSION_DURATION_INDEX);
-        session.distance = cursor.getDouble(SessionColumns.SESSION_DISTANCE_INDEX);
+        session.setDistance(mContext, cursor.getDouble(SessionColumns.SESSION_DISTANCE_INDEX));
         session.notes = cursor.getString(SessionColumns.SESSION_NOTES_INDEX);
         session.avgHrRate = cursor.getInt(SessionColumns.SESSION_AVG_HR_RATE_INDEX);
         session.location = cursor.getString(SessionColumns.SESSION_LOCATION_INDEX);

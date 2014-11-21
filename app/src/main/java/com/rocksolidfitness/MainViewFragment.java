@@ -2,6 +2,7 @@ package com.rocksolidfitness;
 
 
 import android.app.Fragment;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -36,6 +37,8 @@ public class MainViewFragment extends Fragment
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState)
     {
+        SharedPreferences settings = getActivity().getSharedPreferences(Consts.PREFS_NAME, 0);
+        settings.getString("uom", "KM");
 
         SessionsDataSource dataSource = new SessionsDataSource(getActivity());
         dataSource.open();
