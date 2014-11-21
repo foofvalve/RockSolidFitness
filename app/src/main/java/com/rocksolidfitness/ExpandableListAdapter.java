@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.content.ClipData;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Vibrator;
@@ -240,6 +241,8 @@ class ExpandableListAdapter extends BaseExpandableListAdapter
                 {
                     mVibrator.vibrate(Consts.VIBRATE_DURATION);
                     Toast.makeText(mContext, "Add session " + sessionDetail.getDateOfSession().toLocalDateTime(), Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(mContext, SessionDetail.class);
+                    mContext.startActivity(intent);
                 }
             });
 
