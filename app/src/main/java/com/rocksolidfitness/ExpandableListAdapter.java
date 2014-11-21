@@ -24,6 +24,7 @@ import org.joda.time.DateTime;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 class ExpandableListAdapter extends BaseExpandableListAdapter
 {
@@ -31,6 +32,7 @@ class ExpandableListAdapter extends BaseExpandableListAdapter
     private final List<String> mListDataHeader;
     HashMap<String, List<Session>> mListDataChild;
     SessionsDataSource dataSource;
+    Map<String, Integer> mImageMap;
     private Vibrator mVibrator;
 
     public ExpandableListAdapter(Context context, List<String> listDataHeader,
@@ -41,7 +43,15 @@ class ExpandableListAdapter extends BaseExpandableListAdapter
         mListDataChild = listChildData;
         dataSource = new SessionsDataSource(mContext);
         dataSource.open();
+        initImageMap();
         mVibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
+    }
+
+    void initImageMap()
+    {
+        mImageMap = new HashMap<String, Integer>();
+        mImageMap.put("Cycling", R.drawable.ic_cycling);
+        mImageMap.put("Default", R.drawable.ic_running);
     }
 
     /**
@@ -250,6 +260,12 @@ class ExpandableListAdapter extends BaseExpandableListAdapter
         txtSport.setText(sessionDetail.sport);
         txtDesc.setText(sessionDetail.description);
         txtDuration.setText(sessionDetail.getFormattedDuration(mContext));
+
+        ImageView imgSport = (ImageView) convertView.findViewById(R.id.imgSport);
+        if (mImageMap.containsKey(sessionDetail.sport))
+            imgSport.setImageResource(mImageMap.get(sessionDetail.sport));
+        else
+            imgSport.setImageResource(mImageMap.get("Default"));
 
         boolean isSessionComplete = sessionDetail.sessionState == Session.State.COMPLETE;
         final ImageView sessionComplete = (ImageView) convertView.findViewById(R.id.imgDone);

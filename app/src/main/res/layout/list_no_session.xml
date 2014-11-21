@@ -21,11 +21,12 @@
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
         android:layout_centerVertical="true"
+        android:layout_marginLeft="23dp"
+        android:layout_toEndOf="@+id/imgNoSession"
+        android:layout_toRightOf="@+id/imgNoSession"
         android:text="No Session?"
-        android:textAppearance="?android:attr/textAppearanceLarge"/>
+        android:textAppearance="?android:attr/textAppearanceSmall"/>
 
     <Button
         android:id="@+id/btnAddSession"
@@ -35,4 +36,14 @@
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
         android:text="Add Session"/>
+
+    <ImageView
+        android:id="@+id/imgNoSession"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignTop="@+id/btnAddSession"
+        android:layout_marginLeft="6dp"
+        android:src="@drawable/ic_no_session"/>
 </RelativeLayout>
