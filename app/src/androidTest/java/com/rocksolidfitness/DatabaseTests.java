@@ -8,13 +8,14 @@ import android.util.Log;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeConstants;
 
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
 public class DatabaseTests extends AndroidTestCase
 {
-    private final String TAG = "UnitTest";
+    private final String TAG = "com.rocksolidfitness";
     private RenamingDelegatingContext context;
     private SessionsDataSource dataSource;
 
@@ -147,6 +148,14 @@ public class DatabaseTests extends AndroidTestCase
     {
 
         Log.d(TAG, Locale.getDefault().getCountry());
+        Calendar c = Calendar.getInstance();
+        int year = c.get(Calendar.YEAR);
+        int month = c.get(Calendar.MONTH);
+        int day = c.get(Calendar.DAY_OF_MONTH);
+        Log.d(TAG, day + "-" + month + "-" + year);
+
+        DateTime dte = new DateTime();
+        Log.d(TAG, dte.dayOfMonth().get() + "-" + dte.getMonthOfYear() + "-" + dte.getYear());
     }
 
     public void testSessionFormatter()

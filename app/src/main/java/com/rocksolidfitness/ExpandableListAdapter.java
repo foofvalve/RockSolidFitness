@@ -241,7 +241,7 @@ class ExpandableListAdapter extends BaseExpandableListAdapter
                 {
                     mVibrator.vibrate(Consts.VIBRATE_DURATION);
                     Toast.makeText(mContext, "Add session " + sessionDetail.getDateOfSession().toLocalDateTime(), Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent(mContext, SessionDetail.class);
+                    Intent intent = new Intent(mContext, SessionDetails.class);
                     mContext.startActivity(intent);
                 }
             });
