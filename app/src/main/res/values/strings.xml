@@ -54,4 +54,6 @@
     <string name="title_activity_session_detail">SessionDetail</string>
     <string name="hello_world">Hello world!</string>
 
+    <string name="prompt_select_sport">Select Sport:</string>
+
 </resources>

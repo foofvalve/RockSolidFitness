@@ -20,7 +20,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.rocksolidfitness.SessionDetail"
+            android:name="com.rocksolidfitness.SessionDetails"
             android:label="@string/title_activity_session_detail">
         </activity>
     </application>
