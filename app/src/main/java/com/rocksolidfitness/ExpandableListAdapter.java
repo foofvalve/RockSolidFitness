@@ -3,10 +3,10 @@ package com.rocksolidfitness;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.FragmentTransaction;
 import android.content.ClipData;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Vibrator;
@@ -240,11 +240,15 @@ class ExpandableListAdapter extends BaseExpandableListAdapter
                     mVibrator.vibrate(Consts.VIBRATE_DURATION);
                     Toast.makeText(mContext, "Add session " + sessionDetail.getDateOfSession().toLocalDateTime(), Toast.LENGTH_SHORT).show();
 
+                    Intent intent = new Intent(mContext, SessionDetails.class);
+                    ((Activity) mContext).startActivityForResult(intent, 1);
+                    /*
                     SessionDetails sessionDetailsFrag = new SessionDetails();
                     FragmentTransaction transaction = ((Activity) mContext).getFragmentManager().beginTransaction();
                     transaction.addToBackStack(null);
                     transaction.add(R.id.container, sessionDetailsFrag);
                     transaction.commit();
+                    */
                 }
             });
 

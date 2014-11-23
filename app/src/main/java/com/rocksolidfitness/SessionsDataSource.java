@@ -199,6 +199,17 @@ class SessionsDataSource
         return sports;
     }
 
+    public List<String> getSportsForSpinner()
+    {
+        List<String> sportsList = new ArrayList<String>();
+        sportsList.add("Select Sport");
+        sportsList.add("-- Add New --");
+        for (String sport : getSports())
+            sportsList.add(sport);
+
+        return sportsList;
+    }
+
 
     private Session cursorToSession(Cursor cursor)
     {
