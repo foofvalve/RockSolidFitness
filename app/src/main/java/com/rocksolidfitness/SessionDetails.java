@@ -1,9 +1,11 @@
 package com.rocksolidfitness;
 
+import android.app.Fragment;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.app.FragmentActivity;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -14,9 +16,10 @@ import org.joda.time.format.DateTimeFormatter;
 /**
  * Created by Ryan on 22/11/2014.
  */
-public class SessionDetails extends FragmentActivity implements DatePickerFragment.OnCompleteListener
+public class SessionDetails extends Fragment implements DatePickerFragment.OnCompleteListener
 {
-    Button mSetDateOfSession;
+    Button mBtnSetDateOfSession;
+    Button mBtnCancelSessionEdit;
     TextView tvDateOfSession;
     DateTime mSessionDate;
 
@@ -25,19 +28,37 @@ public class SessionDetails extends FragmentActivity implements DatePickerFragme
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState)
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_session_detail);
-        mSetDateOfSession = (Button) findViewById(R.id.btnSetSessDate);
-        tvDateOfSession = (TextView) findViewById(R.id.textViewDateOfSession);
+
+        View rootView = inflater.inflate(R.layout.activity_session_detail, container, false);
+
+        mBtnSetDateOfSession = (Button) rootView.findViewById(R.id.btnSetSessDate);
+        tvDateOfSession = (TextView) rootView.findViewById(R.id.textViewDateOfSession);
+        mBtnCancelSessionEdit = (Button) rootView.findViewById(R.id.btnCancelSessionDetail);
         addSessDateButtonListener();
+        addCloseButtonListner();
+
+        return rootView;
     }
 
+    void addCloseButtonListner()
+    {
+        mBtnCancelSessionEdit.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                getFragmentManager().popBackStack();
+            }
+        });
+    }
 
     void addSessDateButtonListener()
     {
-        mSetDateOfSession.setOnClickListener(new View.OnClickListener()
+        mBtnSetDateOfSession.setOnClickListener(new View.OnClickListener()
         {
             @Override
             public void onClick(View v)
@@ -55,7 +76,7 @@ public class SessionDetails extends FragmentActivity implements DatePickerFragme
                 }
 
                 datePickerFragment.setArguments(bundle);
-                datePickerFragment.show(getSupportFragmentManager(), "datePicker");
+                //datePickerFragment.show(getFragmentManager(), "datePicker");
             }
         });
     }

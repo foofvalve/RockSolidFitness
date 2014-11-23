@@ -1,11 +1,12 @@
 package com.rocksolidfitness;
 
 
+import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.FragmentTransaction;
 import android.content.ClipData;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Vibrator;
@@ -32,7 +33,6 @@ class ExpandableListAdapter extends BaseExpandableListAdapter
     private final Context mContext;
     private final List<String> mListDataHeader;
     HashMap<String, List<Session>> mListDataChild;
-    SessionsDataSource dataSource;
     Map<String, Integer> mImageMap;
     private Vibrator mVibrator;
 
@@ -42,8 +42,6 @@ class ExpandableListAdapter extends BaseExpandableListAdapter
         mContext = context;
         mListDataHeader = listDataHeader;
         mListDataChild = listChildData;
-        dataSource = new SessionsDataSource(mContext);
-        dataSource.open();
         initImageMap();
         mVibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
     }
@@ -241,8 +239,12 @@ class ExpandableListAdapter extends BaseExpandableListAdapter
                 {
                     mVibrator.vibrate(Consts.VIBRATE_DURATION);
                     Toast.makeText(mContext, "Add session " + sessionDetail.getDateOfSession().toLocalDateTime(), Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent(mContext, SessionDetails.class);
-                    mContext.startActivity(intent);
+
+                    SessionDetails sessionDetailsFrag = new SessionDetails();
+                    FragmentTransaction transaction = ((Activity) mContext).getFragmentManager().beginTransaction();
+                    transaction.addToBackStack(null);
+                    transaction.add(R.id.container, sessionDetailsFrag);
+                    transaction.commit();
                 }
             });
 
@@ -307,7 +309,7 @@ class ExpandableListAdapter extends BaseExpandableListAdapter
                             public void onClick(DialogInterface dialog, int id)
                             {
                                 mVibrator.vibrate(Consts.VIBRATE_DURATION);
-                                dataSource.deleteSession(sessionDetail);
+                                deleteSession(sessionDetail);
                                 mListDataChild.get(getGroup(groupie)).remove(sessionDetail);
                                 if (isLastChild)
                                     addPlaceholderSession(groupie, sessionDetail.getDateOfSession());
@@ -343,7 +345,7 @@ class ExpandableListAdapter extends BaseExpandableListAdapter
                     sessionDetail.sessionState = Session.State.COMPLETE;
 
                 int sessionPosition = mListDataChild.get(getGroup(groupie)).indexOf(sessionDetail);
-                dataSource.updateSession(sessionDetail);
+                updateSession(sessionDetail);
                 mListDataChild.get(getGroup(groupie)).set(sessionPosition, sessionDetail);
                 notifyDataSetChanged();
                 Toast.makeText(mContext, mContext.getString(R.string.toast_session_state_fondled), Toast.LENGTH_SHORT).show();
@@ -396,6 +398,31 @@ class ExpandableListAdapter extends BaseExpandableListAdapter
         mListDataChild.get(getGroup(groupPosition)).add(placeHolderSession);
     }
 
+    void deleteSession(Session sessionDetail)
+    {
+        SessionsDataSource dataSource = new SessionsDataSource(mContext);
+        dataSource.open();
+        dataSource.deleteSession(sessionDetail);
+        dataSource.close();
+    }
+
+    void updateSession(Session sessionDetail)
+    {
+        SessionsDataSource dataSource = new SessionsDataSource(mContext);
+        dataSource.open();
+        dataSource.updateSession(sessionDetail);
+        dataSource.close();
+    }
+
+    Session getSessionById(long originatorSessionId)
+    {
+        SessionsDataSource dataSource = new SessionsDataSource(mContext);
+        dataSource.openReadOnly();
+        Session sessionForReschedule = dataSource.getSessionById(originatorSessionId);
+        dataSource.close();
+        return sessionForReschedule;
+    }
+
     protected class DragEventListener implements View.OnDragListener
     {
         public boolean onDrag(View v, DragEvent event)
@@ -437,7 +464,7 @@ class ExpandableListAdapter extends BaseExpandableListAdapter
                         return true; //do nothing when drag+dropping onto the same zone
                     else
                     {   //get session from db and update its session date
-                        Session sessionForReschedule = dataSource.getSessionById(originatorSessionId);
+                        Session sessionForReschedule = getSessionById(originatorSessionId);
                         DateTime sessionNewDate = new DateTime(toDate);
                         sessionForReschedule.setDateOfSession(sessionNewDate);
 
@@ -453,7 +480,7 @@ class ExpandableListAdapter extends BaseExpandableListAdapter
                         if (originatorIsLastChild)
                             addPlaceholderSession(originatorGroupPosition, new DateTime(originiatorFromDate)); //reinstate "No Session?" placeholder if item is the only item in group
 
-                        dataSource.updateSession(sessionForReschedule); //update the db Record
+                        updateSession(sessionForReschedule); //update the db Record
                         notifyDataSetChanged();
                         Log.d("", "Updated Session(date of session) via drag and drop");
                     }

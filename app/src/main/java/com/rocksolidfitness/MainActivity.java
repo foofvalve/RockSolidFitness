@@ -4,6 +4,7 @@ import android.app.ActionBar;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.view.LayoutInflater;
@@ -25,15 +26,7 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_main);
-        if (savedInstanceState == null)
-        {
 
-            MainViewFragment newFragment = new MainViewFragment();
-
-            getFragmentManager().beginTransaction()
-                    .add(R.id.container, newFragment)
-                    .commit();
-        }
 
         mNavigationDrawerFragment = (NavigationDrawerFragment)
                 getFragmentManager().findFragmentById(R.id.navigation_drawer);
@@ -44,7 +37,15 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
                 R.id.navigation_drawer,
                 (DrawerLayout) findViewById(R.id.drawer_layout));
 
+        if (savedInstanceState == null)
+        {
+            MainViewFragment newFragment = new MainViewFragment();
+            FragmentTransaction transaction = getFragmentManager().beginTransaction();
 
+            transaction.add(R.id.container, newFragment);
+            transaction.addToBackStack(null);
+            transaction.commit();
+        }
     }
 
     @Override
