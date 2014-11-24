@@ -181,6 +181,18 @@ public class DatabaseTests extends AndroidTestCase
 
     }
 
+    public void testGetSessionDescForSpinner()
+    {
+        dataSource.loadDynamicTestData();
+        String[] blah = dataSource.getSessDescSpinner("");
+        assertTrue(blah.length != 0);
+
+        blah = dataSource.getSessDescSpinner("Swimming");
+        assertTrue(blah.length != 0);
+        for (int i = 0; i < blah.length; i++)
+            Log.d(TAG, "Swimming:" + blah[i]);
+    }
+
     public void testUtilsDateOffseter()
     {
         DateTime dte = Utils.convertSQLiteDate("2014-08-27");

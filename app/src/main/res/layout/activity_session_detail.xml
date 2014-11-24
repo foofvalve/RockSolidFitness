@@ -39,7 +39,7 @@
                 android:text="S"/>
 
             <Button
-                android:id="@+id/btnSetSessionDate"
+                android:id="@+id/btnSetSessDate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
@@ -49,35 +49,7 @@
 
         </LinearLayout>
 
-        <TextView
-            android:id="@+id/textViewSessDateLabel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="false"
-            android:layout_below="@+id/layoutMandatory"
-            android:layout_marginTop="3dp"
-            android:text="Session Date"
-            android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium"
-            android:textStyle="bold"/>
 
-        <TextView
-        android:id="@+id/textViewDateOfSession"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/textViewSessDateLabel"
-        android:layout_marginLeft="3dp"
-        android:layout_marginTop="3dp"
-
-            />
-
-        <Button
-        android:id="@+id/btnSetSessDate"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/textViewDateOfSession"
-        android:layout_alignParentRight="true"
-        android:layout_marginTop="3dp"
-        android:text="Set Date"/>
 
 
         <AutoCompleteTextView
@@ -85,8 +57,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
-        android:layout_below="@+id/btnSetSessDate"
-        android:layout_marginTop="2dp"
+        android:layout_below="@+id/layoutMandatory"
+        android:layout_marginTop="3dp"
         android:hint="Description"
         android:inputType="textMultiLine"/>
 
@@ -97,7 +69,7 @@
             android:layout_height="wrap_content"
             android:layout_above="@+id/layoutDuration"
             android:layout_alignParentRight="true"
-            android:layout_below="@+id/btnSetSessDate"
+            android:layout_below="@+id/layoutMandatory"
             android:layout_marginBottom="3dp"
             android:layout_marginTop="3dp"
             android:text="Search"/>

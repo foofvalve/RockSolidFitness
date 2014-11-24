@@ -56,4 +56,6 @@
 
     <string name="prompt_select_sport">Select Sport:</string>
 
+    <string name="sess_details_add_new">-- Add New --</string>
+
 </resources>

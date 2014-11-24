@@ -199,15 +199,44 @@ class SessionsDataSource
         return sports;
     }
 
-    public List<String> getSportsForSpinner()
+
+    public String[] getSessDescSpinner(String filterBy)
+    {
+        List<String> sessDescList = new ArrayList<String>();
+
+        Cursor cursor;
+        if (filterBy.length() == 0)
+            cursor = mDatabase.query(
+                    DbHelper.TABLE_SESSIONS, new String[]{SessionColumns.DESCRIPTION, "count(*)"}, null, null, SessionColumns.DESCRIPTION, null, "2 desc");
+        else
+        {
+            cursor = mDatabase.query(
+                    DbHelper.TABLE_SESSIONS, new String[]{SessionColumns.DESCRIPTION, "count(*)"}, SessionColumns.SPORT + " = ?", new String[]{filterBy}, SessionColumns.DESCRIPTION, null, "2 desc");
+
+            if (cursor.getCount() == 0) //fall back and show full list of sports instead
+                cursor = mDatabase.query(
+                        DbHelper.TABLE_SESSIONS, new String[]{SessionColumns.DESCRIPTION, "count(*)"}, null, null, SessionColumns.DESCRIPTION, null, "2 desc");
+        }
+
+        cursor.moveToFirst();
+        while (!cursor.isAfterLast())
+        {
+            sessDescList.add(cursor.getString(0));
+            cursor.moveToNext();
+        }
+        cursor.close();
+
+        return sessDescList.toArray(new String[sessDescList.size()]);
+    }
+
+    public String[] getSportsForSpinner()
     {
         List<String> sportsList = new ArrayList<String>();
-        sportsList.add("Select Sport");
-        sportsList.add("-- Add New --");
+        sportsList.add(mContext.getString(R.string.sess_details_add_new));
         for (String sport : getSports())
             sportsList.add(sport);
 
-        return sportsList;
+        return sportsList.toArray(new String[sportsList.size()]);
     }
 
 

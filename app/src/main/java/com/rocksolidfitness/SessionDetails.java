@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
-import android.widget.TextView;
 
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
@@ -17,12 +16,16 @@ import org.joda.time.format.DateTimeFormatter;
 /**
  * Created by Ryan on 22/11/2014.
  */
-public class SessionDetails extends Activity implements DatePickerFragment.OnCompleteListener, SessionDescListFragment.OnCompleteListener
+public class SessionDetails extends Activity
+        implements DatePickerFragment.OnCompleteListener,
+        SessionDescListFragment.OnCompleteListener,
+        SportsListFragment.OnCompleteListener
 {
     Button mBtnSetDateOfSession;
     Button mBtnCancelSessionEdit;
-    TextView tvDateOfSession;
+    Button mBtnSearchForSport;
     AutoCompleteTextView mAutoTvSessDesc;
+    AutoCompleteTextView mAutoTvSport;
     DateTime mSessionDate;
     Button mBtnLookupSessDesc;
 
@@ -35,15 +38,39 @@ public class SessionDetails extends Activity implements DatePickerFragment.OnCom
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_session_detail);
         mBtnSetDateOfSession = (Button) findViewById(R.id.btnSetSessDate);
-        tvDateOfSession = (TextView) findViewById(R.id.textViewDateOfSession);
         mBtnCancelSessionEdit = (Button) findViewById(R.id.btnCancelSessionDetail);
         mBtnLookupSessDesc = (Button) findViewById(R.id.btnSearchSessionDetail);
         mAutoTvSessDesc = (AutoCompleteTextView) findViewById(R.id.editTextDescription);
-
+        mAutoTvSport = (AutoCompleteTextView) findViewById(R.id.editTextSport);
+        mBtnSearchForSport = (Button) findViewById(R.id.btnSearchForSport);
         addSessDateButtonListener();
         addCloseButtonListner();
         addLookupSessDescBtnListener();
+        addLookupSportBtnListener();
     }
+
+    void addLookupSportBtnListener()
+    {
+        mBtnSearchForSport.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                FragmentManager fm = getFragmentManager();
+
+                if (fm.findFragmentById(android.R.id.content) == null)
+                {
+                    SportsListFragment sportListFragment = new SportsListFragment();
+                    FragmentTransaction transaction = fm.beginTransaction();
+
+                    transaction.addToBackStack(null);
+                    transaction.add(android.R.id.content, sportListFragment);
+                    transaction.commit();
+                }
+            }
+        });
+    }
+
 
     void addLookupSessDescBtnListener()
     {
@@ -59,13 +86,20 @@ public class SessionDetails extends Activity implements DatePickerFragment.OnCom
                     SessionDescListFragment sessionDescListFragment = new SessionDescListFragment();
                     FragmentTransaction transaction = fm.beginTransaction();
 
+                    Bundle bundle = new Bundle();
+                    String sportSelected = mAutoTvSport.getText().toString();
+                    if (sportSelected.equals(getString(R.string.sess_details_add_new)))
+                        bundle.putString("filterBySport", "");
+                    else
+                        bundle.putString("filterBySport", sportSelected);
+
+                    sessionDescListFragment.setArguments(bundle);
                     transaction.addToBackStack(null);
                     transaction.add(android.R.id.content, sessionDescListFragment);
                     transaction.commit();
                 }
             }
         });
-
     }
 
     void addCloseButtonListner()
@@ -116,5 +150,12 @@ public class SessionDetails extends Activity implements DatePickerFragment.OnCom
     public void onComplete(String itemSelected)
     {
         mAutoTvSessDesc.setText(itemSelected);
+    }
+
+
+    @Override
+    public void onSportSelected(String sportSelected)
+    {
+        mAutoTvSport.setText(sportSelected);
     }
 }

@@ -11,15 +11,15 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 
-public class SessionDescListFragment extends ListFragment
+public class SportsListFragment extends ListFragment
 {
-    String[] listOfSessDesc = new String[]{};
+    String[] listOfSports = new String[]{};
     private OnCompleteListener mListener;
 
     @Override
     public void onListItemClick(ListView l, View v, int position, long id)
     {
-        this.mListener.onComplete("" + listOfSessDesc[(int) id]);
+        this.mListener.onSportSelected("" + listOfSports[(int) id]);
         getFragmentManager().popBackStack();
     }
 
@@ -42,13 +42,12 @@ public class SessionDescListFragment extends ListFragment
     {
         SessionsDataSource dataSource = new SessionsDataSource(getActivity());
         dataSource.openReadOnly();
-        String filterBySport = getArguments().getString("filterBySport");
-        listOfSessDesc = dataSource.getSessDescSpinner(filterBySport);
+        listOfSports = dataSource.getSportsForSpinner();
         dataSource.close();
 
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(
                 inflater.getContext(), android.R.layout.simple_list_item_1,
-                listOfSessDesc);
+                listOfSports);
         setListAdapter(adapter);
         View view = super.onCreateView(inflater, container, savedInstanceState);
         view.setBackgroundColor(Color.rgb(100, 100, 100));
@@ -57,6 +56,6 @@ public class SessionDescListFragment extends ListFragment
 
     public static interface OnCompleteListener
     {
-        public abstract void onComplete(String itemSelected);
+        public abstract void onSportSelected(String sportSelected);
     }
 }
