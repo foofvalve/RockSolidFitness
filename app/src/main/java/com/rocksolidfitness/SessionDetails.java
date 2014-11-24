@@ -6,6 +6,7 @@ import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 
@@ -37,11 +38,31 @@ public class SessionDetails extends Activity
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_session_detail);
+
+        SessionsDataSource dataSource = new SessionsDataSource(this);
+        dataSource.openReadOnly();
+        String[] autoCompleteListOfSessDesc = dataSource.getSessDescSpinner("");
+        String[] autoCompleteListOfSports = dataSource.getSportsForSpinner();
+        dataSource.close();
+
         mBtnSetDateOfSession = (Button) findViewById(R.id.btnSetSessDate);
         mBtnCancelSessionEdit = (Button) findViewById(R.id.btnCancelSessionDetail);
         mBtnLookupSessDesc = (Button) findViewById(R.id.btnSearchSessionDetail);
+
         mAutoTvSessDesc = (AutoCompleteTextView) findViewById(R.id.editTextDescription);
+        if (autoCompleteListOfSessDesc != null && autoCompleteListOfSports.length > 0)  //attach autocomplete entries
+        {
+            ArrayAdapter sessDescAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, autoCompleteListOfSessDesc);
+            mAutoTvSessDesc.setAdapter(sessDescAdapter);
+        }
+
         mAutoTvSport = (AutoCompleteTextView) findViewById(R.id.editTextSport);
+        if (autoCompleteListOfSports != null && autoCompleteListOfSports.length > 0)
+        {
+            ArrayAdapter sportsAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, autoCompleteListOfSports);
+            mAutoTvSport.setAdapter(sportsAdapter);
+        }
+
         mBtnSearchForSport = (Button) findViewById(R.id.btnSearchForSport);
         addSessDateButtonListener();
         addCloseButtonListner();
