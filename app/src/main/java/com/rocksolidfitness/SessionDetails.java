@@ -43,6 +43,8 @@ public class SessionDetails extends Activity
     EditText mTxtNotes;
     EditText mTxtDistance;
 
+    private OnCompleteListener mListener;
+
     public SessionDetails()
     {
     }
@@ -97,11 +99,16 @@ public class SessionDetails extends Activity
         {
             mSessionComplete.setBackgroundColor(Color.rgb(0, 0, 0)); //in ADD_MODE display as unticked.
             mBtnDeleteSession.setVisibility(View.INVISIBLE);
+
+            long desiredDateOfSessMillis = getIntent().getExtras().getLong("DesiredDateOfSession");
+            mSessionDate = new DateTime(desiredDateOfSessMillis);
+            mBtnSetDateOfSession.setText(Utils.formatDateForDisplay(mSessionDate));
         } else
         {
             retrieveAndDisplaySession();
             mBtnDeleteSession.setVisibility(View.VISIBLE);
         }
+        //mListener = (OnCompleteListener) this;
     }
 
     void retrieveAndDisplaySession()
@@ -151,24 +158,10 @@ public class SessionDetails extends Activity
             @Override
             public void onClick(View v)
             {
-                /*
-                FragmentManager fm = getFragmentManager();
-
-                if (fm.findFragmentById(android.R.id.content) == null)
-                {
-                    SportsListFragment sportListFragment = new SportsListFragment();
-                    FragmentTransaction transaction = fm.beginTransaction();
-
-                    transaction.addToBackStack(null);
-                    transaction.add(android.R.id.content, sportListFragment);
-                    transaction.commit();
-                } */
-
                 if (!isFormValid())
                     displayErrorMessages();
                 else
                 {
-                    //persist session to db
                     if (getIntent().getExtras().getLong("SessionId") == Consts.ADD_MODE)
                         persistNewSession();
                     else
@@ -177,7 +170,8 @@ public class SessionDetails extends Activity
                     Intent returnIntent = new Intent();
                     setResult(RESULT_OK, returnIntent);
                     finish();
-                    // --> notify dataset change !!! here.
+
+                    //mListener.onComplete(mSessionDate);
                 }
             }
         });
@@ -187,8 +181,22 @@ public class SessionDetails extends Activity
     {
         SessionsDataSource dataSource = new SessionsDataSource(this);
         dataSource.open();
-        Session newSession = new Session(Session.State.PLANNED, "Cycling", "big bike", 257, Utils.getDateOffsetByNDays(0));
 
+        Session.State initialState;
+        ColorDrawable drawable = (ColorDrawable) mSessionComplete.getBackground();
+        if (drawable.getColor() == Color.rgb(47, 255, 64))
+            initialState = Session.State.COMPLETE;
+        else
+            initialState = Session.State.PLANNED;
+
+        Session newSession = new Session(initialState,
+                mAutoTvSport.getText().toString(),
+                mAutoTvSessDesc.getText().toString(),
+                getTotalDurationFromUi(),
+                mSessionDate);
+
+        newSession.notes = mTxtNotes.getText().toString();
+        newSession.setDistance(this, safelyGetDistanceFromUi());
         dataSource.createSession(newSession);
         dataSource.close();
     }
@@ -203,7 +211,7 @@ public class SessionDetails extends Activity
         sessionUpdated.sport = mAutoTvSport.getText().toString();
         sessionUpdated.notes = mTxtNotes.getText().toString();
         sessionUpdated.duration = getTotalDurationFromUi();
-        sessionUpdated.setDistance(this, Double.parseDouble(mTxtDistance.getText().toString()));
+        sessionUpdated.setDistance(this, safelyGetDistanceFromUi());
         sessionUpdated.setDateOfSession(mSessionDate);
 
         ColorDrawable drawable = (ColorDrawable) mSessionComplete.getBackground();
@@ -214,6 +222,14 @@ public class SessionDetails extends Activity
 
         dataSource.updateSession(sessionUpdated);
         dataSource.close();
+    }
+
+    double safelyGetDistanceFromUi()
+    {
+        if (mTxtDistance.getText().toString().length() == 0)
+            return 0;
+
+        return Double.parseDouble(mTxtDistance.getText().toString());
     }
 
     int getTotalDurationFromUi()
@@ -247,6 +263,9 @@ public class SessionDetails extends Activity
 
             if (durationMinutesLength == 0)
                 mErrorMessages = mErrorMessages + getString(R.string.validation_duration_minutes_error) + "\n";
+
+            if (durationMinutesLength > 59)
+                mErrorMessages = mErrorMessages + getString(R.string.validation_duration_minutes_length_error) + "\n";
         }
         return mErrorMessages.equals("") ? true : false;
     }
@@ -272,7 +291,6 @@ public class SessionDetails extends Activity
         alertDialog.show();
     }
 
-
     void addLookupSportBtnListener()
     {
         mBtnSearchForSport.setOnClickListener(new View.OnClickListener()
@@ -294,7 +312,6 @@ public class SessionDetails extends Activity
             }
         });
     }
-
 
     void addLookupSessDescBtnListener()
     {
@@ -374,10 +391,15 @@ public class SessionDetails extends Activity
         mAutoTvSessDesc.setText(itemSelected);
     }
 
-
     @Override
     public void onSportSelected(String sportSelected)
     {
         mAutoTvSport.setText(sportSelected);
+    }
+
+
+    public interface OnCompleteListener
+    {
+        public void onComplete(DateTime sessDateFondled);
     }
 }

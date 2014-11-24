@@ -28,7 +28,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-class ExpandableListAdapter extends BaseExpandableListAdapter
+class ExpandableListAdapter extends BaseExpandableListAdapter implements SessionDetails.OnCompleteListener
 {
     private final Context mContext;
     private final List<String> mListDataHeader;
@@ -242,6 +242,7 @@ class ExpandableListAdapter extends BaseExpandableListAdapter
 
                     Intent intent = new Intent(mContext, SessionDetails.class);
                     intent.putExtra("SessionId", Consts.ADD_MODE);
+                    intent.putExtra("DesiredDateOfSession", sessionDetail.getDateOfSession().getMillis());
                     ((Activity) mContext).startActivityForResult(intent, 1);
                 }
             });
@@ -423,6 +424,12 @@ class ExpandableListAdapter extends BaseExpandableListAdapter
         Session sessionForReschedule = dataSource.getSessionById(originatorSessionId);
         dataSource.close();
         return sessionForReschedule;
+    }
+
+    @Override
+    public void onComplete(DateTime sessDateFondled)
+    {
+        notifyDataSetChanged();
     }
 
     protected class DragEventListener implements View.OnDragListener

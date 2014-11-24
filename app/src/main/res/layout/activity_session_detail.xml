@@ -170,22 +170,23 @@
             android:layout_toRightOf="@+id/btnSaveSession"
             android:text="Add Hist.."/>
 
-        <Button
-            android:id="@+id/btnSessDetailDeleteSessiono"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignTop="@+id/btnCancelSessionDetail"
-            android:layout_toRightOf="@+id/btnAddFromHistory"
-            android:text="Delete"/>
 
         <Button
             android:id="@+id/btnCancelSessionDetail"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/imgMarkAsComplete"
-            android:layout_toRightOf="@+id/btnSessDetailDeleteSessiono"
+            android:layout_toRightOf="@+id/btnAddFromHistory"
             android:text="Cancel"
             />
+
+        <Button
+            android:id="@+id/btnSessDetailDeleteSessiono"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/btnCancelSessionDetail"
+            android:layout_toRightOf="@+id/btnCancelSessionDetail"
+            android:text="Delete"/>
 
     </RelativeLayout>
 </ScrollView>

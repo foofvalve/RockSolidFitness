@@ -45,6 +45,7 @@
     <string name="validation_description_error">Enter session description</string>
     <string name="validation_duration_hours_error">Enter valid duration (hours)</string>
     <string name="validation_duration_minutes_error">Enter valid duration (minutes)</string>
+    <string name="validation_duration_minutes_length_error">Duration (minutes) must be less than 60</string>
 
     <string name="toast_session_deleted">Session Deleted</string>
     <string name="toast_session_state_fondled">Session updated</string>
