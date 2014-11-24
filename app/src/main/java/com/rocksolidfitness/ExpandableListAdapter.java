@@ -241,14 +241,8 @@ class ExpandableListAdapter extends BaseExpandableListAdapter
                     Toast.makeText(mContext, "Add session " + sessionDetail.getDateOfSession().toLocalDateTime(), Toast.LENGTH_SHORT).show();
 
                     Intent intent = new Intent(mContext, SessionDetails.class);
+                    intent.putExtra("SessionId", Consts.ADD_MODE);
                     ((Activity) mContext).startActivityForResult(intent, 1);
-                    /*
-                    SessionDetails sessionDetailsFrag = new SessionDetails();
-                    FragmentTransaction transaction = ((Activity) mContext).getFragmentManager().beginTransaction();
-                    transaction.addToBackStack(null);
-                    transaction.add(R.id.container, sessionDetailsFrag);
-                    transaction.commit();
-                    */
                 }
             });
 
@@ -292,6 +286,10 @@ class ExpandableListAdapter extends BaseExpandableListAdapter
             {
                 mVibrator.vibrate(Consts.VIBRATE_DURATION);
                 Toast.makeText(mContext, "Edit button clicked", Toast.LENGTH_SHORT).show();
+
+                Intent intent = new Intent(mContext, SessionDetails.class);
+                intent.putExtra("SessionId", sessionDetail.id);
+                ((Activity) mContext).startActivityForResult(intent, 1);
             }
         });
 
@@ -505,4 +503,6 @@ class ExpandableListAdapter extends BaseExpandableListAdapter
             return false;
         }
     }
+
+
 }

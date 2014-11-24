@@ -168,14 +168,22 @@
             android:layout_height="wrap_content"
             android:layout_alignTop="@+id/btnCancelSessionDetail"
             android:layout_toRightOf="@+id/btnSaveSession"
-            android:text="Add From History"/>
+            android:text="Add Hist.."/>
+
+        <Button
+            android:id="@+id/btnSessDetailDeleteSessiono"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/btnCancelSessionDetail"
+            android:layout_toRightOf="@+id/btnAddFromHistory"
+            android:text="Delete"/>
 
         <Button
             android:id="@+id/btnCancelSessionDetail"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/imgMarkAsComplete"
-            android:layout_toRightOf="@+id/btnAddFromHistory"
+            android:layout_toRightOf="@+id/btnSessDetailDeleteSessiono"
             android:text="Cancel"
             />
 

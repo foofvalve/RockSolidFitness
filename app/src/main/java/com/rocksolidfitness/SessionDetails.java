@@ -6,11 +6,14 @@ import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.joda.time.DateTime;
@@ -30,13 +33,14 @@ public class SessionDetails extends Activity
     Button mBtnSearchForSport;
     Button mBtnSaveSession;
     Button mBtnLookupSessDesc;
+    Button mBtnDeleteSession;
     AutoCompleteTextView mAutoTvSessDesc;
     AutoCompleteTextView mAutoTvSport;
     TextView mTvDurationHours;
     TextView mTvDurationMinutes;
     DateTime mSessionDate;
     String mErrorMessages;
-
+    ImageView mSessionComplete;
 
     public SessionDetails()
     {
@@ -57,6 +61,7 @@ public class SessionDetails extends Activity
         mBtnSaveSession = (Button) findViewById(R.id.btnSaveSession);
         mBtnCancelSessionEdit = (Button) findViewById(R.id.btnCancelSessionDetail);
         mBtnLookupSessDesc = (Button) findViewById(R.id.btnSearchSessionDetail);
+        mBtnDeleteSession = (Button) findViewById(R.id.btnSessDetailDeleteSessiono);
 
         mTvDurationHours = (TextView) findViewById(R.id.editTextDurationHours);
         mTvDurationMinutes = (TextView) findViewById(R.id.editTextDurationMins);
@@ -81,6 +86,46 @@ public class SessionDetails extends Activity
         addLookupSessDescBtnListener();
         addLookupSportBtnListener();
         addSaveBtnListener();
+
+        mSessionComplete = (ImageView) findViewById(R.id.imgMarkAsComplete);
+        addMarksAsCompleteListener();
+
+        if (getIntent().getExtras().getLong("SessionId") == Consts.ADD_MODE)
+        {
+            mSessionComplete.setBackgroundColor(Color.rgb(0, 0, 0)); //in ADD_MODE display as unticked.
+            mBtnDeleteSession.setVisibility(View.INVISIBLE);
+        } else
+        {
+            retrieveAndDisplaySession();
+            mBtnDeleteSession.setVisibility(View.VISIBLE);
+        }
+    }
+
+    void retrieveAndDisplaySession()
+    {
+        mAutoTvSessDesc.setText("Session id : " + getIntent().getExtras().getLong("SessionId"));
+        /*
+        if (isSessionComplete)
+            mSessionComplete.setBackgroundColor(Color.rgb(47, 255, 64));
+        else
+            mSessionComplete.setBackgroundColor(Color.rgb(0, 0, 0));
+            */
+    }
+
+    void addMarksAsCompleteListener()
+    {
+        mSessionComplete.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                ColorDrawable drawable = (ColorDrawable) mSessionComplete.getBackground();
+                if (drawable.getColor() == Color.rgb(47, 255, 64))
+                    mSessionComplete.setBackgroundColor(Color.rgb(0, 0, 0));
+                else
+                    mSessionComplete.setBackgroundColor(Color.rgb(47, 255, 64));
+            }
+        });
     }
 
     void addSaveBtnListener()
@@ -109,14 +154,42 @@ public class SessionDetails extends Activity
                 {
                     //persist session to db
 
+                    if (getIntent().getExtras().getLong("SessionId") == Consts.ADD_MODE)
+                        persistNewSession();
+                    else
+                        persistUpdatedSession();
 
                     Intent returnIntent = new Intent();
-                    setResult(RESULT_CANCELED, returnIntent);
+                    setResult(RESULT_OK, returnIntent);
                     finish();
                     // --> notify dataset change !!! here.
                 }
             }
         });
+    }
+
+    void persistNewSession()
+    {
+        SessionsDataSource dataSource = new SessionsDataSource(this);
+        dataSource.open();
+        Session newSession = new Session(Session.State.PLANNED, "Cycling", "big bike", 257, Utils.getDateOffsetByNDays(0));
+
+        dataSource.createSession(newSession);
+        dataSource.close();
+    }
+
+    void persistUpdatedSession()
+    {
+        SessionsDataSource dataSource = new SessionsDataSource(this);
+        dataSource.open();
+        long recordId = getIntent().getExtras().getLong("SessionId");
+        Session sessionUpdated = dataSource.getSessionById(recordId);
+        sessionUpdated.description = mAutoTvSessDesc.getText().toString();
+
+        //TODO.. fill other fields and shit
+
+        dataSource.updateSession(sessionUpdated);
+        dataSource.close();
     }
 
     boolean isFormValid()
