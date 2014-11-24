@@ -124,6 +124,7 @@ public class SessionDetails extends Activity
         mTvDurationMinutes.setText(sessionForDisplay.getFormattedDurationMinute());
         mTvDurationHours.setText(sessionForDisplay.getFormattedDurationHour());
         mBtnSetDateOfSession.setText(Utils.formatDateForDisplay(sessionForDisplay.getDateOfSession()));
+        mSessionDate = sessionForDisplay.getDateOfSession();
         mTxtNotes.setText(sessionForDisplay.notes);
     }
 
@@ -168,7 +169,6 @@ public class SessionDetails extends Activity
                 else
                 {
                     //persist session to db
-
                     if (getIntent().getExtras().getLong("SessionId") == Consts.ADD_MODE)
                         persistNewSession();
                     else
@@ -200,11 +200,32 @@ public class SessionDetails extends Activity
         long recordId = getIntent().getExtras().getLong("SessionId");
         Session sessionUpdated = dataSource.getSessionById(recordId);
         sessionUpdated.description = mAutoTvSessDesc.getText().toString();
+        sessionUpdated.sport = mAutoTvSport.getText().toString();
+        sessionUpdated.notes = mTxtNotes.getText().toString();
+        sessionUpdated.duration = getTotalDurationFromUi();
+        sessionUpdated.setDistance(this, Double.parseDouble(mTxtDistance.getText().toString()));
+        sessionUpdated.setDateOfSession(mSessionDate);
 
-        //TODO.. fill other fields and shit
+        ColorDrawable drawable = (ColorDrawable) mSessionComplete.getBackground();
+        if (drawable.getColor() == Color.rgb(47, 255, 64))
+            sessionUpdated.sessionState = Session.State.COMPLETE;
+        else
+            sessionUpdated.sessionState = Session.State.PLANNED;
 
         dataSource.updateSession(sessionUpdated);
         dataSource.close();
+    }
+
+    int getTotalDurationFromUi()
+    {
+        int totalMinutes = 0;
+        if (mTvDurationHours.getText().toString().length() > 0)
+            totalMinutes = 60 * Integer.parseInt(mTvDurationHours.getText().toString());
+
+        if (mTvDurationMinutes.getText().toString().length() > 0)
+            totalMinutes += Integer.parseInt(mTvDurationMinutes.getText().toString());
+
+        return totalMinutes;
     }
 
     boolean isFormValid()
