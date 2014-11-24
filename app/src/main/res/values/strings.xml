@@ -37,6 +37,15 @@
     <string name="confirm_delete_msg">Delete this session?</string>
     <string name="confirm_delete_yes">Yes</string>
     <string name="confirm_delete_no">No</string>
+
+    <string name="validation_errors_title">Oops. Some bad data</string>
+    <string name="validation_button_ok">Ok</string>
+
+    <string name="validation_sport_error">Select a sport</string>
+    <string name="validation_description_error">Enter session description</string>
+    <string name="validation_duration_hours_error">Enter valid duration (hours)</string>
+    <string name="validation_duration_minutes_error">Enter valid duration (minutes)</string>
+
     <string name="toast_session_deleted">Session Deleted</string>
     <string name="toast_session_state_fondled">Session updated</string>
 
