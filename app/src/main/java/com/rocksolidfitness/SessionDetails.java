@@ -13,12 +13,11 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.joda.time.DateTime;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
 
 /**
  * Created by Ryan on 22/11/2014.
@@ -41,6 +40,8 @@ public class SessionDetails extends Activity
     DateTime mSessionDate;
     String mErrorMessages;
     ImageView mSessionComplete;
+    EditText mTxtNotes;
+    EditText mTxtDistance;
 
     public SessionDetails()
     {
@@ -57,6 +58,8 @@ public class SessionDetails extends Activity
         String[] autoCompleteListOfSports = dataSource.getSportsForSpinner();
         dataSource.close();
 
+        mTxtNotes = (EditText) findViewById(R.id.editTextNotes);
+        mTxtDistance = (EditText) findViewById(R.id.editTextDistance);
         mBtnSetDateOfSession = (Button) findViewById(R.id.btnSetSessDate);
         mBtnSaveSession = (Button) findViewById(R.id.btnSaveSession);
         mBtnCancelSessionEdit = (Button) findViewById(R.id.btnCancelSessionDetail);
@@ -104,12 +107,24 @@ public class SessionDetails extends Activity
     void retrieveAndDisplaySession()
     {
         mAutoTvSessDesc.setText("Session id : " + getIntent().getExtras().getLong("SessionId"));
-        /*
-        if (isSessionComplete)
+        long sessionId = getIntent().getExtras().getLong("SessionId");
+        SessionsDataSource dataSource = new SessionsDataSource(this);
+        dataSource.openReadOnly();
+        Session sessionForDisplay = dataSource.getSessionById(sessionId);
+        dataSource.close();
+
+        if (sessionForDisplay.isComplete())
             mSessionComplete.setBackgroundColor(Color.rgb(47, 255, 64));
         else
             mSessionComplete.setBackgroundColor(Color.rgb(0, 0, 0));
-            */
+
+        mAutoTvSport.setText(sessionForDisplay.sport);
+        mAutoTvSessDesc.setText(sessionForDisplay.description);
+        mTxtDistance.setText(Double.toString(sessionForDisplay.getDistance()));
+        mTvDurationMinutes.setText(sessionForDisplay.getFormattedDurationMinute());
+        mTvDurationHours.setText(sessionForDisplay.getFormattedDurationHour());
+        mBtnSetDateOfSession.setText(Utils.formatDateForDisplay(sessionForDisplay.getDateOfSession()));
+        mTxtNotes.setText(sessionForDisplay.notes);
     }
 
     void addMarksAsCompleteListener()
@@ -328,11 +343,9 @@ public class SessionDetails extends Activity
     @Override
     public void onComplete(DateTime sessionDate)
     {
-        DateTimeFormatter formatter = DateTimeFormat.forPattern("E d MMMM yyyy");
         mSessionDate = sessionDate;
-        mBtnSetDateOfSession.setText(mSessionDate.toString(formatter));
+        mBtnSetDateOfSession.setText(Utils.formatDateForDisplay(mSessionDate));
     }
-
 
     @Override
     public void onComplete(String itemSelected)

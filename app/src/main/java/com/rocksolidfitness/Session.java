@@ -104,6 +104,40 @@ public final class Session
                 minutes + " " + resources.getString(R.string.time_minutes);
     }
 
+    public String getFormattedDurationHour()
+    {
+        if (duration < 60)
+            return "0";
+
+        if (duration == 60)
+            return "1";
+
+        if (duration % 60 == 0)
+            return Integer.toString(duration / 60);
+
+        int minutes = duration % 60;
+        int hours = (duration - minutes) / 60;
+
+        return Integer.toString(hours);
+    }
+
+    public String getFormattedDurationMinute()
+    {
+        if (duration < 60)
+            return Integer.toString(duration);
+
+        if (duration == 60)
+            return "0";
+
+        if (duration % 60 == 0)
+            return "0";
+
+        int minutes = duration % 60;
+
+        return Integer.toString(minutes);
+    }
+
+
     public String toString()
     {
         return MessageFormat.format("id=[{0}]|" +

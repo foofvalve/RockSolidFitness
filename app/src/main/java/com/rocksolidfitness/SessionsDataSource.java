@@ -296,7 +296,14 @@ class SessionsDataSource
         createSession(new Session(Session.State.PLANNED, "Swimming", "1k+stuff+pullbouy+wd", 45, Utils.getDateOffsetByNDays(-3)));
         createSession(new Session(Session.State.COMPLETE, "Strength and Conditioning", "plank", 14, Utils.getDateOffsetByNDays(-1)));
         createSession(new Session(Session.State.COMPLETE, "Strength and Conditioning", "legs", 17, Utils.getDateOffsetByNDays(-1)));
-        createSession(new Session(Session.State.PLANNED, "Running", "easy", 57, Utils.getDateOffsetByNDays(0)));  //aka Today
+
+        //aka Today
+        Session specialFullyDefinedSess = new Session(Session.State.PLANNED, "Running", "easy with a hint of blah blah this session has lots of word and stuff with newline \n" +
+                "       moreshit", 157, Utils.getDateOffsetByNDays(0));
+        specialFullyDefinedSess.setDistance(mContext, 21.26);
+        specialFullyDefinedSess.notes = "Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur, from a Lorem Ipsum";
+        createSession(specialFullyDefinedSess);
+
         createSession(new Session(Session.State.PLANNED, "Swimming", "easy", 30, Utils.getDateOffsetByNDays(1)));
         createSession(new Session(Session.State.PLANNED, "Running", "easy", 56, Utils.getDateOffsetByNDays(2)));
         createSession(new Session(Session.State.COMPLETE, "Cycling", "big bike", 230, Utils.getDateOffsetByNDays(2)));

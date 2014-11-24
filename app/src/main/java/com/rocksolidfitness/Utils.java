@@ -53,6 +53,12 @@ class Utils
         return tomorrow.plusDays(1);
     }
 
+    public static String formatDateForDisplay(DateTime rawDate)
+    {
+        DateTimeFormatter formatter = DateTimeFormat.forPattern("E d MMMM yyyy");
+        return rawDate.toString(formatter);
+    }
+
     public static void printSessionsToConsole(List<Session> sessionsForThisWeek)
     {
         for (Session sport : sessionsForThisWeek)
