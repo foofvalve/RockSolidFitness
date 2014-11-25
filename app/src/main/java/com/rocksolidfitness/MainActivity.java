@@ -73,6 +73,17 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
         return super.onOptionsItemSelected(item);
     }
 
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data)
+    {
+        if (resultCode == RESULT_OK)
+        {
+            finish();
+            startActivity(getIntent());
+        }
+    }
+
     @Override
     public void onNavigationDrawerItemSelected(int position)
     {

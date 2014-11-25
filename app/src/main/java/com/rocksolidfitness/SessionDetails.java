@@ -44,8 +44,6 @@ public class SessionDetails extends Activity
     EditText mTxtNotes;
     EditText mTxtDistance;
 
-    private OnCompleteListener mListener;
-
     public SessionDetails()
     {
     }
@@ -110,7 +108,7 @@ public class SessionDetails extends Activity
             retrieveAndDisplaySession();
             mBtnDeleteSession.setVisibility(View.VISIBLE);
         }
-        //mListener = (OnCompleteListener) this;
+
     }
 
     void retrieveAndDisplaySession()
@@ -159,8 +157,6 @@ public class SessionDetails extends Activity
                                 Intent returnIntent = new Intent();
                                 setResult(RESULT_OK, returnIntent);
                                 finish();
-
-
                             }
                         })
                         .setNegativeButton(getString(R.string.confirm_delete_no), new DialogInterface.OnClickListener()
@@ -211,8 +207,6 @@ public class SessionDetails extends Activity
                     Intent returnIntent = new Intent();
                     setResult(RESULT_OK, returnIntent);
                     finish();
-
-                    //mListener.onComplete(mSessionDate);
                 }
             }
         });
@@ -449,11 +443,5 @@ public class SessionDetails extends Activity
     public void onSportSelected(String sportSelected)
     {
         mAutoTvSport.setText(sportSelected);
-    }
-
-
-    public interface OnCompleteListener
-    {
-        public void onComplete(DateTime sessDateFondled);
     }
 }

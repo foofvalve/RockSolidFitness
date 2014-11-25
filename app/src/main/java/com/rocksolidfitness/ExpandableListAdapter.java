@@ -28,13 +28,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-class ExpandableListAdapter extends BaseExpandableListAdapter implements SessionDetails.OnCompleteListener
+class ExpandableListAdapter extends BaseExpandableListAdapter
 {
     private final Context mContext;
     private final List<String> mListDataHeader;
     HashMap<String, List<Session>> mListDataChild;
     Map<String, Integer> mImageMap;
     private Vibrator mVibrator;
+
 
     public ExpandableListAdapter(Context context, List<String> listDataHeader,
                                  HashMap<String, List<Session>> listChildData)
@@ -426,11 +427,6 @@ class ExpandableListAdapter extends BaseExpandableListAdapter implements Session
         return sessionForReschedule;
     }
 
-    @Override
-    public void onComplete(DateTime sessDateFondled)
-    {
-        notifyDataSetChanged();
-    }
 
     protected class DragEventListener implements View.OnDragListener
     {
