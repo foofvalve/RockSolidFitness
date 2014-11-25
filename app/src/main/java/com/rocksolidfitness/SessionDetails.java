@@ -16,6 +16,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.joda.time.DateTime;
 
@@ -91,6 +92,7 @@ public class SessionDetails extends Activity
         addLookupSessDescBtnListener();
         addLookupSportBtnListener();
         addSaveBtnListener();
+        addDeleteSessListener();
 
         mSessionComplete = (ImageView) findViewById(R.id.imgMarkAsComplete);
         addMarksAsCompleteListener();
@@ -135,6 +137,45 @@ public class SessionDetails extends Activity
         mTxtNotes.setText(sessionForDisplay.notes);
     }
 
+    void addDeleteSessListener()
+    {
+        mBtnDeleteSession.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(v.getContext());
+
+                alertDialogBuilder.setTitle(getString(R.string.confirm_delete_title));
+
+                alertDialogBuilder
+                        .setMessage(getString(R.string.confirm_delete_msg))
+                        .setCancelable(false)
+                        .setPositiveButton(getString(R.string.confirm_delete_yes), new DialogInterface.OnClickListener()
+                        {
+                            public void onClick(DialogInterface dialog, int id)
+                            {
+                                deleteSession();
+                                Intent returnIntent = new Intent();
+                                setResult(RESULT_OK, returnIntent);
+                                finish();
+
+
+                            }
+                        })
+                        .setNegativeButton(getString(R.string.confirm_delete_no), new DialogInterface.OnClickListener()
+                        {
+                            public void onClick(DialogInterface dialog, int id)
+                            {
+                                dialog.cancel();
+                            }
+                        });
+                AlertDialog alertDialog = alertDialogBuilder.create();
+                alertDialog.show();
+            }
+        });
+    }
+
     void addMarksAsCompleteListener()
     {
         mSessionComplete.setOnClickListener(new View.OnClickListener()
@@ -177,6 +218,17 @@ public class SessionDetails extends Activity
         });
     }
 
+    void deleteSession()
+    {
+        SessionsDataSource dataSource = new SessionsDataSource(this);
+        long sessionId = getIntent().getExtras().getLong("SessionId");
+        dataSource.open();
+        Session sessionForDeletion = dataSource.getSessionById(sessionId);
+        dataSource.deleteSession(sessionForDeletion);
+        dataSource.close();
+        Toast.makeText(this, "Session deleted", Toast.LENGTH_SHORT).show();
+    }
+
     void persistNewSession()
     {
         SessionsDataSource dataSource = new SessionsDataSource(this);
@@ -199,6 +251,7 @@ public class SessionDetails extends Activity
         newSession.setDistance(this, safelyGetDistanceFromUi());
         dataSource.createSession(newSession);
         dataSource.close();
+        Toast.makeText(this, "Session saved", Toast.LENGTH_SHORT).show();
     }
 
     void persistUpdatedSession()
@@ -222,6 +275,7 @@ public class SessionDetails extends Activity
 
         dataSource.updateSession(sessionUpdated);
         dataSource.close();
+        Toast.makeText(this, "Session updated", Toast.LENGTH_SHORT).show();
     }
 
     double safelyGetDistanceFromUi()
