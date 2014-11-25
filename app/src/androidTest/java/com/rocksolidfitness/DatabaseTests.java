@@ -8,6 +8,7 @@ import android.util.Log;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeConstants;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
@@ -142,6 +143,34 @@ public class DatabaseTests extends AndroidTestCase
         List<Session> sessionsForThisWeek = dataSource.getAllSessionsForCurrentWeek();
         for (Session sport : sessionsForThisWeek)
             Log.d(TAG, sport.toString());
+    }
+
+    public void testDailySnapshots()
+    {
+        dataSource.loadDynamicTestData();
+        List<DailySnapshot> dailySnapshots = new ArrayList<DailySnapshot>();
+
+        //TODO: dataSource.getMaxWeek <-> dataSource.getMinWeek
+        for (int week = 46; week <= 49; week++)
+        {
+            dailySnapshots.add(new DailySnapshot(week).flagAsPlaceholder());
+
+            List<Session> sessionsForWeek = dataSource.getAllSessionsForWeek(week, 2014);
+            for (int dayOfWeek = 1; dayOfWeek <= 7; dayOfWeek++)
+            {
+                DailySnapshot dailySnapshot = new DailySnapshot(week);
+                dailySnapshot.mBelongsToDayOfWeek = dayOfWeek;
+                for (Session session : sessionsForWeek)
+                {
+                    if (session.getDateOfSession().getDayOfWeek() == dayOfWeek)
+                        dailySnapshot.addSession(session);
+                }
+                dailySnapshots.add(dailySnapshot);
+            }
+        }
+
+        for (DailySnapshot d : dailySnapshots)
+            Log.d("", d.toString());
     }
 
     public void testMeh2()

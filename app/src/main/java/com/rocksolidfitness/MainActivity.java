@@ -101,6 +101,10 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
             intent.putExtra("SessionId", Consts.ADD_MODE);
             intent.putExtra("DesiredDateOfSession", new DateTime().getMillis());
             startActivityForResult(intent, 1);
+        } else if (position == 3)
+        {
+            Intent intent = new Intent(this, WeekViewActivity.class);
+            startActivityForResult(intent, 1);
         } else
         {
             fragmentManager.beginTransaction()

@@ -61,7 +61,9 @@
         <item>Strength and Conditioning</item>
     </string-array>
 
-    <string name="title_activity_session_detail">SessionDetail</string>
+    <string name="title_activity_session_detail">Session Detail</string>
+    <string name="title_activity_weekly_view">Weekly Summary</string>
+
     <string name="hello_world">Hello world!</string>
 
     <string name="prompt_select_sport">Select Sport:</string>
@@ -69,3 +71,4 @@
     <string name="sess_details_add_new">-- Add New --</string>
 
 </resources>
+

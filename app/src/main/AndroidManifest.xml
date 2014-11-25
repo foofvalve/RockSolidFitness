@@ -23,6 +23,10 @@
             android:name="com.rocksolidfitness.SessionDetails"
             android:label="@string/title_activity_session_detail">
         </activity>
+        <activity
+            android:name="com.rocksolidfitness.WeekViewActivity"
+            android:label="@string/title_activity_session_detail">
+        </activity>
     </application>
 
 </manifest>

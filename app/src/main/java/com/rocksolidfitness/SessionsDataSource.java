@@ -107,6 +107,46 @@ class SessionsDataSource
         return getAllSessionsForWeek(DateTime.now().getWeekOfWeekyear(), DateTime.now().getYear());
     }
 
+    List<Session> getAllSessions()
+    {
+        List<Session> sessionsForWeek = new ArrayList<Session>();
+
+        Cursor cursor = mDatabase.query(DbHelper.TABLE_SESSIONS,
+                SessionColumns.allColumns, null,
+                null, null, null, null);
+
+        if (cursor.getCount() == 0) return null;
+
+        cursor.moveToFirst();
+        while (!cursor.isAfterLast())
+        {
+            sessionsForWeek.add(cursorToSession(cursor));
+            cursor.moveToNext();
+        }
+        cursor.close();
+        return sessionsForWeek;
+    }
+
+    List<Session> getAllPlannedSessions()
+    {
+        List<Session> sessionsForWeek = new ArrayList<Session>();
+
+        Cursor cursor = mDatabase.query(DbHelper.TABLE_SESSIONS,
+                SessionColumns.allColumns, null,
+                null, null, null, null);
+
+        if (cursor.getCount() == 0) return null;
+
+        cursor.moveToFirst();
+        while (!cursor.isAfterLast())
+        {
+            sessionsForWeek.add(cursorToSession(cursor));
+            cursor.moveToNext();
+        }
+        cursor.close();
+        return sessionsForWeek;
+    }
+
     List<Session> getAllSessionsForWeek(int week, int year)
     {
         List<Session> sessionsForWeek = new ArrayList<Session>();
