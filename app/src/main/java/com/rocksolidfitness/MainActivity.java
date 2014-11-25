@@ -81,6 +81,13 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
         {
             finish();
             startActivity(getIntent());
+
+            MainViewFragment newFragment = new MainViewFragment();
+            FragmentTransaction transaction = getFragmentManager().beginTransaction();
+
+            transaction.replace(R.id.container, newFragment);
+            transaction.addToBackStack(null);
+            transaction.commit();
         }
     }
 

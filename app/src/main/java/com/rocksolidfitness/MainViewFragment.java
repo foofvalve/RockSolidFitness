@@ -42,14 +42,16 @@ public class MainViewFragment extends Fragment
 
         SessionsDataSource dataSource = new SessionsDataSource(getActivity());
         dataSource.open();
-        //dataSource.loadDynamicTestData();
+        dataSource.loadDynamicTestData();
         dataSource.close();
 
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
         mExpListView = (ExpandableListView) rootView.findViewById(R.id.expandableListViewSessions);
         currentWeekLabel = (TextView) rootView.findViewById(R.id.lblCurrentWeek);
         sliderMonthName = (TextView) rootView.findViewById(R.id.lblCurrentWeekInfo);
-        setDashboardDate(new DateTime());
+
+        long initialDashDate = settings.getLong("global_dashboard_date", new DateTime().getMillis()); //if stored in prefs use it, otherwise fallback to today
+        setDashboardDate(new DateTime(initialDashDate));
 
         Button btnPrev = (Button) rootView.findViewById(R.id.btnPreviousWeek);
         btnPrev.setOnClickListener(new View.OnClickListener()
@@ -85,11 +87,18 @@ public class MainViewFragment extends Fragment
             }
         });
 
-        prepareListData(DIRECTION.TODAY);
+        if (mDashboardDate.getMillis() == new DateTime().getMillis())
+            prepareListData(DIRECTION.TODAY);
+        else
+            prepareListData(DIRECTION.DO_NOT_SLIDE);
 
         mListAdapter = new ExpandableListAdapter(getActivity(), mListDataHeader, mListDataChild);
         mExpListView.setAdapter(mListAdapter);
-        autoExpandToday();
+        if (mDashboardDate.getMillis() == new DateTime().getMillis())
+            autoExpandToday();
+        else
+            autoExpandAll();
+
         return rootView;
     }
 
@@ -105,6 +114,12 @@ public class MainViewFragment extends Fragment
 
         sliderMonthName.clearComposingText();
         sliderMonthName.setText(mDashboardDate.monthOfYear().getAsText() + " " + mDashboardDate.getYear());
+
+        SharedPreferences settings = getActivity().getSharedPreferences(Consts.PREFS_NAME, 0);
+        SharedPreferences.Editor edit = settings.edit();
+        edit.clear();
+        edit.putLong("global_dashboard_date", mDashboardDate.getMillis());
+        edit.commit();
     }
 
 
@@ -151,9 +166,12 @@ public class MainViewFragment extends Fragment
         } else if (shiftDirection == DIRECTION.TODAY)
         {
             sessionsForDisplay = dataSource.getAllSessionsForCurrentWeek();
-        } else
+        } else if (shiftDirection == DIRECTION.BACKWARD)
         {
             setDashboardDate(mDashboardDate.minusDays(7));
+            sessionsForDisplay = dataSource.getAllSessionsBasedOnDate(mDashboardDate);
+        } else
+        {
             sessionsForDisplay = dataSource.getAllSessionsBasedOnDate(mDashboardDate);
         }
 
@@ -239,6 +257,7 @@ public class MainViewFragment extends Fragment
     {
         FORWARD,
         BACKWARD,
-        TODAY
+        TODAY,
+        DO_NOT_SLIDE
     }
 }

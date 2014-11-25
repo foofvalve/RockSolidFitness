@@ -6,6 +6,7 @@ import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -154,6 +155,7 @@ public class SessionDetails extends Activity
                             public void onClick(DialogInterface dialog, int id)
                             {
                                 deleteSession();
+                                saveSessionDateToPrefs();
                                 Intent returnIntent = new Intent();
                                 setResult(RESULT_OK, returnIntent);
                                 finish();
@@ -204,6 +206,7 @@ public class SessionDetails extends Activity
                     else
                         persistUpdatedSession();
 
+                    saveSessionDateToPrefs();
                     Intent returnIntent = new Intent();
                     setResult(RESULT_OK, returnIntent);
                     finish();
@@ -212,12 +215,22 @@ public class SessionDetails extends Activity
         });
     }
 
+    void saveSessionDateToPrefs()
+    {
+        SharedPreferences settings = getSharedPreferences(Consts.PREFS_NAME, 0);
+        SharedPreferences.Editor edit = settings.edit();
+        edit.clear();
+        edit.putLong("global_dashboard_date", mSessionDate.getMillis());
+        edit.commit();
+    }
+
     void deleteSession()
     {
         SessionsDataSource dataSource = new SessionsDataSource(this);
         long sessionId = getIntent().getExtras().getLong("SessionId");
         dataSource.open();
         Session sessionForDeletion = dataSource.getSessionById(sessionId);
+        mSessionDate = sessionForDeletion.getDateOfSession();
         dataSource.deleteSession(sessionForDeletion);
         dataSource.close();
         Toast.makeText(this, "Session deleted", Toast.LENGTH_SHORT).show();
