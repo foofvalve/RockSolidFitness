@@ -39,6 +39,7 @@ public class SessionDetails extends Activity
     AutoCompleteTextView mAutoTvSport;
     TextView mTvDurationHours;
     TextView mTvDurationMinutes;
+    TextView mTvPrepopForm;
     DateTime mSessionDate;
     String mErrorMessages;
     ImageView mSessionComplete;
@@ -93,6 +94,10 @@ public class SessionDetails extends Activity
         addSaveBtnListener();
         addDeleteSessListener();
 
+        //debug only!!!
+        mTvPrepopForm = (TextView) findViewById(R.id.textViewSessDone);
+        addDebugPrefillForm();
+
         mSessionComplete = (ImageView) findViewById(R.id.imgMarkAsComplete);
         addMarksAsCompleteListener();
 
@@ -110,6 +115,24 @@ public class SessionDetails extends Activity
             mBtnDeleteSession.setVisibility(View.VISIBLE);
         }
 
+    }
+
+    //TEsting
+    void addDebugPrefillForm()
+    {
+        mTvPrepopForm.setOnLongClickListener(new View.OnLongClickListener()
+        {
+            public boolean onLongClick(View v)
+            {
+                mTvDurationMinutes.setText("11");
+                mTxtNotes.setText("some notes blah blah \n blah blah ... stuff");
+                mTvDurationHours.setText("1");
+                mAutoTvSessDesc.setText("Really Long Run");
+                mAutoTvSport.setText("Running");
+                mTxtDistance.setText("50");
+                return true;
+            }
+        });
     }
 
     void retrieveAndDisplaySession()

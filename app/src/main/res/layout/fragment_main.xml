@@ -79,6 +79,7 @@
         android:layout_alignParentStart="true"
         android:layout_below="@+id/sessionSlider"
         android:layout_weight="1"
+        android:animateLayoutChanges="true"
         android:divider="@android:color/darker_gray"
         android:dividerHeight="5sp"
         android:transcriptMode="disabled"/>
