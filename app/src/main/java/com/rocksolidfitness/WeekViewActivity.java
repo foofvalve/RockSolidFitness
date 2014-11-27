@@ -1,9 +1,8 @@
 package com.rocksolidfitness;
 
 import android.app.Activity;
-import android.content.pm.ActivityInfo;
 import android.os.Bundle;
-import android.widget.GridView;
+import android.webkit.WebView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,20 +11,31 @@ import java.util.List;
 public class WeekViewActivity extends Activity
 {
     private ArrayList<DailySnapshot> listDailySnapshots;
-    private GridviewAdapter mAdapter;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         setContentView(R.layout.weekly_layout);
 
-        prepareList();
-        GridView gridView = (GridView) findViewById(R.id.gridView);
-        gridView.setNumColumns(8);
-        mAdapter = new GridviewAdapter(this, listDailySnapshots);
-        gridView.setAdapter(mAdapter);
+        WebView webView = (WebView) findViewById(R.id.webView);
+        webView.getSettings().setDomStorageEnabled(true);
+        String customHtml = "<html><head><link href=\"bootstrap.min.css\" rel=\"stylesheet\" type=\"text/css\"/></head><body><h2>Greetings from JavaCodeGeeks</h2>\t<table class=\"table\">\n" +
+                "\t\t<tr>\n" +
+                "\t\t\t<th>Week 12</th>\n" +
+                "\t\t\t<th>Week 13</th>\n" +
+                "\t\t\t<th>Week 14</th>\n" +
+                "\t\t</tr>\n" +
+                "\t\t<tr>\n" +
+                "\t\t<td>asdfasf</td>\n" +
+                "\t\t<td>asdfasf</td>\n" +
+                "\t\t<td>asdfas</td>\n" +
+                "\t\t</tr>\t\n" +
+                "\t</table>\n</body></html>";
+        //webView.loadData(customHtml, "text/html", "UTF-8");
+
+        webView.loadDataWithBaseURL("file:///android_asset/", customHtml, "text/html", "UTF-8", "");
     }
 
     public void prepareList()
@@ -34,7 +44,7 @@ public class WeekViewActivity extends Activity
 
         SessionsDataSource dataSource = new SessionsDataSource(this);
         dataSource.openReadOnly();
-        ...fix this shit
+        //...fix this shit
         for (int week = 46; week <= 49; week++)
         {
             listDailySnapshots.add(new DailySnapshot(week).flagAsPlaceholder());

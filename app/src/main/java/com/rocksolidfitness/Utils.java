@@ -1,6 +1,8 @@
 package com.rocksolidfitness;
 
 
+import android.content.Context;
+import android.util.DisplayMetrics;
 import android.util.Log;
 
 import org.joda.time.DateTime;
@@ -77,5 +79,18 @@ class Utils
         daysOfGivenWeek.put(DateTimeConstants.SATURDAY + "", firstDayOfWeek.plusDays(5));
         daysOfGivenWeek.put(DateTimeConstants.SUNDAY + "", firstDayOfWeek.plusDays(6));
         return daysOfGivenWeek;
+    }
+
+
+    public static float getScreenHeightInDp(Context context)
+    {
+        DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
+        return displayMetrics.heightPixels / displayMetrics.density;
+    }
+
+    public static float getScreenWidthInDp(Context context)
+    {
+        DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
+        return displayMetrics.widthPixels / displayMetrics.density;
     }
 }
