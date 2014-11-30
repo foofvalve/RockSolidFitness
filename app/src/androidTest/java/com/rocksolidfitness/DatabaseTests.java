@@ -7,7 +7,6 @@ import android.util.Log;
 
 import org.joda.time.DateTime;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class DatabaseTests extends AndroidTestCase
@@ -141,33 +140,19 @@ public class DatabaseTests extends AndroidTestCase
             Log.d(TAG, sport.toString());
     }
 
-    public void testDailySnapshots()
+    public void testGetSessionsForDay()
     {
         dataSource.loadDynamicTestData();
-        List<DailySnapshot> dailySnapshots = new ArrayList<DailySnapshot>();
 
-        //TODO: dataSource.getMaxWeek <-> dataSource.getMinWeek
-        for (int week = 46; week <= 49; week++)
-        {
-            dailySnapshots.add(new DailySnapshot(week).flagAsPlaceholder());
-
-            List<Session> sessionsForWeek = dataSource.getAllSessionsForWeek(week, 2014);
-            for (int dayOfWeek = 1; dayOfWeek <= 7; dayOfWeek++)
-            {
-                DailySnapshot dailySnapshot = new DailySnapshot(week);
-                dailySnapshot.mBelongsToDayOfWeek = dayOfWeek;
-                for (Session session : sessionsForWeek)
-                {
-                    if (session.getDateOfSession().getDayOfWeek() == dayOfWeek)
-                        dailySnapshot.addSession(session);
-                }
-                dailySnapshots.add(dailySnapshot);
-            }
-        }
-
-        for (DailySnapshot d : dailySnapshots)
-            Log.d("", d.toString());
+        DateTime now = new DateTime();
+        String filter = String.valueOf(now.dayOfMonth().get()) + String.valueOf(now.getMonthOfYear())
+                + String.valueOf(now.getYear());
+        Log.d(TAG, "filter: " + filter);
+        List<Session> sessionsForThisWeek = dataSource.getAllSessionsForDay(filter);
+        for (Session sport : sessionsForThisWeek)
+            Log.d(TAG, sport.toString());
     }
+
 
     public void testGetSessionDescForSpinner()
     {

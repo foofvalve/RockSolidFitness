@@ -9,4 +9,5 @@ public class Consts
     public static final int VIBRATE_DURATION = 50;
     public static final String PREFS_NAME = "AppSettings";
     public static final long ADD_MODE = -1;
+    public static final int DEFAULT_DAY_IN_FUTURE_FOR_DISPLAY = 10; //days
 }

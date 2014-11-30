@@ -42,7 +42,7 @@ public class MainViewFragment extends Fragment
 
         SessionsDataSource dataSource = new SessionsDataSource(getActivity());
         dataSource.open();
-        //dataSource.loadDynamicTestData();
+        dataSource.loadDynamicTestData();
         dataSource.close();
 
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
@@ -101,6 +101,7 @@ public class MainViewFragment extends Fragment
 
         return rootView;
     }
+
 
     void setDashboardDate(DateTime dashboardDate)
     {

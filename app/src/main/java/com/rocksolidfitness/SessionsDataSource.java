@@ -15,7 +15,7 @@ import java.util.List;
 
 class SessionsDataSource
 {
-    private final DbHelper mDbHelper;
+    DbHelper mDbHelper = null;
     Context mContext;
     // Database fields
     private SQLiteDatabase mDatabase;
@@ -24,11 +24,20 @@ class SessionsDataSource
     {
         mDbHelper = new DbHelper(context);
         mContext = context;
+        this.mDatabase = mDbHelper.getWritableDatabase();
     }
 
     public void open() throws SQLException
     {
         mDatabase = mDbHelper.getWritableDatabase();
+    }
+
+    public boolean isOpen()
+    {
+        if (mDatabase == null)
+            return false;
+        else
+            return mDatabase.isOpen();
     }
 
     public void openReadOnly() throws SQLException
@@ -38,7 +47,8 @@ class SessionsDataSource
 
     public void close()
     {
-        mDbHelper.close();
+        if (mDbHelper != null)
+            mDbHelper.close();
     }
 
     public long createSession(Session session)
@@ -147,6 +157,27 @@ class SessionsDataSource
         return sessionsForWeek;
     }
 
+    List<Session> getAllSessionsForDay(String ddmmyyyy)
+    {
+        List<Session> sessionsForWeek = new ArrayList<Session>();
+
+        Cursor cursor = mDatabase.query(DbHelper.TABLE_SESSIONS,
+                SessionColumns.allColumns,
+                " strftime('%d%m%Y',dateofsession) = ? ",
+                new String[]{"" + ddmmyyyy}, null, null, SessionColumns.SESSION_WEEK + "," + SessionColumns.SESSION_YEAR);
+
+        if (cursor.getCount() == 0) return null;
+
+        cursor.moveToFirst();
+        while (!cursor.isAfterLast())
+        {
+            sessionsForWeek.add(cursorToSession(cursor));
+            cursor.moveToNext();
+        }
+        cursor.close();
+        return sessionsForWeek;
+    }
+
     List<Session> getAllSessionsForWeek(int week, int year)
     {
         List<Session> sessionsForWeek = new ArrayList<Session>();
@@ -154,6 +185,27 @@ class SessionsDataSource
         Cursor cursor = mDatabase.query(DbHelper.TABLE_SESSIONS,
                 SessionColumns.allColumns, SessionColumns.SESSION_WEEK + " = ? and " + SessionColumns.SESSION_YEAR + " = ?",
                 new String[]{"" + week, "" + year}, null, null, null);
+
+        if (cursor.getCount() == 0) return null;
+
+        cursor.moveToFirst();
+        while (!cursor.isAfterLast())
+        {
+            sessionsForWeek.add(cursorToSession(cursor));
+            cursor.moveToNext();
+        }
+        cursor.close();
+        return sessionsForWeek;
+    }
+
+    List<Session> getAllSessionsForWeekOrderByDate(int week, int year)
+    {
+        List<Session> sessionsForWeek = new ArrayList<Session>();
+
+        Cursor cursor = mDatabase.query(DbHelper.TABLE_SESSIONS,
+                SessionColumns.allColumns, SessionColumns.SESSION_WEEK + " = ? and " + SessionColumns.SESSION_YEAR + " = ?",
+                new String[]{"" + week, "" + year}, null, null, SessionColumns.SESSION_WEEK + "," + SessionColumns.SESSION_YEAR
+                        + SessionColumns.DATE_OF_SESSION);
 
         if (cursor.getCount() == 0) return null;
 

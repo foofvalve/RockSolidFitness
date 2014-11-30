@@ -137,6 +137,21 @@ public final class Session
         return Integer.toString(minutes);
     }
 
+    public String getFormattedCombinedDuration()
+    {
+        return getFormattedDurationHour() + ":" + getFormattedDurationMinute();
+    }
+
+    public String getSessionDateFormatted()
+    {
+        return Utils.getSessionDateFormatted(dateOfSession);
+    }
+
+    public String getFullSessionDescription()
+    {
+        return Utils.shortifyText(sport, 30) + "\t" + getFormattedCombinedDuration() + "\n" +
+                Utils.shortifyText(description, 40);
+    }
 
     public String toString()
     {

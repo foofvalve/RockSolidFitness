@@ -5,4 +5,33 @@
         <!-- Customize your theme here. -->
     </style>
 
+    <style name="style_cell_many_desc">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:inputType">text</item>
+        <item name="android:textSize">8sp</item>
+        <item name="android:paddingLeft">3dp</item>
+        <item name="android:paddingRight">3dp</item>
+    </style>
+
+    <style name="cellblah">
+
+        <item name="android:ellipsize">end</item>
+        <item name="android:layout_margin">1dp</item>
+        <item name="android:layout_width">100dp</item>
+        <item name="android:layout_height">60dp</item>
+        <item name="android:textSize">10sp</item>
+        <item name="android:background">@drawable/bg_table_cell</item>
+        <item name="android:maxLines">5</item>
+        <item name="android:lines">5</item>
+    </style>
+
+    <style name="weekday_label">
+        <item name="android:layout_margin">1dp</item>
+        <item name="android:layout_width">12dp</item>
+        <item name="android:layout_height">60dp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:maxLines">3</item>
+    </style>
+
 </resources>

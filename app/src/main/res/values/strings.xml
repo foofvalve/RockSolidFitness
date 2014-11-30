@@ -38,6 +38,8 @@
     <string name="confirm_delete_yes">Yes</string>
     <string name="confirm_delete_no">No</string>
 
+    <string name="session">Workout</string>
+    <string name="date">Date</string>
     <string name="validation_errors_title">Oops. Some bad data</string>
     <string name="validation_button_ok">Ok</string>
 
@@ -71,4 +73,5 @@
     <string name="sess_details_add_new">-- Add New --</string>
 
 </resources>
+
 

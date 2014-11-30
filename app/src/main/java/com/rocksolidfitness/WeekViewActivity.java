@@ -2,67 +2,65 @@ package com.rocksolidfitness;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.webkit.WebView;
+import android.util.Log;
+import android.widget.TextView;
 
-import java.util.ArrayList;
+import org.joda.time.DateTime;
+
 import java.util.List;
 
 
 public class WeekViewActivity extends Activity
 {
-    private ArrayList<DailySnapshot> listDailySnapshots;
 
+    SessionsDataSource dataSource;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.weekly_layout);
+        setContentView(R.layout.weekly_layout_v2);
 
-        WebView webView = (WebView) findViewById(R.id.webView);
-        webView.getSettings().setDomStorageEnabled(true);
-        String customHtml = "<html><head><link href=\"bootstrap.min.css\" rel=\"stylesheet\" type=\"text/css\"/></head><body><h2>Greetings from JavaCodeGeeks</h2>\t<table class=\"table\">\n" +
-                "\t\t<tr>\n" +
-                "\t\t\t<th>Week 12</th>\n" +
-                "\t\t\t<th>Week 13</th>\n" +
-                "\t\t\t<th>Week 14</th>\n" +
-                "\t\t</tr>\n" +
-                "\t\t<tr>\n" +
-                "\t\t<td>asdfasf</td>\n" +
-                "\t\t<td>asdfasf</td>\n" +
-                "\t\t<td>asdfas</td>\n" +
-                "\t\t</tr>\t\n" +
-                "\t</table>\n</body></html>";
-        //webView.loadData(customHtml, "text/html", "UTF-8");
+        DateTime dayOfWeek = Utils.getFirstDayOfWeek();
 
-        webView.loadDataWithBaseURL("file:///android_asset/", customHtml, "text/html", "UTF-8", "");
-    }
+        dataSource = new SessionsDataSource(this);
+        if (!dataSource.isOpen())
+            dataSource.open();
 
-    public void prepareList()
-    {
-        listDailySnapshots = new ArrayList<DailySnapshot>();
-
-        SessionsDataSource dataSource = new SessionsDataSource(this);
-        dataSource.openReadOnly();
-        //...fix this shit
-        for (int week = 46; week <= 49; week++)
+        for (int i = 1; i <= 21; i++)
         {
-            listDailySnapshots.add(new DailySnapshot(week).flagAsPlaceholder());
+            String filter = String.valueOf(dayOfWeek.dayOfMonth().get()) + String.valueOf(dayOfWeek.getMonthOfYear())
+                    + String.valueOf(dayOfWeek.getYear());
 
-            List<Session> sessionsForWeek = dataSource.getAllSessionsForWeek(week, 2014);
-            for (int dayOfWeek = 1; dayOfWeek <= 7; dayOfWeek++)
+            List<Session> listOfSessionsForDay = dataSource.getAllSessionsForDay(filter);
+
+            TextView dayTextView = (TextView) findViewById(getResources().getIdentifier("tv" + i, "id", getPackageName()));
+            //TextView dayTextView = (TextView)findViewById(R.id.tv1);
+            Log.d("", "finding :: tv" + i);
+            dayTextView.clearComposingText();
+            dayTextView.setText(String.valueOf(dayOfWeek.getDayOfMonth()));
+            if (listOfSessionsForDay != null)
             {
-                DailySnapshot dailySnapshot = new DailySnapshot(week);
-                dailySnapshot.mBelongsToDayOfWeek = dayOfWeek;
-                for (Session session : sessionsForWeek)
+                for (Session session : listOfSessionsForDay)
                 {
-                    if (session.getDateOfSession().getDayOfWeek() == dayOfWeek)
-                        dailySnapshot.addSession(session);
+                    String currentText = dayTextView.getText().toString();
+                    dayTextView.setText(currentText + "\n" + session.getFullSessionDescription());
                 }
-                listDailySnapshots.add(dailySnapshot);
             }
+
+            dayOfWeek = dayOfWeek.plusDays(1);
         }
 
         dataSource.close();
+    }
+
+    @Override
+    protected void onDestroy()
+    {
+        super.onDestroy();
+        if (dataSource != null)
+        {
+            dataSource.close();
+        }
     }
 }

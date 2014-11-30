@@ -1,0 +1,254 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/label0"
+                android:layout_width="12dp"
+                android:layout_height="wrap_content"
+
+                android:text=""/>
+
+            <TextView
+                android:id="@+id/tvFirstWeek"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="Week 13"
+                android:textStyle="bold"/>
+
+            <TextView
+                android:id="@+id/tvSecondWeek"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="Week 14"
+                android:textStyle="bold"/>
+
+            <TextView
+                android:id="@+id/tvThirdWeek"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@+id/tv8"
+                android:gravity="center"
+                android:text="Week 15"
+                android:textStyle="bold"/>
+        </LinearLayout>
+
+        <!-- Monday -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="60dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/label1"
+                style="@style/weekday_label"
+                android:text="\n M"/>
+
+            <TextView
+                android:id="@+id/tv1"
+                style="@style/cellblah"
+                android:text="1 \n Swim 4:33"/>
+
+            <TextView
+                android:id="@+id/tv8"
+                style="@style/cellblah"
+                android:text="8"
+                />
+
+            <TextView
+                android:id="@+id/tv15"
+                style="@style/cellblah"
+                android:text="16"
+                />
+        </LinearLayout>
+
+        <!-- Tuesday -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="60dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/label2"
+                style="@style/weekday_label"
+                android:text="\n T"/>
+
+            <TextView
+                android:id="@+id/tv2"
+                style="@style/cellblah"
+                android:text="1 \n Swim 4:33"/>
+
+            <TextView
+                android:id="@+id/tv9"
+                style="@style/cellblah"
+                android:text="8"
+                />
+
+            <TextView
+                android:id="@+id/tv16"
+                style="@style/cellblah"
+                android:text="16"
+                />
+        </LinearLayout>
+
+        <!-- Wednesday -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="60dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/label3"
+                style="@style/weekday_label"
+                android:text="\n W"/>
+
+            <TextView
+                android:id="@+id/tv3"
+                style="@style/cellblah"
+                android:text="1 \n Swim 4:33 \n Easy blah bhal main set is long blan blan 232 blah"
+                />
+
+            <TextView
+                android:id="@+id/tv10"
+                style="@style/cellblah"
+                android:text="8"
+                />
+
+            <TextView
+                android:id="@+id/tv17"
+                style="@style/cellblah"
+                android:text="16"
+                />
+        </LinearLayout>
+
+
+        <!-- Thursday -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="60dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/label4"
+                style="@style/weekday_label"
+                android:text="\n T"/>
+
+            <TextView
+                android:id="@+id/tv4"
+                style="@style/cellblah"
+                android:text="1 \n Swim 4:33"/>
+
+            <TextView
+                android:id="@+id/tv11"
+                style="@style/cellblah"
+                android:text="8"
+                />
+
+            <TextView
+                android:id="@+id/tv18"
+                style="@style/cellblah"
+                android:text="16"
+                />
+        </LinearLayout>
+
+        <!-- Friday -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="60dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/label5"
+                style="@style/weekday_label"
+                android:text="\n F"/>
+
+            <TextView
+                android:id="@+id/tv5"
+                style="@style/cellblah"
+                android:text="1 \n Swim 4:33"/>
+
+            <TextView
+                android:id="@+id/tv12"
+                style="@style/cellblah"
+                android:text="8"
+                />
+
+            <TextView
+                android:id="@+id/tv19"
+                style="@style/cellblah"
+                android:text="16"
+                />
+        </LinearLayout>
+
+        <!-- Saturday -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="60dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/label6"
+                style="@style/weekday_label"
+                android:text="\n S"/>
+
+            <TextView
+                android:id="@+id/tv6"
+                style="@style/cellblah"
+                android:text="1 \n Swim 4:33"/>
+
+            <TextView
+                android:id="@+id/tv13"
+                style="@style/cellblah"
+                android:text="8"
+                />
+
+            <TextView
+                android:id="@+id/tv20"
+                style="@style/cellblah"
+                android:text="16"
+                />
+        </LinearLayout>
+
+        <!-- Sunday -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="60dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/label7"
+                style="@style/weekday_label"
+                android:text="\n S"/>
+
+            <TextView
+                android:id="@+id/tv7"
+                style="@style/cellblah"
+                android:text="1 \n Swim 4:33"/>
+
+            <TextView
+                android:id="@+id/tv14"
+                style="@style/cellblah"
+                android:text="8"
+                />
+
+            <TextView
+                android:id="@+id/tv21"
+                style="@style/cellblah"
+                android:text="16"
+                />
+        </LinearLayout>
+    </LinearLayout>
+</ScrollView>

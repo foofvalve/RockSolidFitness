@@ -61,6 +61,36 @@ class Utils
         return rawDate.toString(formatter);
     }
 
+    public static String shortifyText(String text, int maxLength)
+    {
+        if (text.length() > maxLength)
+            return text.substring(0, maxLength) + "...";
+        else
+            return text;
+
+    }
+
+    public static String getSessionDateFormatted(DateTime rawDate)
+    {
+        DateTimeFormatter formatter = DateTimeFormat.forPattern("E");
+        String dayOfWeekText = rawDate.toString(formatter);
+
+        formatter = DateTimeFormat.forPattern("d MMM");
+        String datePart = rawDate.toString(formatter);
+
+        return dayOfWeekText + "\n" + datePart;
+    }
+
+    public static boolean areDatesEqual(DateTime d1, DateTime d2)
+    {
+        if (d1.getDayOfWeek() == d2.getDayOfWeek() &&
+                d1.getMonthOfYear() == d2.getMonthOfYear() &&
+                d1.getYear() == d2.getYear())
+            return true;
+        else
+            return false;
+    }
+
     public static void printSessionsToConsole(List<Session> sessionsForThisWeek)
     {
         for (Session sport : sessionsForThisWeek)
@@ -79,6 +109,13 @@ class Utils
         daysOfGivenWeek.put(DateTimeConstants.SATURDAY + "", firstDayOfWeek.plusDays(5));
         daysOfGivenWeek.put(DateTimeConstants.SUNDAY + "", firstDayOfWeek.plusDays(6));
         return daysOfGivenWeek;
+    }
+
+
+    public static DateTime getFirstDayOfWeek()
+    {
+        DateTime now = new DateTime();
+        return now.dayOfWeek().withMinimumValue();
     }
 
 

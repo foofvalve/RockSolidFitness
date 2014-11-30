@@ -68,6 +68,11 @@ public class GenericTests extends AndroidTestCase
 
     }
 
+    public void testFirstDayOfWeek()
+    {
+        Log.d(TAG, Utils.getFirstDayOfWeek().toString());
+    }
+
     public void testUtilsDateOffseter()
     {
         DateTime dte = Utils.convertSQLiteDate("2014-08-27");
