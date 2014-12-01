@@ -1,8 +1,8 @@
 package com.rocksolidfitness;
 
 import android.app.Activity;
+import android.graphics.Color;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
@@ -20,7 +20,6 @@ public class WeekViewActivity extends Activity implements SwipeInterface
     DateTime mDayOfWeek;
     double mScreenWidth;
     double mScreenHeight;
-    SWIPE mSwipe;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -28,7 +27,6 @@ public class WeekViewActivity extends Activity implements SwipeInterface
         super.onCreate(savedInstanceState);
         setContentView(R.layout.weekly_layout_v2);
 
-        mSwipe = SWIPE.LEFT;
         ActivitySwipeDetector swipe = new ActivitySwipeDetector(this, WeekViewActivity.this);
         LinearLayout swipe_layout = (LinearLayout) findViewById(R.id.weeklyLayoutMainContainer);
         swipe_layout.setOnTouchListener(swipe);
@@ -43,10 +41,7 @@ public class WeekViewActivity extends Activity implements SwipeInterface
     @Override
     public void onLeftToRight(View v)
     {
-        mSwipe = SWIPE.LEFT;
-        Log.i("", "mDayOfWeek = " + mDayOfWeek.toString());
         mDayOfWeek = mDayOfWeek.minusDays(7);
-        Log.i("", "mDayOfWeek + 7 days =  " + mDayOfWeek.toString());
         setWeekHeaders();
         setMainContent();
     }
@@ -54,7 +49,6 @@ public class WeekViewActivity extends Activity implements SwipeInterface
     @Override
     public void onRightToLeft(View v)
     {
-        mSwipe = SWIPE.RIGHT;
         mDayOfWeek = mDayOfWeek.plusDays(7);
         setWeekHeaders();
         setMainContent();
@@ -66,10 +60,14 @@ public class WeekViewActivity extends Activity implements SwipeInterface
         if (!dataSource.isOpen())
             dataSource.open();
 
+        ViewGroup vg = (ViewGroup) findViewById(R.id.weeklyLayoutMainContainer);
+        vg.invalidate();  //force repaint the view
+
+        DateTime dateRange = mDayOfWeek;
         for (int i = 1; i <= 21; i++)
         {
-            String filter = mDayOfWeek.toString("dd") + String.valueOf(mDayOfWeek.getMonthOfYear())
-                    + String.valueOf(mDayOfWeek.getYear());
+            String filter = dateRange.toString("dd") + String.valueOf(dateRange.getMonthOfYear())
+                    + String.valueOf(dateRange.getYear());
 
             List<Session> listOfSessionsForDay = dataSource.getAllSessionsForDay(filter);
 
@@ -82,7 +80,13 @@ public class WeekViewActivity extends Activity implements SwipeInterface
             params.width = (int) mScreenWidth;
             dayTextView.setLayoutParams(params);
 
-            dayTextView.setText(String.valueOf(mDayOfWeek.getDayOfMonth()));
+            if (dateRange.getWeekOfWeekyear() == new DateTime().getWeekOfWeekyear())  //highlight the current week
+                dayTextView.setBackgroundColor(Color.parseColor("#d4d446"));
+            else
+                dayTextView.setBackgroundColor(Color.parseColor("#eaeaea"));
+
+
+            dayTextView.setText(String.valueOf(dateRange.getDayOfMonth()));
             if (listOfSessionsForDay != null)
             {
                 for (Session session : listOfSessionsForDay)
@@ -98,7 +102,7 @@ public class WeekViewActivity extends Activity implements SwipeInterface
                 }
             }
 
-            mDayOfWeek = mDayOfWeek.plusDays(1);
+            dateRange = dateRange.plusDays(1);
         }
 
         dataSource.close();
@@ -114,7 +118,6 @@ public class WeekViewActivity extends Activity implements SwipeInterface
         tvFirstWeek.setLayoutParams(params);
         tvFirstWeek.clearComposingText();
 
-
         String firstWeek = String.valueOf(mDayOfWeek.getWeekOfWeekyear())
                 + " " + mDayOfWeek.toString("MMM");
         tvFirstWeek.setText(getString(R.string.week) + " - " + firstWeek);
@@ -125,12 +128,8 @@ public class WeekViewActivity extends Activity implements SwipeInterface
         tvSecondWeek.clearComposingText();
 
         String secondWeek;
-        if (mSwipe == SWIPE.LEFT)
-            secondWeek = String.valueOf(mDayOfWeek.plusDays(7).getWeekOfWeekyear())
+        secondWeek = String.valueOf(mDayOfWeek.plusDays(7).getWeekOfWeekyear())
                     + " " + mDayOfWeek.plusDays(7).toString("MMM");
-        else
-            secondWeek = String.valueOf(mDayOfWeek.minusDays(7).getWeekOfWeekyear())
-                    + " " + mDayOfWeek.minusDays(7).toString("MMM");
 
         tvSecondWeek.setText(getString(R.string.week) + " - " + secondWeek);
 
@@ -140,12 +139,8 @@ public class WeekViewActivity extends Activity implements SwipeInterface
         tvThirdWeek.clearComposingText();
 
         String thirdWeek;
-        if (mSwipe == SWIPE.LEFT)
-            thirdWeek = String.valueOf(mDayOfWeek.plusDays(14).getWeekOfWeekyear())
+        thirdWeek = String.valueOf(mDayOfWeek.plusDays(14).getWeekOfWeekyear())
                     + " " + mDayOfWeek.plusDays(14).toString("MMM");
-        else
-            thirdWeek = String.valueOf(mDayOfWeek.minusDays(14).getWeekOfWeekyear())
-                    + " " + mDayOfWeek.minusDays(14).toString("MMM");
 
         tvThirdWeek.setText(getString(R.string.week) + " - " + thirdWeek);
     }
@@ -158,11 +153,6 @@ public class WeekViewActivity extends Activity implements SwipeInterface
         {
             dataSource.close();
         }
-    }
-
-    public enum SWIPE
-    {
-        LEFT, RIGHT
     }
 }
 
