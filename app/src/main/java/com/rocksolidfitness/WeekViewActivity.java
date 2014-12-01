@@ -2,7 +2,10 @@ package com.rocksolidfitness;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import org.joda.time.DateTime;
@@ -10,13 +13,14 @@ import org.joda.time.DateTime;
 import java.util.List;
 
 
-public class WeekViewActivity extends Activity
+public class WeekViewActivity extends Activity implements SwipeInterface
 {
 
     SessionsDataSource dataSource;
     DateTime mDayOfWeek;
     double mScreenWidth;
     double mScreenHeight;
+    SWIPE mSwipe;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -24,9 +28,34 @@ public class WeekViewActivity extends Activity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.weekly_layout_v2);
 
+        mSwipe = SWIPE.LEFT;
+        ActivitySwipeDetector swipe = new ActivitySwipeDetector(this, WeekViewActivity.this);
+        LinearLayout swipe_layout = (LinearLayout) findViewById(R.id.weeklyLayoutMainContainer);
+        swipe_layout.setOnTouchListener(swipe);
+
         mScreenWidth = (Utils.getScreenWidthInPx(this) * 0.93) / 3;
         mScreenHeight = (Utils.getScreenHeightInPx(this) * 0.98) / 7;
         mDayOfWeek = Utils.getFirstDayOfWeek();
+        setWeekHeaders();
+        setMainContent();
+    }
+
+    @Override
+    public void onLeftToRight(View v)
+    {
+        mSwipe = SWIPE.LEFT;
+        Log.i("", "mDayOfWeek = " + mDayOfWeek.toString());
+        mDayOfWeek = mDayOfWeek.minusDays(7);
+        Log.i("", "mDayOfWeek + 7 days =  " + mDayOfWeek.toString());
+        setWeekHeaders();
+        setMainContent();
+    }
+
+    @Override
+    public void onRightToLeft(View v)
+    {
+        mSwipe = SWIPE.RIGHT;
+        mDayOfWeek = mDayOfWeek.plusDays(7);
         setWeekHeaders();
         setMainContent();
     }
@@ -84,6 +113,8 @@ public class WeekViewActivity extends Activity
         params.width = (int) mScreenWidth;
         tvFirstWeek.setLayoutParams(params);
         tvFirstWeek.clearComposingText();
+
+
         String firstWeek = String.valueOf(mDayOfWeek.getWeekOfWeekyear())
                 + " " + mDayOfWeek.toString("MMM");
         tvFirstWeek.setText(getString(R.string.week) + " - " + firstWeek);
@@ -92,16 +123,30 @@ public class WeekViewActivity extends Activity
         params.width = (int) mScreenWidth;
         tvSecondWeek.setLayoutParams(params);
         tvSecondWeek.clearComposingText();
-        String secondWeek = String.valueOf(mDayOfWeek.plusDays(7).getWeekOfWeekyear())
-                + " " + mDayOfWeek.toString("MMM");
+
+        String secondWeek;
+        if (mSwipe == SWIPE.LEFT)
+            secondWeek = String.valueOf(mDayOfWeek.plusDays(7).getWeekOfWeekyear())
+                    + " " + mDayOfWeek.plusDays(7).toString("MMM");
+        else
+            secondWeek = String.valueOf(mDayOfWeek.minusDays(7).getWeekOfWeekyear())
+                    + " " + mDayOfWeek.minusDays(7).toString("MMM");
+
         tvSecondWeek.setText(getString(R.string.week) + " - " + secondWeek);
 
         params = tvThirdWeek.getLayoutParams();
         params.width = (int) mScreenWidth;
         tvThirdWeek.setLayoutParams(params);
         tvThirdWeek.clearComposingText();
-        String thirdWeek = String.valueOf(mDayOfWeek.plusDays(14).getWeekOfWeekyear())
-                + " " + mDayOfWeek.toString("MMM");
+
+        String thirdWeek;
+        if (mSwipe == SWIPE.LEFT)
+            thirdWeek = String.valueOf(mDayOfWeek.plusDays(14).getWeekOfWeekyear())
+                    + " " + mDayOfWeek.plusDays(14).toString("MMM");
+        else
+            thirdWeek = String.valueOf(mDayOfWeek.minusDays(14).getWeekOfWeekyear())
+                    + " " + mDayOfWeek.minusDays(14).toString("MMM");
+
         tvThirdWeek.setText(getString(R.string.week) + " - " + thirdWeek);
     }
 
@@ -113,6 +158,11 @@ public class WeekViewActivity extends Activity
         {
             dataSource.close();
         }
+    }
+
+    public enum SWIPE
+    {
+        LEFT, RIGHT
     }
 }
 
