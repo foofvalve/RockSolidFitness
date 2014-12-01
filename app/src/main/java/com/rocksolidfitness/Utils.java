@@ -119,15 +119,15 @@ class Utils
     }
 
 
-    public static float getScreenHeightInDp(Context context)
+    public static float getScreenHeightInPx(Context context)
     {
         DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
-        return displayMetrics.heightPixels / displayMetrics.density;
+        return displayMetrics.heightPixels;
     }
 
-    public static float getScreenWidthInDp(Context context)
+    public static float getScreenWidthInPx(Context context)
     {
         DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
-        return displayMetrics.widthPixels / displayMetrics.density;
+        return displayMetrics.widthPixels;
     }
 }

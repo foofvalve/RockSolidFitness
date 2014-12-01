@@ -24,8 +24,8 @@ public class GenericTests extends AndroidTestCase
 
     public void testGettingScreenSizes()
     {
-        float height = Utils.getScreenHeightInDp(mContext);
-        float width = Utils.getScreenWidthInDp(mContext);
+        float height = Utils.getScreenHeightInPx(mContext);
+        float width = Utils.getScreenWidthInPx(mContext);
 
         Log.d(TAG, "Height=" + height);
         Log.d(TAG, "Wdith=" + width);

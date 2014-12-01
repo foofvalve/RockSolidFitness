@@ -153,6 +153,18 @@ public final class Session
                 Utils.shortifyText(description, 40);
     }
 
+    public String getMeduimSessionDescription()
+    {
+        return Utils.shortifyText(sport, 13) + "\t" + getFormattedCombinedDuration() + "\n" +
+                Utils.shortifyText(description, 25);
+    }
+
+    public String getShortSessionDescription()
+    {
+        return sport.charAt(0) + "\t" + getFormattedCombinedDuration() + "\t" +
+                Utils.shortifyText(description, 12);
+    }
+
     public String toString()
     {
         return MessageFormat.format("id=[{0}]|" +
