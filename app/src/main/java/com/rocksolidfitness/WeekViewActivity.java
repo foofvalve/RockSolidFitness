@@ -1,7 +1,6 @@
 package com.rocksolidfitness;
 
 import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -60,7 +59,6 @@ public class WeekViewActivity extends Activity implements SwipeInterface
         setMainContent();
     }
 
-    @TargetApi(16)
     @SuppressLint("NewApi")
     void setMainContent()
     {
@@ -170,12 +168,12 @@ public class WeekViewActivity extends Activity implements SwipeInterface
         Paint paint = new Paint();
         paint.setStyle(Paint.Style.FILL);
         paint.setColor(Color.WHITE);
-        paint.setTextSize(10);
+        paint.setTextSize(Utils.convertDpToPixel(24, this));
 
         Canvas canvas = new Canvas(bm);
         canvas.drawColor(color);
-        float relativePos = (float) 0.87;
-        canvas.drawText(text, bm.getWidth() * relativePos, bm.getHeight() * relativePos, paint);
+        float relativePos = Utils.convertDpToPixel(28, this);
+        canvas.drawText(text, bm.getWidth() - relativePos, bm.getHeight() - relativePos, paint);
 
         return new BitmapDrawable(getResources(), bm);
     }
