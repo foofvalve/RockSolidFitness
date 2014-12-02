@@ -1,7 +1,13 @@
 package com.rocksolidfitness;
 
+import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
 import android.app.Activity;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,8 +24,8 @@ public class WeekViewActivity extends Activity implements SwipeInterface
 
     SessionsDataSource dataSource;
     DateTime mDayOfWeek;
-    double mScreenWidth;
-    double mScreenHeight;
+    double mCellWidth;
+    double mCellHeight;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -31,8 +37,8 @@ public class WeekViewActivity extends Activity implements SwipeInterface
         LinearLayout swipe_layout = (LinearLayout) findViewById(R.id.weeklyLayoutMainContainer);
         swipe_layout.setOnTouchListener(swipe);
 
-        mScreenWidth = (Utils.getScreenWidthInPx(this) * 0.93) / 3;
-        mScreenHeight = (Utils.getScreenHeightInPx(this) * 0.98) / 7;
+        mCellWidth = (Utils.getScreenWidthInPx(this) * 0.93) / 3;
+        mCellHeight = (Utils.getScreenHeightInPx(this) * 0.98) / 7;
         mDayOfWeek = Utils.getFirstDayOfWeek();
         setWeekHeaders();
         setMainContent();
@@ -54,6 +60,8 @@ public class WeekViewActivity extends Activity implements SwipeInterface
         setMainContent();
     }
 
+    @TargetApi(16)
+    @SuppressLint("NewApi")
     void setMainContent()
     {
         dataSource = new SessionsDataSource(this);
@@ -74,19 +82,28 @@ public class WeekViewActivity extends Activity implements SwipeInterface
             TextView dayTextView = (TextView) findViewById(getResources().getIdentifier("tv" + i, "id", getPackageName()));
 
             dayTextView.clearComposingText();
-
+            dayTextView.setText("");
             ViewGroup.LayoutParams params = dayTextView.getLayoutParams();
-            params.height = (int) mScreenHeight;
-            params.width = (int) mScreenWidth;
+            params.height = (int) mCellHeight;
+            params.width = (int) mCellWidth;
             dayTextView.setLayoutParams(params);
 
+            int bgColor;
             if (dateRange.getWeekOfWeekyear() == new DateTime().getWeekOfWeekyear())  //highlight the current week
-                dayTextView.setBackgroundColor(Color.parseColor("#d4d446"));
+                bgColor = Color.parseColor("#d4d446");
             else
-                dayTextView.setBackgroundColor(Color.parseColor("#eaeaea"));
+                bgColor = Color.parseColor("#eaeaea");
 
+            String lableDayOfMonth = String.valueOf(dateRange.getDayOfMonth());
+            int sdk = android.os.Build.VERSION.SDK_INT;
+            if (sdk < android.os.Build.VERSION_CODES.JELLY_BEAN)
+            {
+                dayTextView.setBackgroundDrawable(writeOnDrawable(bgColor, lableDayOfMonth));
+            } else
+            {
+                dayTextView.setBackground(writeOnDrawable(bgColor, lableDayOfMonth));
+            }
 
-            dayTextView.setText(String.valueOf(dateRange.getDayOfMonth()));
             if (listOfSessionsForDay != null)
             {
                 for (Session session : listOfSessionsForDay)
@@ -94,18 +111,18 @@ public class WeekViewActivity extends Activity implements SwipeInterface
                     String currentText = dayTextView.getText().toString();
 
                     if (listOfSessionsForDay.size() == 1)
-                        dayTextView.setText(currentText + "\n" + session.getFullSessionDescription());
+                        dayTextView.setText(currentText + session.getFullSessionDescription() + "\n");
                     else if (listOfSessionsForDay.size() == 2)
-                        dayTextView.setText(currentText + "\n" + session.getMeduimSessionDescription());
+                        dayTextView.setText(currentText + session.getMeduimSessionDescription() + "\n");
                     else
-                        dayTextView.setText(currentText + "\n" + session.getShortSessionDescription());
+                        dayTextView.setText(currentText + session.getShortSessionDescription() + "\n");
                 }
             }
 
             dateRange = dateRange.plusDays(1);
         }
-
-        dataSource.close();
+        if (dataSource != null)
+            dataSource.close();
     }
 
     void setWeekHeaders()
@@ -114,7 +131,7 @@ public class WeekViewActivity extends Activity implements SwipeInterface
         TextView tvSecondWeek = (TextView) findViewById(R.id.tvSecondWeek);
         TextView tvThirdWeek = (TextView) findViewById(R.id.tvThirdWeek);
         ViewGroup.LayoutParams params = tvFirstWeek.getLayoutParams();
-        params.width = (int) mScreenWidth;
+        params.width = (int) mCellWidth;
         tvFirstWeek.setLayoutParams(params);
         tvFirstWeek.clearComposingText();
 
@@ -123,26 +140,44 @@ public class WeekViewActivity extends Activity implements SwipeInterface
         tvFirstWeek.setText(getString(R.string.week) + " - " + firstWeek);
 
         params = tvSecondWeek.getLayoutParams();
-        params.width = (int) mScreenWidth;
+        params.width = (int) mCellWidth;
         tvSecondWeek.setLayoutParams(params);
         tvSecondWeek.clearComposingText();
 
         String secondWeek;
         secondWeek = String.valueOf(mDayOfWeek.plusDays(7).getWeekOfWeekyear())
-                    + " " + mDayOfWeek.plusDays(7).toString("MMM");
+                + " " + mDayOfWeek.plusDays(7).toString("MMM");
 
         tvSecondWeek.setText(getString(R.string.week) + " - " + secondWeek);
 
         params = tvThirdWeek.getLayoutParams();
-        params.width = (int) mScreenWidth;
+        params.width = (int) mCellWidth;
         tvThirdWeek.setLayoutParams(params);
         tvThirdWeek.clearComposingText();
 
         String thirdWeek;
         thirdWeek = String.valueOf(mDayOfWeek.plusDays(14).getWeekOfWeekyear())
-                    + " " + mDayOfWeek.plusDays(14).toString("MMM");
+                + " " + mDayOfWeek.plusDays(14).toString("MMM");
 
         tvThirdWeek.setText(getString(R.string.week) + " - " + thirdWeek);
+    }
+
+    public BitmapDrawable writeOnDrawable(int color, String text)
+    {
+        Bitmap.Config conf = Bitmap.Config.ARGB_8888;
+        Bitmap bm = Bitmap.createBitmap((int) mCellWidth, (int) mCellHeight, conf);
+
+        Paint paint = new Paint();
+        paint.setStyle(Paint.Style.FILL);
+        paint.setColor(Color.WHITE);
+        paint.setTextSize(10);
+
+        Canvas canvas = new Canvas(bm);
+        canvas.drawColor(color);
+        float relativePos = (float) 0.87;
+        canvas.drawText(text, bm.getWidth() * relativePos, bm.getHeight() * relativePos, paint);
+
+        return new BitmapDrawable(getResources(), bm);
     }
 
     @Override
