@@ -94,17 +94,22 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
     @Override
     public void onNavigationDrawerItemSelected(int position)
     {
+        Intent i;
         FragmentManager fragmentManager = getFragmentManager();
         if (position == 1)
         {
-            Intent intent = new Intent(this, SessionDetails.class);
-            intent.putExtra("SessionId", Consts.ADD_MODE);
-            intent.putExtra("DesiredDateOfSession", new DateTime().getMillis());
-            startActivityForResult(intent, 1);
+            i = new Intent(this, SessionDetails.class);
+            i.putExtra("SessionId", Consts.ADD_MODE);
+            i.putExtra("DesiredDateOfSession", new DateTime().getMillis());
+            startActivityForResult(i, 1);
+        } else if (position == 2)
+        {
+            i = new Intent(this, ListViewMultiChartActivity.class);
+            startActivity(i);
         } else if (position == 3)
         {
-            Intent intent = new Intent(this, WeekViewActivity.class);
-            startActivityForResult(intent, 1);
+            i = new Intent(this, WeekViewActivity.class);
+            startActivityForResult(i, 1);
         } else
         {
             fragmentManager.beginTransaction()

@@ -25,7 +25,11 @@
         </activity>
         <activity
             android:name="com.rocksolidfitness.WeekViewActivity"
-            android:label="@string/title_activity_session_detail">
+            android:label="@string/title_activity_weekly_view">
+        </activity>
+        <activity
+            android:name="com.rocksolidfitness.ListViewMultiChartActivity"
+            android:label="@string/title_activity_reporting">
         </activity>
     </application>
 

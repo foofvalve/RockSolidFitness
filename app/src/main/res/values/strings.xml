@@ -65,6 +65,7 @@
 
     <string name="title_activity_session_detail">Session Detail</string>
     <string name="title_activity_weekly_view">Weekly Summary</string>
+    <string name="title_activity_reporting">Reporting</string>
 
     <string name="hello_world">Hello world!</string>
 
