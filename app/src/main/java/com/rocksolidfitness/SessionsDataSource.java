@@ -10,6 +10,7 @@ import android.database.sqlite.SQLiteDatabase;
 import org.joda.time.DateTime;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 
@@ -117,44 +118,81 @@ class SessionsDataSource
         return getAllSessionsForWeek(DateTime.now().getWeekOfWeekyear(), DateTime.now().getYear());
     }
 
-    List<Session> getAllSessions()
+    LinkedHashMap<String, Float> getTotalsPerWeekPerSport(String sport, String columnToSum)
     {
-        List<Session> sessionsForWeek = new ArrayList<Session>();
+        //DURATION:
+        //group by week+year+sport [DURATION]
+        //select sessionweek,sessionyear,sport, round((sum(duration)*1.0)/60,2) from sessions group by 1,2,3;
+        LinkedHashMap<String, Float> durationPerWeekPerSport = new LinkedHashMap<String, Float>();
+
+        String aggColumnName = "";
+        if (columnToSum.equals(SessionColumns.DURATION))
+            aggColumnName = "round((sum(" + SessionColumns.DURATION + ")*1.0)/60,2)";
+        else
+            aggColumnName = "round(sum(" + SessionColumns.DISTANCE + "),2)";
 
         Cursor cursor = mDatabase.query(DbHelper.TABLE_SESSIONS,
-                SessionColumns.allColumns, null,
-                null, null, null, null);
+                new String[]{SessionColumns.SESSION_WEEK, SessionColumns.SESSION_YEAR, SessionColumns.SPORT, aggColumnName},
+                SessionColumns.SPORT + " = ?",
+                new String[]{sport},
+                "1,2,3", null, "1,2,3 desc");
 
         if (cursor.getCount() == 0) return null;
 
         cursor.moveToFirst();
         while (!cursor.isAfterLast())
         {
-            sessionsForWeek.add(cursorToSession(cursor));
+            durationPerWeekPerSport.put(cursor.getString(0), cursor.getFloat(3));
             cursor.moveToNext();
         }
         cursor.close();
-        return sessionsForWeek;
+        return durationPerWeekPerSport;
     }
 
-    List<Session> getAllPlannedSessions()
+    LinkedHashMap<String, Float> getDurationPerWeek()
     {
-        List<Session> sessionsForWeek = new ArrayList<Session>();
+        //group by week+year [DURATION] summed per week
+        //select sessionweek,sessionyear, round((sum(duration)*1.0)/60,2) from sessions group by 1,2;
+        LinkedHashMap<String, Float> durationPerWeek = new LinkedHashMap<String, Float>();
 
         Cursor cursor = mDatabase.query(DbHelper.TABLE_SESSIONS,
-                SessionColumns.allColumns, null,
-                null, null, null, null);
+                new String[]{SessionColumns.SESSION_WEEK, SessionColumns.SESSION_YEAR, "round((sum(duration)*1.0)/60,2)"},
+                null,
+                null,
+                "1,2", null, "1,2 desc");
 
         if (cursor.getCount() == 0) return null;
 
         cursor.moveToFirst();
         while (!cursor.isAfterLast())
         {
-            sessionsForWeek.add(cursorToSession(cursor));
+            durationPerWeek.put(cursor.getString(0), cursor.getFloat(2));
             cursor.moveToNext();
         }
         cursor.close();
-        return sessionsForWeek;
+        return durationPerWeek;
+    }
+
+    List<String> getUniqueSports()
+    {
+        List<String> uniqueSportsLogged = new ArrayList<String>();
+
+        Cursor cursor = mDatabase.query(DbHelper.TABLE_SESSIONS,
+                new String[]{SessionColumns.SPORT},
+                null,
+                null,
+                "1", null, "1");
+
+        if (cursor.getCount() == 0) return null;
+
+        cursor.moveToFirst();
+        while (!cursor.isAfterLast())
+        {
+            uniqueSportsLogged.add(cursor.getString(0));
+            cursor.moveToNext();
+        }
+        cursor.close();
+        return uniqueSportsLogged;
     }
 
     List<Session> getAllSessionsForDay(String ddmmyyyy)
@@ -185,27 +223,6 @@ class SessionsDataSource
         Cursor cursor = mDatabase.query(DbHelper.TABLE_SESSIONS,
                 SessionColumns.allColumns, SessionColumns.SESSION_WEEK + " = ? and " + SessionColumns.SESSION_YEAR + " = ?",
                 new String[]{"" + week, "" + year}, null, null, null);
-
-        if (cursor.getCount() == 0) return null;
-
-        cursor.moveToFirst();
-        while (!cursor.isAfterLast())
-        {
-            sessionsForWeek.add(cursorToSession(cursor));
-            cursor.moveToNext();
-        }
-        cursor.close();
-        return sessionsForWeek;
-    }
-
-    List<Session> getAllSessionsForWeekOrderByDate(int week, int year)
-    {
-        List<Session> sessionsForWeek = new ArrayList<Session>();
-
-        Cursor cursor = mDatabase.query(DbHelper.TABLE_SESSIONS,
-                SessionColumns.allColumns, SessionColumns.SESSION_WEEK + " = ? and " + SessionColumns.SESSION_YEAR + " = ?",
-                new String[]{"" + week, "" + year}, null, null, SessionColumns.SESSION_WEEK + "," + SessionColumns.SESSION_YEAR
-                        + SessionColumns.DATE_OF_SESSION);
 
         if (cursor.getCount() == 0) return null;
 
@@ -373,19 +390,19 @@ class SessionsDataSource
     public void loadDynamicTestData()
     {
         truncateSessionTable();
-        createSession(new Session(Session.State.PLANNED, "Running", "easy", 58, Utils.getDateOffsetByNDays(-14)));
-        createSession(new Session(Session.State.PLANNED, "Swimming", "1k+stuff+pullbouy+wd", 62, Utils.getDateOffsetByNDays(-13)));
-        createSession(new Session(Session.State.PLANNED, "Cycling", "mtb", 120, Utils.getDateOffsetByNDays(-13)));
+        createSession(new Session(Session.State.PLANNED, "Running", "easy", 58, Utils.getDateOffsetByNDays(-14), 22));
+        createSession(new Session(Session.State.PLANNED, "Swimming", "1k+stuff+pullbouy+wd", 62, Utils.getDateOffsetByNDays(-13), 2.4));
+        createSession(new Session(Session.State.PLANNED, "Cycling", "mtb", 120, Utils.getDateOffsetByNDays(-13), 122.2));
         createSession(new Session(Session.State.PLANNED, "Strength and Conditioning", "plank", 14, Utils.getDateOffsetByNDays(-13)));
-        createSession(new Session(Session.State.PLANNED, "Running", "easy", 49, Utils.getDateOffsetByNDays(-12)));
-        createSession(new Session(Session.State.PLANNED, "Swimming", "easy", 30, Utils.getDateOffsetByNDays(-11)));
+        createSession(new Session(Session.State.PLANNED, "Running", "easy", 49, Utils.getDateOffsetByNDays(-12), 8.8));
+        createSession(new Session(Session.State.PLANNED, "Swimming", "easy", 30, Utils.getDateOffsetByNDays(-11), 1.3));
         createSession(new Session(Session.State.PLANNED, "Strength and Conditioning", "plank", 14, Utils.getDateOffsetByNDays(-10)));
-        createSession(new Session(Session.State.PLANNED, "Running", "easy", 57, Utils.getDateOffsetByNDays(-9)));
-        createSession(new Session(Session.State.PLANNED, "Swimming", "easy", 30, Utils.getDateOffsetByNDays(-7)));
-        createSession(new Session(Session.State.PLANNED, "Cycling", "roadie", 230, Utils.getDateOffsetByNDays(-6)));
-        createSession(new Session(Session.State.PLANNED, "Cycling", "mtb", 120, Utils.getDateOffsetByNDays(-6)));
-        createSession(new Session(Session.State.PLANNED, "Running", "easy", 57, Utils.getDateOffsetByNDays(-4)));
-        createSession(new Session(Session.State.PLANNED, "Swimming", "1k+stuff+pullbouy+wd", 45, Utils.getDateOffsetByNDays(-3)));
+        createSession(new Session(Session.State.PLANNED, "Running", "easy", 57, Utils.getDateOffsetByNDays(-9), 12.35));
+        createSession(new Session(Session.State.PLANNED, "Swimming", "easy", 30, Utils.getDateOffsetByNDays(-7), 3.5));
+        createSession(new Session(Session.State.PLANNED, "Cycling", "roadie", 230, Utils.getDateOffsetByNDays(-6), 68));
+        createSession(new Session(Session.State.PLANNED, "Cycling", "mtb", 120, Utils.getDateOffsetByNDays(-6), 55));
+        createSession(new Session(Session.State.PLANNED, "Running", "easy", 57, Utils.getDateOffsetByNDays(-4), 13.33));
+        createSession(new Session(Session.State.PLANNED, "Swimming", "1k+stuff+pullbouy+wd", 45, Utils.getDateOffsetByNDays(-3), 4.5));
         createSession(new Session(Session.State.COMPLETE, "Strength and Conditioning", "plank", 14, Utils.getDateOffsetByNDays(-1)));
         createSession(new Session(Session.State.COMPLETE, "Strength and Conditioning", "legs", 17, Utils.getDateOffsetByNDays(-1)));
 

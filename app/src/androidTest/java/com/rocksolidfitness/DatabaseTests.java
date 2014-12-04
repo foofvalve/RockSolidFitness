@@ -7,6 +7,7 @@ import android.util.Log;
 
 import org.joda.time.DateTime;
 
+import java.util.LinkedHashMap;
 import java.util.List;
 
 public class DatabaseTests extends AndroidTestCase
@@ -130,6 +131,16 @@ public class DatabaseTests extends AndroidTestCase
     {
         dataSource.createSport("Kayaking");
         assertTrue(dataSource.createSport("Kayaking") == -1);
+    }
+
+    public void testGetAggSessionDurationPerWeek()
+    {
+        dataSource.loadDynamicTestData();
+        LinkedHashMap<String, Float> resultSet = dataSource.getDurationPerWeek();
+        assertFalse(resultSet.isEmpty());
+
+        List<String> result = dataSource.getUniqueSports();
+        assertFalse(result.isEmpty());
     }
 
     public void testGetSessionsForTheCurrentWeek()

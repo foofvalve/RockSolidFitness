@@ -37,6 +37,17 @@ public final class Session
     {
     }
 
+    public Session(State state, String sport, String description, int duration, DateTime dateOfSession, double distance)
+    {
+        this.distance = distance;
+        this.sessionState = state;
+        this.sport = sport;
+        this.description = description;
+        this.duration = duration;
+        this.dateOfSession = dateOfSession;
+        setDateOfSession(dateOfSession);
+    }
+
     public Session(State state, String sport, String description, int duration, DateTime dateOfSession)
     {
         this.sessionState = state;

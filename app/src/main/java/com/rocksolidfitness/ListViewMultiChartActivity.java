@@ -2,6 +2,7 @@ package com.rocksolidfitness;
 
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
@@ -16,10 +17,19 @@ import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.utils.ColorTemplate;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ListViewMultiChartActivity extends ChartBase
 {
+    List<String> mListOfLoggedSports;
+
+
+    //DISTANCE:
+    //group by week+year [DISTANCE]  >> Grand Totals per week
+    //select sessionweek,sessionyear, round((sum(distance)*1.0)/60,2) from sessions group by 1,2;
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -27,77 +37,105 @@ public class ListViewMultiChartActivity extends ChartBase
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_listview_chart);
-
+        populateSportList();
         ListView lv = (ListView) findViewById(R.id.listView1);
 
         ArrayList<ChartItem> list = new ArrayList<ChartItem>();
+        list.add(new LineChartItem(generateTotDurationDataLine(), getApplicationContext()));
 
-        // 30 items
-        for (int i = 0; i < 30; i++)
+        for (String sport : mListOfLoggedSports)
         {
-            list.add(new LineChartItem(generateDataLine(i + 1), getApplicationContext()));
+            list.add(new LineChartItem(generateSportDurationDataLine(sport, SessionColumns.DURATION), getApplicationContext()));
+            list.add(new LineChartItem(generateSportDurationDataLine(sport, SessionColumns.DISTANCE), getApplicationContext()));
         }
 
         ChartDataAdapter cda = new ChartDataAdapter(getApplicationContext(), list);
         lv.setAdapter(cda);
     }
 
-    private LineData generateDataLine(int cnt)
+    void populateSportList()
     {
+        SessionsDataSource dataSource = new SessionsDataSource(this);
+        dataSource.open();
+        mListOfLoggedSports = dataSource.getUniqueSports();
+        dataSource.close();
+    }
 
+    private LineData generateTotDurationDataLine()
+    {
+        SessionsDataSource dataSource = new SessionsDataSource(this);
+        dataSource.open();
+        LinkedHashMap<String, Float> resultSet = dataSource.getDurationPerWeek();
+        dataSource.close();
+        ArrayList<String> wkTicks = new ArrayList<String>();
         ArrayList<Entry> e1 = new ArrayList<Entry>();
 
-        for (int i = 0; i < 12; i++)
+        int index = 0;
+        for (Map.Entry<String, Float> entry : resultSet.entrySet())
         {
-            e1.add(new Entry((int) (Math.random() * 65) + 40, i));
+            wkTicks.add(entry.getKey().toString());
+            e1.add(new Entry(Float.parseFloat(String.valueOf(entry.getValue())), index));
+            index++;
         }
 
-        LineDataSet d1 = new LineDataSet(e1, "New DataSet " + cnt + ", (1)");
-        d1.setLineWidth(3f);
+        LineDataSet d1 = new LineDataSet(e1, "Total Duration(Hrs)/Week ");
+        d1.setLineWidth(4f);
         d1.setCircleSize(5f);
-        d1.setHighLightColor(Color.rgb(244, 117, 117));
-
-        ArrayList<Entry> e2 = new ArrayList<Entry>();
-
-        for (int i = 0; i < 12; i++)
-        {
-            e2.add(new Entry(e1.get(i).getVal() - 30, i));
-        }
-
-        LineDataSet d2 = new LineDataSet(e2, "New DataSet " + cnt + ", (2)");
-        d2.setLineWidth(3f);
-        d2.setCircleSize(5f);
-        d2.setHighLightColor(Color.rgb(244, 117, 117));
-        d2.setColor(ColorTemplate.VORDIPLOM_COLORS[0]);
-        d2.setCircleColor(ColorTemplate.VORDIPLOM_COLORS[0]);
+        d1.setHighLightColor(Color.rgb(200, 100, 50));
 
         ArrayList<LineDataSet> sets = new ArrayList<LineDataSet>();
         sets.add(d1);
-        sets.add(d2);
 
-        LineData cd = new LineData(getMonths(), sets);
+        LineData cd = new LineData(wkTicks, sets);
         return cd;
     }
 
-    private ArrayList<String> getMonths()
+    private LineData generateSportDurationDataLine(String sport, String columnToSum)
     {
+        SessionsDataSource dataSource = new SessionsDataSource(this);
+        dataSource.open();
+        LinkedHashMap<String, Float> resultSet = dataSource.getTotalsPerWeekPerSport(sport, columnToSum);
+        dataSource.close();
+        ArrayList<String> wkTicks = new ArrayList<String>();
+        ArrayList<Entry> e1 = new ArrayList<Entry>();
 
-        ArrayList<String> m = new ArrayList<String>();
-        m.add("Jan");
-        m.add("Feb");
-        m.add("Mar");
-        m.add("Apr");
-        m.add("May");
-        m.add("Jun");
-        m.add("Jul");
-        m.add("Aug");
-        m.add("Sep");
-        m.add("Okt");
-        m.add("Nov");
-        m.add("Dec");
+        int index = 0;
+        for (Map.Entry<String, Float> entry : resultSet.entrySet())
+        {
+            wkTicks.add(entry.getKey().toString());
+            e1.add(new Entry(Float.parseFloat(String.valueOf(entry.getValue())), index));
+            index++;
+        }
 
-        return m;
+        String graphLabel;
+
+        if (columnToSum.equals(SessionColumns.DURATION))
+            graphLabel = sport + " Total " + columnToSum + " (Hrs)/Week ";
+        else
+        {
+            SharedPreferences settings = getSharedPreferences(Consts.PREFS_NAME, 0);
+            graphLabel = sport + " Total " + columnToSum + " (" + settings.getString("uom", "KM") + ")/Week ";
+        }
+
+
+        LineDataSet d1 = new LineDataSet(e1, graphLabel);
+        d1.setLineWidth(4f);
+        d1.setCircleSize(5f);
+        d1.setHighLightColor(Color.rgb(244, 117, 117));
+
+        if (columnToSum.equals(SessionColumns.DISTANCE))
+        {
+            d1.setColor(ColorTemplate.VORDIPLOM_COLORS[0]);
+            d1.setCircleColor(ColorTemplate.VORDIPLOM_COLORS[0]);
+        }
+
+        ArrayList<LineDataSet> sets = new ArrayList<LineDataSet>();
+        sets.add(d1);
+
+        LineData cd = new LineData(wkTicks, sets);
+        return cd;
     }
+
 
     /**
      * adapter that supports 3 different item types
