@@ -11,9 +11,9 @@ import java.text.MessageFormat;
 
 public final class Session
 {
+    final String escapeChars = "[\n\r]";
     //Fields
     public long id;
-
     public State sessionState;
     public String sport;
     public String description;
@@ -56,6 +56,29 @@ public final class Session
         this.duration = duration;
         this.dateOfSession = dateOfSession;
         setDateOfSession(dateOfSession);
+    }
+
+    public static String getCSVHeaders()
+    {
+        return "id," +
+                "sessionState," +
+                "sport," +
+                "description," +
+                "dateOfSession," +
+                "duration," +
+                "distance," +
+                "notes," +
+                "avgHrRate," +
+                "location," +
+                "caloriesBurnt," +
+                "weight," +
+                "raceName," +
+                "trainingWeek," +
+                "dateCreated," +
+                "dateModified," +
+                "sessionWeek," +
+                "sessionYear," +
+                "uom\n";
     }
 
     public DateTime getDateOfSession()
@@ -174,6 +197,37 @@ public final class Session
     {
         return sport.charAt(0) + "\t" + getFormattedCombinedDuration() + "\t" +
                 Utils.shortifyText(description, 12);
+    }
+
+    public String toCSV()
+    {
+        return MessageFormat.format("{0}," +
+                        "{1}," +
+                        "{2}," +
+                        "{3}," +
+                        "{4}," +
+                        "{5}," +
+                        "{6}," +
+                        "{7}," +
+                        "{8}," +
+                        "{9}," +
+                        "{10}," +
+                        "{11}," +
+                        "{12}," +
+                        "{13}," +
+                        "{14}," +
+                        "{15}," +
+                        "{16}," +
+                        "{17}," +
+                        "{17}\n",
+                id, sessionState, sport, description.replaceAll(escapeChars, ""), dateOfSession, duration, getDistance(),
+                blankIfNull(notes), avgHrRate, blankIfNull(location).replaceAll(escapeChars, ""), caloriesBurnt, weight, blankIfNull(raceName), trainingWeek,
+                dateCreated, dateModified, sessionWeek, String.valueOf(sessionYear).replace(",", ""), getUomAsString());
+    }
+
+    String blankIfNull(String value)
+    {
+        return value == null ? "" : value.replaceAll(escapeChars, "").replace(",", "");
     }
 
     public String toString()

@@ -1,8 +1,9 @@
 package com.rocksolidfitness;
 
+import android.content.Intent;
 import android.os.Environment;
-import android.test.AndroidTestCase;
-import android.test.RenamingDelegatingContext;
+import android.test.ActivityUnitTestCase;
+import android.test.suitebuilder.annotation.SmallTest;
 
 import java.io.File;
 import java.io.IOException;
@@ -15,14 +16,15 @@ import jxl.write.WritableSheet;
 import jxl.write.WritableWorkbook;
 import jxl.write.WriteException;
 
-public class ImportExportTests extends AndroidTestCase
+public class ImportExportTests extends ActivityUnitTestCase<BlankActivity>
 {
-    private RenamingDelegatingContext context;
 
-    public void setUp()
+
+    public ImportExportTests()
     {
-        context = new RenamingDelegatingContext(getContext(), "test_v3_");
+        super(BlankActivity.class);
     }
+
 
     public void testBlah()
             throws BiffException, IOException, WriteException
@@ -52,9 +54,31 @@ public class ImportExportTests extends AndroidTestCase
 
     }
 
-    public void testImportExcel()
-    {
 
+    public void testExportSess()
+    {
+        //ImpExpManager.exportAllSessions(context);
+
+
+    }
+
+    @SmallTest
+    public void testImportExcel() throws Throwable
+    {
+        startActivity(new Intent(), null, null);
+        runTestOnUiThread(new Runnable()
+        {
+            public void run()
+            {
+                ImpExpManager impExpManage = new ImpExpManager();
+                impExpManage.execute(getActivity());
+            }
+        });
+        assertNotNull(getActivity());
+
+        // To wait for the AsyncTask to complete, you can safely call get() from the test thread
+        //getActivity()._myAsyncTask.get();
+        // assertTrue(asyncTaskRanCorrectly());
     }
 
     public void tearDown() throws Exception

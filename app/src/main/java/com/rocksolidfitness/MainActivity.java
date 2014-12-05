@@ -6,6 +6,7 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.view.LayoutInflater;
@@ -13,11 +14,15 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import org.joda.time.DateTime;
 
 
-public class MainActivity extends Activity implements NavigationDrawerFragment.NavigationDrawerCallbacks
+public class MainActivity extends Activity implements NavigationDrawerFragment.NavigationDrawerCallbacks,
+        ExportFragment.OnFragmentInteractionListener,
+        ImpExpManager.AsyncResponse
+
 {
     private NavigationDrawerFragment mNavigationDrawerFragment;
 
@@ -110,6 +115,14 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
         {
             i = new Intent(this, WeekViewActivity.class);
             startActivityForResult(i, 1);
+        } else if (position == 7)
+        {
+            ExportFragment exportFragment = new ExportFragment();
+            FragmentTransaction transaction = getFragmentManager().beginTransaction();
+
+            transaction.replace(R.id.container, exportFragment);
+            transaction.addToBackStack(null);
+            transaction.commit();
         } else
         {
             fragmentManager.beginTransaction()
@@ -173,6 +186,21 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
         return super.onCreateOptionsMenu(menu);
     }
 
+    @Override
+    public void onFragmentInteraction(Uri uri)
+    {
+
+    }
+
+
+    @Override
+    public void processFinish(boolean passed)
+    {
+        if (passed)
+            Toast.makeText(this, "Completed export successfully", Toast.LENGTH_SHORT).show();
+        else
+            Toast.makeText(this, "Something bad happened- export failed", Toast.LENGTH_SHORT).show();
+    }
 
     /**
      * A placeholder fragment containing a simple view.
