@@ -199,6 +199,32 @@ public final class Session
                 Utils.shortifyText(description, 12);
     }
 
+    public String toXML()
+    {
+        return MessageFormat.format("\t<session>\n\t\t<id>{0}</id>\n" +
+                        "\t\t<sessionState>{1}</sessionState>\n" +
+                        "\t\t<sport>{2}</sport>\n" +
+                        "\t\t<description>{3}</description>\n" +
+                        "\t\t<dateOfSession>{4}</dateOfSession>\n" +
+                        "\t\t<duration>{5}</duration>\n" +
+                        "\t\t<distance>{6}</distance>\n" +
+                        "\t\t<notes><![CDATA[{7}]]></notes>\n" +
+                        "\t\t<avgHrRate>{8}</avgHrRate>\n" +
+                        "\t\t<location>{9}</location>\n" +
+                        "\t\t<caloriesBurnt>{10}</caloriesBurnt>\n" +
+                        "\t\t<weight>{11}</weight>\n" +
+                        "\t\t<raceName>{12}</raceName>\n" +
+                        "\t\t<trainingWeek>{13}</trainingWeek>\n" +
+                        "\t\t<dateCreated>{14}</dateCreated>\n" +
+                        "\t\t<dateModified>{15}</dateModified>\n" +
+                        "\t\t<sessionWeek>{16}</sessionWeek>\n" +
+                        "\t\t<sessionYear>{17}</sessionYear>\n" +
+                        "\t\t<uom>{17}</uom>\n\t</session>\n",
+                id, sessionState, sport, description.replaceAll(escapeChars, ""), dateOfSession, duration, getDistance(),
+                blankIfNull(notes), avgHrRate, blankIfNull(location).replaceAll(escapeChars, ""), caloriesBurnt, weight, blankIfNull(raceName), trainingWeek,
+                dateCreated, dateModified, sessionWeek, String.valueOf(sessionYear).replace(",", ""), getUomAsString());
+    }
+
     public String toCSV()
     {
         return MessageFormat.format("{0}," +

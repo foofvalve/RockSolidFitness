@@ -60,6 +60,13 @@
         <item>Strength and Conditioning</item>
     </string-array>
 
+    <string-array name="export_type">
+        <item>CSV (Comma Delimeted)</item>
+        <item>Excel 97-2003 Workbook</item>
+        <item>XML Data</item>
+    </string-array>
+    <string name="export_type_title">Select Export Type:</string>
+
     <string name="title_activity_session_detail">Session Detail</string>
     <string name="title_activity_weekly_view">Weekly Summary</string>
     <string name="title_activity_reporting">Reporting</string>

@@ -70,7 +70,7 @@ public class ImportExportTests extends ActivityUnitTestCase<BlankActivity>
         {
             public void run()
             {
-                ImpExpManager impExpManage = new ImpExpManager();
+                ImpExpManager impExpManage = new ImpExpManager(Consts.EXPORT_CSV);
                 impExpManage.execute(getActivity());
             }
         });

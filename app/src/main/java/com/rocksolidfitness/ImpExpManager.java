@@ -15,8 +15,16 @@ import java.util.List;
 
 public class ImpExpManager extends AsyncTask<Context, Integer, Boolean>
 {
+    private final int mExportType;
     public AsyncResponse delegate = null;
     Context mContext;
+    DateTimeFormatter isoFormat;
+    File dir;
+
+    public ImpExpManager(int exportType)
+    {
+        mExportType = exportType;
+    }
 
     @Override
     protected Boolean doInBackground(Context... context)
@@ -31,13 +39,43 @@ public class ImpExpManager extends AsyncTask<Context, Integer, Boolean>
             dataSource.close();
 
             File sdCard = Environment.getExternalStorageDirectory();
-            File dir = new File(sdCard.getAbsolutePath() + "/rocksolidfitnessexport");
+            dir = new File(sdCard.getAbsolutePath() + "/rocksolidfitnessexport");
 
             dir.mkdirs();
-            DateTimeFormatter isoFormat = DateTimeFormat.forPattern("yyyy-MM-dd HHmm");
+            isoFormat = DateTimeFormat.forPattern("yyyy-MM-dd HHmm");
 
-            File wbfile = new File(dir, "workout_export_" + new DateTime().toString(isoFormat) + ".csv");
+            switch (mExportType)
+            {
+                case Consts.EXPORT_CSV:
+                    exportToCSV(listOfAllSessions);
+                    break;
+                case Consts.EXPORT_EXCEL:
+                    exportToExcel(listOfAllSessions);
+                    break;
+                case Consts.EXPORT_XML:
+                    exportToXML(listOfAllSessions);
+                    break;
+            }
 
+            return true;
+        } catch (Exception e)
+        {
+            Log.e("ImpExpManager.exportAllSessions", e.getMessage());
+            return false;
+        }
+    }
+
+    void exportToExcel(List<Session> listOfAllSessions)
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    void exportToCSV(List<Session> listOfAllSessions)
+    {
+        File wbfile = new File(dir, "workout_export_" + new DateTime().toString(isoFormat) + ".csv");
+
+        try
+        {
             FileWriter writer = new FileWriter(wbfile);
             writer.append(Session.getCSVHeaders());
             int countExported = 1;
@@ -51,20 +89,47 @@ public class ImpExpManager extends AsyncTask<Context, Integer, Boolean>
             }
             writer.flush();
             writer.close();
-            return true;
         } catch (Exception e)
         {
-            Log.e("ImpExpManager.exportAllSessions", e.getMessage());
-            return false;
+            Log.e("ImpExpManager.exportToCSV", e.getMessage());
         }
     }
+
+    void exportToXML(List<Session> listOfAllSessions)
+    {
+        File wbfile = new File(dir, "workout_export_" + new DateTime().toString(isoFormat) + ".xml");
+
+        try
+        {
+            FileWriter writer = new FileWriter(wbfile);
+            writer.append("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n");
+            writer.append("<sessions>\n");
+            int countExported = 1;
+            int numSessionsForExport = listOfAllSessions.size();
+            for (Session s : listOfAllSessions)
+            {
+                publishProgress((int) ((countExported / (float) numSessionsForExport) * 100));
+                Log.d("", s.toXML());
+                writer.append(s.toXML());
+                countExported++;
+            }
+            writer.append("</sessions>");
+            writer.flush();
+            writer.close();
+        } catch (Exception e)
+        {
+            Log.e("ImpExpManager.exportToCSV", e.getMessage());
+        }
+    }
+
 
     protected void onProgressUpdate(Integer... progress)
     {
         Log.i("", "Progress:" + progress[0]);
     }
 
-    protected void onPostExecute(boolean result)
+    @Override
+    protected void onPostExecute(Boolean result)
     {
         delegate.processFinish(result);
     }

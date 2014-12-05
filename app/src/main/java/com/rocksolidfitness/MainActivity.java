@@ -2,11 +2,13 @@ package com.rocksolidfitness;
 
 import android.app.ActionBar;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.DialogInterface;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.view.LayoutInflater;
@@ -20,12 +22,11 @@ import org.joda.time.DateTime;
 
 
 public class MainActivity extends Activity implements NavigationDrawerFragment.NavigationDrawerCallbacks,
-        ExportFragment.OnFragmentInteractionListener,
         ImpExpManager.AsyncResponse
 
 {
+    private static final int ALERT_DIALOG1 = 1;
     private NavigationDrawerFragment mNavigationDrawerFragment;
-
     private CharSequence mTitle;
 
     @Override
@@ -96,6 +97,7 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
         }
     }
 
+
     @Override
     public void onNavigationDrawerItemSelected(int position)
     {
@@ -117,18 +119,72 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
             startActivityForResult(i, 1);
         } else if (position == 7)
         {
-            ExportFragment exportFragment = new ExportFragment();
-            FragmentTransaction transaction = getFragmentManager().beginTransaction();
 
-            transaction.replace(R.id.container, exportFragment);
-            transaction.addToBackStack(null);
-            transaction.commit();
+        } else if (position == 8)
+        {
+            showDialog(1);
         } else
         {
             fragmentManager.beginTransaction()
                     .replace(R.id.container, PlaceholderFragment.newInstance(position + 1))
                     .commit();
         }
+    }
+
+
+    @Override
+    public Dialog onCreateDialog(int id)
+    {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        switch (id)
+        {
+            case ALERT_DIALOG1:
+
+                builder.setTitle(R.string.export_type_title)
+                        .setItems(R.array.export_type, new DialogInterface.OnClickListener()
+                        {
+                            public void onClick(DialogInterface dialog, int which)
+                            {
+                                switch (which)
+                                {
+                                    case Consts.EXPORT_CSV:
+                                        doExportCsv();
+                                        break;
+                                    case Consts.EXPORT_EXCEL:
+                                        doExportExcel();
+                                        break;
+                                    case Consts.EXPORT_XML:
+                                        doExportXML();
+                                        break;
+                                }
+                            }
+                        });
+                break;
+            default:
+                return null;
+        }
+        return builder.create();
+    }
+
+    void doExportCsv()
+    {
+        ImpExpManager impExpManage = new ImpExpManager(Consts.EXPORT_CSV);
+        impExpManage.delegate = this;
+        impExpManage.execute(this);
+    }
+
+    void doExportExcel()
+    {
+        ImpExpManager impExpManage = new ImpExpManager(Consts.EXPORT_EXCEL);
+        impExpManage.delegate = this;
+        impExpManage.execute(this);
+    }
+
+    void doExportXML()
+    {
+        ImpExpManager impExpManage = new ImpExpManager(Consts.EXPORT_XML);
+        impExpManage.delegate = this;
+        impExpManage.execute(this);
     }
 
     void onSectionAttached(int number)
@@ -186,18 +242,12 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
         return super.onCreateOptionsMenu(menu);
     }
 
-    @Override
-    public void onFragmentInteraction(Uri uri)
-    {
-
-    }
-
 
     @Override
     public void processFinish(boolean passed)
     {
         if (passed)
-            Toast.makeText(this, "Completed export successfully", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Completed export to SD Card", Toast.LENGTH_SHORT).show();
         else
             Toast.makeText(this, "Something bad happened- export failed", Toast.LENGTH_SHORT).show();
     }
@@ -246,3 +296,4 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
         }
     }
 }
+
