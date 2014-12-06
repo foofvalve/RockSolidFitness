@@ -48,12 +48,23 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
 
         if (savedInstanceState == null)
         {
-            MainViewFragment newFragment = new MainViewFragment();
-            FragmentTransaction transaction = getFragmentManager().beginTransaction();
+            if (getIntent().hasExtra("loadPlanView") &&
+                    getIntent().getBooleanExtra("loadPlanView", false) == true)
+            {
+                MainViewFragment newFragment = new MainViewFragment();
+                FragmentTransaction transaction = getFragmentManager().beginTransaction();
 
-            transaction.add(R.id.container, newFragment);
-            transaction.addToBackStack(null);
-            transaction.commit();
+                transaction.add(R.id.container, newFragment);
+                transaction.addToBackStack(null);
+                transaction.commit();
+            } else
+            {
+                DashboardFragment newFragment = new DashboardFragment();
+                FragmentTransaction transaction = getFragmentManager().beginTransaction();
+                transaction.add(R.id.container, newFragment);
+                transaction.addToBackStack(null);
+                transaction.commit();
+            }
         }
     }
 
@@ -86,7 +97,9 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
         if (resultCode == RESULT_OK)
         {
             finish();
-            startActivity(getIntent());
+            Intent i = getIntent();
+            i.putExtra("loadPlanView", true);
+            startActivity(i);
 
             MainViewFragment newFragment = new MainViewFragment();
             FragmentTransaction transaction = getFragmentManager().beginTransaction();

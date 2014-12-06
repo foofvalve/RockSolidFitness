@@ -1,0 +1,123 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:background="@android:color/background_light"
+              android:orientation="vertical"
+              tools:context="com.rocksolidfitness.DashboardFragment">
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+
+        >
+
+
+        <TextView
+            android:id="@+id/tvLine1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:layout_margin="5dp"
+            android:text="Summary"/>
+
+        <TextView
+            android:id="@+id/tvLine2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@+id/tvLine1"
+            android:layout_margin="5dp"
+            android:text="Current training week 41"/>
+
+        <TextView
+            android:id="@+id/tvLine3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@+id/tvLine2"
+            android:layout_margin="5dp"
+            android:text="Workout Details"/>
+
+        <TextView
+            android:id="@+id/tvLine4"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@+id/tvLine3"
+            android:layout_margin="5dp"
+            android:text="Planned : 12"/>
+
+        <TextView
+            android:id="@+id/tvLine5"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@+id/tvLine4"
+            android:layout_margin="5dp"
+            android:text="Completed : 1"/>
+
+
+        <Button
+            android:id="@+id/btnDashBoardAdd"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/btnDashBoardReport"
+            android:layout_margin="2dp"
+            android:layout_toLeftOf="@+id/btnDashboardDownloadPrograms"
+            android:text="Add"/>
+
+        <Button
+            android:id="@+id/btnDashBoardReport"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_margin="2dp"
+            android:layout_toLeftOf="@+id/btnDashboardDownloadPrograms"
+            android:text="Report"/>
+
+        <Button
+            android:id="@+id/btnDashboardPlan"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/btnDashboardDownloadPrograms"
+            android:layout_centerHorizontal="true"
+            android:layout_margin="2dp"
+            android:text="Plan"/>
+
+        <Button
+            android:id="@+id/btnDashboardDownloadPrograms"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_margin="2dp"
+            android:text="Download"/>
+
+
+        <Button
+            android:id="@+id/btnDashboardWeekView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/btnDashboardImpExp"
+            android:layout_margin="2dp"
+            android:layout_toRightOf="@+id/btnDashboardDownloadPrograms"
+            android:text="Weekly"/>
+
+        <Button
+            android:id="@+id/btnDashboardImpExp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_margin="2dp"
+            android:layout_toRightOf="@+id/btnDashboardDownloadPrograms"
+            android:text="Export"/>
+
+
+    </RelativeLayout>
+
+
+</LinearLayout>
