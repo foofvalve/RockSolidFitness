@@ -12,18 +12,23 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.Toast;
 
 import org.joda.time.DateTime;
 
+import java.util.List;
+
 
 public class DashboardFragment extends Fragment implements ImpExpManager.AsyncResponse
 {
-    private static final int ALERT_DIALOG1 = 1;
     View mView;
     double mCellWidth;
     Intent i;
+
+    String mimeType = "text/html";
+    String encoding = "utf-8";
 
     public DashboardFragment()
     {
@@ -40,15 +45,72 @@ public class DashboardFragment extends Fragment implements ImpExpManager.AsyncRe
         initButton("btnDashBoardReport");
         initButton("btnDashboardPlan");
         initButton("btnDashboardImpExp");
-
-
         initButton("btnDashboardDownloadPrograms");
         initButton("btnDashboardWeekView");
 
+        WebView webLeftView = (WebView) mView.findViewById(R.id.webViewLeftPane);
+        webLeftView.loadData(generateHtmlLeftPane(), mimeType, encoding);
+
+        WebView webRightView = (WebView) mView.findViewById(R.id.webViewRightPane);
+        webRightView.loadData(generateHtmlRightPane(), mimeType, encoding);
 
         return mView;
     }
 
+
+    private String generateHtmlRightPane()
+    {
+        String htmlRightPane;
+
+        SessionsDataSource dataSource = new SessionsDataSource(getActivity());
+        dataSource.open();
+        DateTime now = new DateTime();
+        String filter = now.toString("dd") + String.valueOf(now.getMonthOfYear())
+                + String.valueOf(now.getYear());
+        List<Session> sessionsForToday = dataSource.getAllSessionsForDay(filter);
+        dataSource.close();
+
+        if (sessionsForToday == null)
+        {
+            htmlRightPane = "<h4>Today</h4>"
+                    + "<div>No workouts planned for today</div>";
+        } else
+        {
+            htmlRightPane = "<h4>Today</h4>";
+            for (Session s : sessionsForToday)
+                htmlRightPane += s.toHtmlSnippet();
+        }
+
+        return htmlRightPane;
+    }
+
+    private String generateHtmlLeftPane()
+    {
+        String htmlLeftPane;
+
+        SessionsDataSource dataSource = new SessionsDataSource(getActivity());
+        dataSource.open();
+        DateTime now = new DateTime();
+        String totalDuration = dataSource.getTotalDurationForCurrentWeek();
+        dataSource.close();
+
+        int currentWeek = new DateTime().getWeekOfWeekyear();
+        if (totalDuration.equals(""))
+        {
+            htmlLeftPane = "<h4>Summary Week " + currentWeek + "</h4>"
+                    + "<div></div>";
+        } else
+        {
+            //TODO: SOftify this...
+            htmlLeftPane = "<h4>Summary Week " + currentWeek + "</h4>"
+                    + "<div><b>Bike&nbsp;&nbsp;</b><small>3:15&nbsp;&nbsp;</small><small>150 KM</small></div>"
+                    + "<div><b>Run&nbsp;&nbsp;</b><small>1:25&nbsp;&nbsp;</small><small>50 KM</small></div>"
+                    + "<h2>88 %</h2>"
+                    + "<div>Complete 5 out of 8<div>";
+        }
+
+        return htmlLeftPane;
+    }
 
     public void initButton(String buttonId)   //resize the buttons relative to the screenwidth
     {

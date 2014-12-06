@@ -119,7 +119,7 @@ public class WeekViewActivity extends Activity implements SwipeInterface
 
             dateRange = dateRange.plusDays(1);
         }
-        if (dataSource != null)
+        if (dataSource != null && dataSource.isOpen())
             dataSource.close();
     }
 

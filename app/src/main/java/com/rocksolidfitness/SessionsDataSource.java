@@ -149,6 +149,30 @@ class SessionsDataSource
         return durationPerWeekPerSport;
     }
 
+    String getTotalDurationForCurrentWeek()
+    {
+        String currentWk = String.valueOf(new DateTime().getWeekOfWeekyear());
+        String currentYr = String.valueOf(new DateTime().getYear());
+
+        Cursor cursor = mDatabase.query(DbHelper.TABLE_SESSIONS,
+                new String[]{SessionColumns.SESSION_WEEK, SessionColumns.SESSION_YEAR, "round((sum(duration)*1.0)/60,2)"},
+                SessionColumns.SESSION_WEEK + "=? and " + SessionColumns.SESSION_YEAR + "=?",
+                new String[]{currentWk, currentYr},
+                "1,2", null, "1,2 desc");
+
+        if (cursor.getCount() == 0) return "";
+
+        cursor.moveToFirst();
+        Float sumDuration = 0f;
+        while (!cursor.isAfterLast())
+        {
+            sumDuration = cursor.getFloat(2);
+            cursor.moveToNext();
+        }
+        cursor.close();
+        return String.valueOf(sumDuration);
+    }
+
     LinkedHashMap<String, Float> getDurationPerWeek()
     {
         //group by week+year [DURATION] summed per week

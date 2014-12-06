@@ -199,6 +199,11 @@ public final class Session
                 Utils.shortifyText(description, 12);
     }
 
+    public String toHtmlSnippet()
+    {
+        return "<div><i>" + sport + "&nbsp;&nbsp;</i><b>" + getFormattedCombinedDuration() + "</b></div><div>" + Utils.shortifyText(description, 25) + "</div>";
+    }
+
     public String toXML()
     {
         return MessageFormat.format("\t<session>\n\t\t<id>{0}</id>\n" +
